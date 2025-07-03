@@ -6,6 +6,9 @@ public partial class Enemy : CharacterBody2D
 	[Export] public float Speed = 60.0f;
 	
 	private int _currentHealth;
+	
+	[Signal]
+	public delegate void EnemyKilledEventHandler();
 
 	public override void _Ready()
 	{
@@ -32,6 +35,7 @@ public partial class Enemy : CharacterBody2D
 	private void Die()
 	{
 		GD.Print($"{Name} died!");
+		EmitSignal(SignalName.EnemyKilled);
 		QueueFree();
 	}
 }

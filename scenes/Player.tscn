@@ -1,6 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://dkr0iqwlu118r"]
+[gd_scene load_steps=9 format=3]
 
-[ext_resource type="Script" uid="uid://b0fuy4tbr4lia" path="res://scripts/Player/Player.cs" id="1_kpjcp"]
+[ext_resource type="Script" path="res://scripts/Player/Player.cs" id="1_kpjcp"]
 [ext_resource type="Texture2D" path="res://assets/basic_colors_tilesheet_16x16.png" id="2_3li8b"]
 [ext_resource type="Script" path="res://Hitbox.cs" id="3_3li8b"]
 

@@ -86,11 +86,17 @@ public partial class EnemySpawner : Node2D
 			return;
 		}
 
-		var enemy = EnemyScene.Instantiate<Node2D>();
+		var enemy = EnemyScene.Instantiate<Enemy>();
 		
 		// Randomize spawn position within range
 		var randomX = GD.Randf() * (SpawnXRange.Y - SpawnXRange.X) + SpawnXRange.X;
 		enemy.GlobalPosition = new Vector2(randomX, GlobalPosition.Y + SpawnY);
+		
+		// Connect enemy signals to GameManager
+		if (GameManager.Instance != null)
+		{
+			enemy.EnemyKilled += GameManager.Instance.OnEnemyKilled;
+		}
 		
 		GetTree().Root.CallDeferred("add_child", enemy);
 		GD.Print($"👾 Enemy spawned at {enemy.GlobalPosition}");

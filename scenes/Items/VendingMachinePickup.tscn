@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://dh34v5ge0ktyv"]
+[gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" uid="uid://b276blnmn0scv" path="res://scripts/Items/LootablePickup.cs" id="1_k0fgs"]
+[ext_resource type="Script" path="res://scripts/Items/LootablePickup.cs" id="1_k0fgs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lgr22"]
 size = Vector2(46.5, 71.5)
