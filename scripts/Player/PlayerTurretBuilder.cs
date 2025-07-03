@@ -27,17 +27,22 @@ public class PlayerTurretBuilder
 
 		var turret = _player.CurrentTurretScene.Instantiate<Turret>();
 
-		if (_player.Money < turret.Cost)
+		// Use GameManager's money system instead of Player's separate money
+		if (GameManager.Instance == null)
 		{
-			GD.PrintErr($"❌ Not enough money! Need ${turret.Cost}, but have ${_player.Money}");
+			GD.PrintErr("❌ GameManager not available!");
+			return;
+		}
+
+		if (!GameManager.Instance.SpendMoney(turret.Cost))
+		{
+			GD.PrintErr($"❌ Not enough money! Need ${turret.Cost}, but have ${GameManager.Instance.Money}");
 			return;
 		}
 
 		turret.GlobalPosition = _player.GetGlobalMousePosition();
 		_player.GetTree().Root.AddChild(turret);
 
-		_player.Money -= turret.Cost;
-		GameManager.Instance.Hud.UpdateMoney(_player.Money);
 		GD.Print($"🔧 Built turret at {turret.GlobalPosition} for ${turret.Cost}");
 	}
 }

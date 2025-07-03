@@ -49,7 +49,8 @@ public partial class RoundManager : Node
 		_transitionTimer.Timeout += OnTransitionTimeout;
 		AddChild(_transitionTimer);
 
-		StartBuildPhase();
+		// Start the first round properly
+		StartRound();
 	}
 
 	public override void _Process(double delta)
@@ -96,18 +97,28 @@ public partial class RoundManager : Node
 		CurrentPhase = RoundPhase.Defend;
 		_phaseTimer.Stop();
 
-		// Calculate enemies for this round
-		EnemiesRemaining = Mathf.RoundToInt(BaseEnemyCount * Mathf.Pow(EnemyCountMultiplier, CurrentRound - 1));
+		// Use WaveSpawner if available, otherwise fallback to old system
+		if (WaveSpawner.Instance != null)
+		{
+			// Start the wave corresponding to current round
+			WaveSpawner.Instance.StartWave(CurrentRound - 1);
+			EnemiesRemaining = WaveSpawner.Instance.TotalEnemiesInWave;
+			GD.Print($"⚔️ Defend Phase Started - Round {CurrentRound} using WaveSpawner");
+		}
+		else
+		{
+			// Fallback to old system
+			EnemiesRemaining = Mathf.RoundToInt(BaseEnemyCount * Mathf.Pow(EnemyCountMultiplier, CurrentRound - 1));
+			GD.Print($"⚔️ Defend Phase Started - Round {CurrentRound} ({EnemiesRemaining} enemies)");
+			
+			if (EnemySpawner.Instance != null)
+			{
+				EnemySpawner.Instance.StartWave(EnemiesRemaining);
+			}
+		}
 		
-		GD.Print($"⚔️ Defend Phase Started - Round {CurrentRound} ({EnemiesRemaining} enemies)");
 		EmitSignal(SignalName.PhaseChanged, (int)CurrentPhase);
 		EmitSignal(SignalName.DefendPhaseStarted, CurrentRound, EnemiesRemaining);
-
-		// Start enemy spawning
-		if (EnemySpawner.Instance != null)
-		{
-			EnemySpawner.Instance.StartWave(EnemiesRemaining);
-		}
 	}
 
 	public void ForceStartDefendPhase()
@@ -123,6 +134,14 @@ public partial class RoundManager : Node
 	{
 		if (CurrentPhase == RoundPhase.Defend)
 		{
+			// If using WaveSpawner, let it handle completion
+			if (WaveSpawner.Instance != null)
+			{
+				// WaveSpawner will handle round completion through its own system
+				return;
+			}
+			
+			// Fallback for old enemy spawner system
 			EnemiesRemaining--;
 			GD.Print($"👾 Enemy defeated! Remaining: {EnemiesRemaining}");
 			

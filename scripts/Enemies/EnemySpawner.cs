@@ -88,9 +88,17 @@ public partial class EnemySpawner : Node2D
 
 		var enemy = EnemyScene.Instantiate<Enemy>();
 		
-		// Randomize spawn position within range
-		var randomX = GD.Randf() * (SpawnXRange.Y - SpawnXRange.X) + SpawnXRange.X;
-		enemy.GlobalPosition = new Vector2(randomX, GlobalPosition.Y + SpawnY);
+		// Use PathManager for spawn position if available
+		if (PathManager.Instance != null)
+		{
+			enemy.GlobalPosition = PathManager.Instance.GetSpawnPosition();
+		}
+		else
+		{
+			// Fallback to old method
+			var randomX = GD.Randf() * (SpawnXRange.Y - SpawnXRange.X) + SpawnXRange.X;
+			enemy.GlobalPosition = new Vector2(randomX, GlobalPosition.Y + SpawnY);
+		}
 		
 		// Connect enemy signals to GameManager
 		if (GameManager.Instance != null)

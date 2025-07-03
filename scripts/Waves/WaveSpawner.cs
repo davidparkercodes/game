@@ -1,0 +1,451 @@
+using Godot;
+using System.Collections.Generic;
+using System.Linq;
+
+public partial class WaveSpawner : Node2D
+{
+	[Export] public PackedScene BasicEnemyScene;
+	[Export] public WaveSetConfig WaveSet;
+	[Export] public string WaveConfigPath = "res://data/waves/default_waves.json";
+	
+	[Signal] public delegate void WaveStartedEventHandler(int waveNumber, string waveName);
+	[Signal] public delegate void WaveCompletedEventHandler(int waveNumber, int bonusMoney);
+	[Signal] public delegate void EnemyGroupStartedEventHandler(string enemyType, int count);
+	[Signal] public delegate void EnemyGroupCompletedEventHandler(string enemyType);
+	[Signal] public delegate void AllWavesCompletedEventHandler();
+	
+	public static WaveSpawner Instance { get; private set; }
+	
+	public int CurrentWaveIndex { get; private set; } = 0;
+	public WaveConfig CurrentWave => IsValidWaveIndex(CurrentWaveIndex) ? WaveSet.Waves[CurrentWaveIndex] : null;
+	public bool IsSpawning { get; private set; } = false;
+	public int TotalEnemiesInWave { get; private set; } = 0;
+	public int EnemiesSpawned { get; private set; } = 0;
+	public int EnemiesRemaining => TotalEnemiesInWave - EnemiesSpawned;
+	
+	private Dictionary<string, PackedScene> _enemyScenes = new();
+	private List<Timer> _activeTimers = new();
+	private int _currentGroupIndex = 0;
+	private bool _waveInProgress = false;
+
+	public override void _Ready()
+	{
+		Instance = this;
+		LoadWaveConfiguration();
+		RegisterEnemyTypes();
+		GD.Print("🌊 WaveSpawner ready");
+	}
+
+	private void LoadWaveConfiguration()
+	{
+		if (WaveSet == null)
+		{
+			if (FileAccess.FileExists(WaveConfigPath))
+			{
+				LoadWaveSetFromJson(WaveConfigPath);
+				GD.Print($"📋 Loaded wave set from JSON: {WaveSet.SetName}");
+			}
+			else
+			{
+				CreateDefaultWaveSet();
+				GD.Print("⚠️ No wave config found, created default waves");
+			}
+		}
+	}
+
+	private void LoadWaveSetFromJson(string jsonPath)
+	{
+		try
+		{
+			var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
+			if (file == null)
+			{
+				GD.PrintErr($"❌ Failed to open wave config file: {jsonPath}");
+				return;
+			}
+
+			string jsonText = file.GetAsText();
+			file.Close();
+
+			var json = new Json();
+			var parseResult = json.Parse(jsonText);
+			if (parseResult != Error.Ok)
+			{
+				GD.PrintErr($"❌ Failed to parse JSON: {parseResult}");
+				return;
+			}
+
+			var jsonData = json.Data.AsGodotDictionary();
+			WaveSet = ParseWaveSetFromJson(jsonData);
+		}
+		catch (System.Exception e)
+		{
+			GD.PrintErr($"❌ Error loading wave config: {e.Message}");
+			CreateDefaultWaveSet();
+		}
+	}
+
+	private WaveSetConfig ParseWaveSetFromJson(Godot.Collections.Dictionary jsonData)
+	{
+		var waveSet = new WaveSetConfig();
+		waveSet.SetName = jsonData.GetValueOrDefault("setName", "Unknown Wave Set").AsString();
+		waveSet.Description = jsonData.GetValueOrDefault("description", "").AsString();
+
+		if (jsonData.ContainsKey("waves"))
+		{
+			var wavesArray = jsonData["waves"].AsGodotArray();
+			foreach (var waveData in wavesArray)
+			{
+				var waveDict = waveData.AsGodotDictionary();
+				var wave = ParseWaveFromJson(waveDict);
+				waveSet.Waves.Add(wave);
+			}
+		}
+
+		return waveSet;
+	}
+
+	private WaveConfig ParseWaveFromJson(Godot.Collections.Dictionary waveData)
+	{
+		var wave = new WaveConfig();
+		wave.WaveNumber = waveData.GetValueOrDefault("waveNumber", 1).AsInt32();
+		wave.WaveName = waveData.GetValueOrDefault("waveName", "Wave").AsString();
+		wave.Description = waveData.GetValueOrDefault("description", "").AsString();
+		wave.PreWaveDelay = waveData.GetValueOrDefault("preWaveDelay", 0.0f).AsSingle();
+		wave.PostWaveDelay = waveData.GetValueOrDefault("postWaveDelay", 2.0f).AsSingle();
+		wave.BonusMoney = waveData.GetValueOrDefault("bonusMoney", 25).AsInt32();
+
+		if (waveData.ContainsKey("enemyGroups"))
+		{
+			var groupsArray = waveData["enemyGroups"].AsGodotArray();
+			foreach (var groupData in groupsArray)
+			{
+				var groupDict = groupData.AsGodotDictionary();
+				var group = ParseEnemyGroupFromJson(groupDict);
+				wave.EnemyGroups.Add(group);
+			}
+		}
+
+		return wave;
+	}
+
+	private EnemySpawnGroup ParseEnemyGroupFromJson(Godot.Collections.Dictionary groupData)
+	{
+		var group = new EnemySpawnGroup();
+		group.EnemyType = groupData.GetValueOrDefault("enemyType", "Basic").AsString();
+		group.Count = groupData.GetValueOrDefault("count", 5).AsInt32();
+		group.SpawnInterval = groupData.GetValueOrDefault("spawnInterval", 1.0f).AsSingle();
+		group.StartDelay = groupData.GetValueOrDefault("startDelay", 0.0f).AsSingle();
+		group.HealthMultiplier = groupData.GetValueOrDefault("healthMultiplier", 1.0f).AsSingle();
+		group.SpeedMultiplier = groupData.GetValueOrDefault("speedMultiplier", 1.0f).AsSingle();
+		group.MoneyReward = groupData.GetValueOrDefault("moneyReward", 10).AsInt32();
+		return group;
+	}
+
+	private void RegisterEnemyTypes()
+	{
+		// Register enemy scene mappings
+		_enemyScenes["Basic"] = BasicEnemyScene;
+		// Add more enemy types here as they're created
+		// _enemyScenes["Fast"] = FastEnemyScene;
+		// _enemyScenes["Heavy"] = HeavyEnemyScene;
+	}
+
+	private void CreateDefaultWaveSet()
+	{
+		WaveSet = new WaveSetConfig();
+		WaveSet.SetName = "Default Waves";
+		WaveSet.Description = "Auto-generated default wave progression";
+		
+		// Create 10 default waves with increasing difficulty
+		for (int i = 1; i <= 10; i++)
+		{
+			var wave = new WaveConfig();
+			wave.WaveNumber = i;
+			wave.WaveName = $"Wave {i}";
+			wave.BonusMoney = 25 + (i * 5);
+			wave.Description = $"Standard wave {i} with {5 + i * 2} enemies";
+			
+			var enemyGroup = new EnemySpawnGroup();
+			enemyGroup.EnemyType = "Basic";
+			enemyGroup.Count = 5 + (i * 2); // Increase enemy count each wave
+			enemyGroup.SpawnInterval = Mathf.Max(0.5f, 2.0f - (i * 0.1f)); // Faster spawning
+			enemyGroup.HealthMultiplier = 1.0f + (i * 0.15f); // More HP
+			enemyGroup.SpeedMultiplier = 1.0f + (i * 0.05f); // Slightly faster
+			enemyGroup.MoneyReward = 10 + (i * 2); // More money per enemy
+			
+			wave.EnemyGroups.Add(enemyGroup);
+			WaveSet.Waves.Add(wave);
+		}
+	}
+
+	public void StartWave(int waveIndex = -1)
+	{
+		if (_waveInProgress)
+		{
+			GD.PrintErr("❌ Cannot start wave: another wave is in progress");
+			return;
+		}
+
+		if (waveIndex >= 0)
+			CurrentWaveIndex = waveIndex;
+
+		if (!IsValidWaveIndex(CurrentWaveIndex))
+		{
+			GD.Print("🏆 All waves completed!");
+			EmitSignal(SignalName.AllWavesCompleted);
+			return;
+		}
+
+		var wave = CurrentWave;
+		_waveInProgress = true;
+		_currentGroupIndex = 0;
+		EnemiesSpawned = 0;
+		
+		// Calculate total enemies in this wave
+		TotalEnemiesInWave = wave.EnemyGroups.Sum(group => group.Count);
+		
+		GD.Print($"🌊 Starting {wave.WaveName} (Wave {wave.WaveNumber}) - {TotalEnemiesInWave} enemies");
+		EmitSignal(SignalName.WaveStarted, wave.WaveNumber, wave.WaveName);
+		
+		// Start with pre-wave delay if configured
+		if (wave.PreWaveDelay > 0)
+		{
+			var preDelayTimer = CreateTimer(wave.PreWaveDelay);
+			preDelayTimer.Timeout += () => StartSpawningGroups();
+		}
+		else
+		{
+			StartSpawningGroups();
+		}
+	}
+
+	private void StartSpawningGroups()
+	{
+		var wave = CurrentWave;
+		if (wave == null) return;
+
+		IsSpawning = true;
+		
+		// Start all enemy groups with their respective delays
+		for (int i = 0; i < wave.EnemyGroups.Count; i++)
+		{
+			var group = wave.EnemyGroups[i];
+			
+			if (group.StartDelay > 0)
+			{
+				var groupDelayTimer = CreateTimer(group.StartDelay);
+				var groupIndex = i; // Capture for closure
+				groupDelayTimer.Timeout += () => StartEnemyGroup(groupIndex);
+			}
+			else
+			{
+				StartEnemyGroup(i);
+			}
+		}
+	}
+
+	private void StartEnemyGroup(int groupIndex)
+	{
+		var wave = CurrentWave;
+		if (wave == null || groupIndex >= wave.EnemyGroups.Count) return;
+		
+		var group = wave.EnemyGroups[groupIndex];
+		
+		GD.Print($"👥 Starting enemy group: {group.Count}x {group.EnemyType}");
+		EmitSignal(SignalName.EnemyGroupStarted, group.EnemyType, group.Count);
+		
+		// Spawn enemies in this group with intervals
+		SpawnEnemyGroup(group);
+	}
+
+	private void SpawnEnemyGroup(EnemySpawnGroup group)
+	{
+		if (!_enemyScenes.ContainsKey(group.EnemyType))
+		{
+			GD.PrintErr($"❌ Unknown enemy type: {group.EnemyType}");
+			return;
+		}
+
+		var enemyScene = _enemyScenes[group.EnemyType];
+		int enemiesSpawnedInGroup = 0;
+
+		// Create a timer for spawning enemies in this group
+		var spawnTimer = CreateTimer(group.SpawnInterval);
+		spawnTimer.Timeout += () =>
+		{
+			if (enemiesSpawnedInGroup < group.Count && _waveInProgress)
+			{
+				SpawnEnemy(enemyScene, group);
+				enemiesSpawnedInGroup++;
+				EnemiesSpawned++;
+				
+				// Continue spawning if more enemies in this group
+				if (enemiesSpawnedInGroup < group.Count)
+				{
+					spawnTimer.Start();
+				}
+				else
+				{
+					// This group is complete
+					EmitSignal(SignalName.EnemyGroupCompleted, group.EnemyType);
+					CheckWaveCompletion();
+				}
+			}
+		};
+		
+		// Start spawning immediately for the first enemy
+		if (enemiesSpawnedInGroup < group.Count && _waveInProgress)
+		{
+			SpawnEnemy(enemyScene, group);
+			enemiesSpawnedInGroup++;
+			EnemiesSpawned++;
+			
+			// Start the timer for subsequent spawns
+			if (enemiesSpawnedInGroup < group.Count)
+			{
+				spawnTimer.Start();
+			}
+			else
+			{
+				EmitSignal(SignalName.EnemyGroupCompleted, group.EnemyType);
+				CheckWaveCompletion();
+			}
+		}
+	}
+
+	private void SpawnEnemy(PackedScene enemyScene, EnemySpawnGroup group)
+	{
+		var enemy = enemyScene.Instantiate<Enemy>();
+		
+		// Apply group modifiers
+		enemy.MaxHealth = Mathf.RoundToInt(enemy.MaxHealth * group.HealthMultiplier);
+		enemy.Speed *= group.SpeedMultiplier;
+		
+		// Set spawn position using PathManager if available
+		if (PathManager.Instance != null)
+		{
+			enemy.GlobalPosition = PathManager.Instance.GetSpawnPosition();
+		}
+		else
+		{
+			enemy.GlobalPosition = GlobalPosition;
+		}
+		
+		// Connect to enemy events
+		enemy.EnemyKilled += () => OnEnemyKilled(group.MoneyReward);
+		enemy.EnemyReachedEnd += OnEnemyReachedEnd;
+		
+		GetTree().Root.AddChild(enemy);
+		GD.Print($"👾 Spawned {group.EnemyType} enemy ({EnemiesSpawned}/{TotalEnemiesInWave})");
+	}
+
+	private void OnEnemyKilled(int moneyReward)
+	{
+		// Award money through GameManager
+		if (GameManager.Instance != null)
+		{
+			GameManager.Instance.AddMoney(moneyReward);
+		}
+		
+		CheckWaveCompletion();
+	}
+
+	private void OnEnemyReachedEnd()
+	{
+		// Handle enemy reaching end through GameManager
+		if (GameManager.Instance != null)
+		{
+			GameManager.Instance.OnEnemyReachedEnd();
+		}
+		
+		CheckWaveCompletion();
+	}
+
+	private void CheckWaveCompletion()
+	{
+		// Check if all enemies have been spawned and defeated/reached end
+		var enemiesInScene = GetTree().GetNodesInGroup("enemies").Count;
+		
+		if (EnemiesSpawned >= TotalEnemiesInWave && enemiesInScene == 0)
+		{
+			CompleteWave();
+		}
+	}
+
+	private void CompleteWave()
+	{
+		if (!_waveInProgress) return;
+		
+		var wave = CurrentWave;
+		_waveInProgress = false;
+		IsSpawning = false;
+		
+		GD.Print($"✅ {wave.WaveName} completed! Bonus: ${wave.BonusMoney}");
+		
+		// Award bonus money
+		if (GameManager.Instance != null)
+		{
+			GameManager.Instance.AddMoney(wave.BonusMoney);
+		}
+		
+		EmitSignal(SignalName.WaveCompleted, wave.WaveNumber, wave.BonusMoney);
+		
+		// Clean up timers
+		CleanupTimers();
+		
+		// Auto-advance to next wave after post-wave delay
+		if (wave.PostWaveDelay > 0)
+		{
+			var postDelayTimer = CreateTimer(wave.PostWaveDelay);
+			postDelayTimer.Timeout += () => {
+				CurrentWaveIndex++;
+				// Don't auto-start next wave, let RoundManager control this
+			};
+		}
+		else
+		{
+			CurrentWaveIndex++;
+		}
+	}
+
+	public void StopCurrentWave()
+	{
+		_waveInProgress = false;
+		IsSpawning = false;
+		CleanupTimers();
+		GD.Print("🛑 Wave stopped");
+	}
+
+	private Timer CreateTimer(float waitTime)
+	{
+		var timer = new Timer();
+		timer.WaitTime = waitTime;
+		timer.OneShot = true;
+		AddChild(timer);
+		_activeTimers.Add(timer);
+		return timer;
+	}
+
+	private void CleanupTimers()
+	{
+		foreach (var timer in _activeTimers)
+		{
+			if (IsInstanceValid(timer))
+			{
+				timer.QueueFree();
+			}
+		}
+		_activeTimers.Clear();
+	}
+
+	private bool IsValidWaveIndex(int index)
+	{
+		return WaveSet != null && index >= 0 && index < WaveSet.Waves.Count;
+	}
+
+	// Public getters for UI/HUD
+	public int GetTotalWaves() => WaveSet?.Waves.Count ?? 0;
+	public string GetCurrentWaveName() => CurrentWave?.WaveName ?? "Unknown";
+	public string GetWaveSetName() => WaveSet?.SetName ?? "No Wave Set";
+}

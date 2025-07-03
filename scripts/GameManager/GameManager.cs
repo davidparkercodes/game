@@ -46,6 +46,9 @@ public partial class GameManager : Node
 		RoundManager.PhaseChanged += OnPhaseChanged;
 		RoundManager.RoundStarted += OnRoundStarted;
 		RoundManager.RoundCompleted += OnRoundCompleted;
+		
+		// Connect WaveSpawner signals if available (deferred since WaveSpawner might not be ready yet)
+		CallDeferred(nameof(ConnectToWaveSpawner));
 
 		// Update HUD
 		Callable.From(() =>
@@ -90,7 +93,11 @@ public partial class GameManager : Node
 
 	public void OnEnemyKilled()
 	{
-		AddMoney(MoneyPerEnemyKilled);
+		// Only add money if WaveSpawner is not handling it
+		if (WaveSpawner.Instance == null)
+		{
+			AddMoney(MoneyPerEnemyKilled);
+		}
 		RoundManager.OnEnemyDefeated();
 	}
 
@@ -133,5 +140,21 @@ public partial class GameManager : Node
 	{
 		GD.Print($"🏆 Round {roundNumber} completed!");
 		// Maybe give bonus money or other rewards
+	}
+	
+	private void ConnectToWaveSpawner()
+	{
+		if (WaveSpawner.Instance != null)
+		{
+			WaveSpawner.Instance.WaveCompleted += OnWaveCompleted;
+			GD.Print("🔗 Connected to WaveSpawner signals");
+		}
+	}
+	
+	private void OnWaveCompleted(int waveNumber, int bonusMoney)
+	{
+		GD.Print($"✅ Wave {waveNumber} completed! Bonus: ${bonusMoney}");
+		// Tell RoundManager to complete the round
+		RoundManager.CompleteRound();
 	}
 }

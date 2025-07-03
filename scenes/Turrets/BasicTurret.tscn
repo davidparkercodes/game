@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://c10tc48jl4pnw"]
+[gd_scene load_steps=6 format=3 uid="uid://ddkixe5gb73sy"]
 
 [ext_resource type="Script" uid="uid://bds13km047p4h" path="res://scripts/Turrets/BasicTurret.cs" id="1_dtl24"]
 [ext_resource type="Texture2D" uid="uid://8y8jt8dxd382" path="res://assets/sprites/basic_colors_tilesheet_16x16.png" id="2_4sggw"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://f5b31abn1i2s"]
+[gd_scene load_steps=6 format=3 uid="uid://db86u6pd501cl"]
 
 [ext_resource type="Script" uid="uid://b0354xnfsvo0j" path="res://scripts/Turrets/SniperTurret.cs" id="1_ih2c0"]
 [ext_resource type="PackedScene" path="res://scenes/Projectiles/Bullet.tscn" id="2_jfomq"]

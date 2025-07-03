@@ -9,8 +9,6 @@ public partial class Player : CharacterBody2D
 	[Export] public PackedScene SniperTurretScene;
 
 	public PackedScene CurrentTurretScene { get; private set; }
-	
-	public int Money { get; set; } = 50;
 
 	private PlayerMovement _movement;
 	private PlayerCombat _combat;
