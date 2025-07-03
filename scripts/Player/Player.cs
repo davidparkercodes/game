@@ -21,6 +21,7 @@ public partial class Player : CharacterBody2D
 		if (BasicTurretScene != null)
 		{
 			CurrentTurretScene = BasicTurretScene;
+			UpdateSelectedTurretDisplay("Basic");
 		}
 		else
 		{
@@ -54,6 +55,7 @@ public partial class Player : CharacterBody2D
 					if (BasicTurretScene != null)
 					{
 						CurrentTurretScene = BasicTurretScene;
+						UpdateSelectedTurretDisplay("Basic");
 						GD.Print("📦 Switched to Basic Turret");
 					}
 					else
@@ -66,6 +68,7 @@ public partial class Player : CharacterBody2D
 					if (SniperTurretScene != null)
 					{
 						CurrentTurretScene = SniperTurretScene;
+						UpdateSelectedTurretDisplay("Sniper");
 						GD.Print("🎯 Switched to Sniper Turret");
 					}
 					else
@@ -83,10 +86,49 @@ public partial class Player : CharacterBody2D
 		{
 			case "Basic":
 				CurrentTurretScene = BasicTurretScene;   // make sure this PackedScene field exists/exported
+				UpdateSelectedTurretDisplay("Basic");
 				break;
 			case "Sniper":
 				CurrentTurretScene = SniperTurretScene;  // same here
+				UpdateSelectedTurretDisplay("Sniper");
 				break;
+		}
+	}
+
+	private void UpdateSelectedTurretDisplay(string turretName)
+	{
+		if (GameManager.Instance?.Hud != null)
+		{
+			GameManager.Instance.Hud.UpdateSelectedTurret(turretName);
+		}
+		else
+		{
+			// Defer the call until GameManager is ready
+			CallDeferred(nameof(DelayedUpdateSelectedTurret), turretName);
+		}
+	}
+
+	private void TriggerHitbox()
+	{
+		var hitbox = GetNode<Area2D>("Hitbox");
+		if (hitbox != null)
+		{
+			hitbox.Call("ResetHits");
+			var collisionShape = hitbox.GetNode<CollisionShape2D>("CollisionShape2D");
+			if (collisionShape != null)
+			{
+				collisionShape.Disabled = false;
+				// Use a timer to disable it after a brief moment
+				GetTree().CreateTimer(0.1).Timeout += () => collisionShape.Disabled = true;
+			}
+		}
+	}
+
+	private void DelayedUpdateSelectedTurret(string turretName)
+	{
+		if (GameManager.Instance?.Hud != null)
+		{
+			GameManager.Instance.Hud.UpdateSelectedTurret(turretName);
 		}
 	}
 }
