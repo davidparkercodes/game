@@ -36,6 +36,12 @@ public partial class Turret : StaticBody2D
 
 	// ---------- OVERRIDES ----------------------------------------------------
 	protected virtual void ConfigureStats() { }
+	
+	// Public method to manually configure stats before _Ready() is called
+	public void InitializeStats()
+	{
+		ConfigureStats();
+	}
 
 	public override void _Process(double delta)
 	{

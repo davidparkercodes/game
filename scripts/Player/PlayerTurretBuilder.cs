@@ -26,6 +26,9 @@ public class PlayerTurretBuilder
 		}
 
 		var turret = _player.CurrentTurretScene.Instantiate<Turret>();
+		
+		// Configure stats before checking cost (since _Ready() hasn't been called yet)
+		turret.InitializeStats();
 
 		// Use GameManager's money system instead of Player's separate money
 		if (GameManager.Instance == null)
