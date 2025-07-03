@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhgcatjlalax7"]
+
+[ext_resource type="Script" uid="uid://cyyr1t7ujlyht" path="res://scripts/GameManager/Hud.cs" id="1_wfueu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wfueu"]
+bg_color = Color(0, 0, 0, 0.45098)
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = ExtResource("1_wfueu")
+
+[node name="SidebarPanel" type="Panel" parent="."]
+offset_right = 200.0
+offset_bottom = 300.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wfueu")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SidebarPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MoneyLabel" type="Label" parent="SidebarPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.831373, 0, 1)
+theme_override_font_sizes/font_size = 24
+
+[node name="WaveLabel" type="Label" parent="SidebarPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="LivesLabel" type="Label" parent="SidebarPanel/VBoxContainer"]
+layout_mode = 2

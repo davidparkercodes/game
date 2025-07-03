@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3 uid="uid://ddkixe5gb73sy"]
+
+[ext_resource type="Script" uid="uid://bds13km047p4h" path="res://scripts/Turrets/BasicTurret.cs" id="1_dtl24"]
+[ext_resource type="Texture2D" uid="uid://8y8jt8dxd382" path="res://assets/basic_colors_tilesheet_16x16.png" id="2_4sggw"]
+[ext_resource type="PackedScene" uid="uid://vq6ajim058j0" path="res://scenes/Bullet.tscn" id="2_tbwx1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_76wwe"]
+size = Vector2(16, 16)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4sggw"]
+radius = 112.0
+
+[node name="StaticBody2D" type="StaticBody2D"]
+script = ExtResource("1_dtl24")
+BulletScene = ExtResource("2_tbwx1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_4sggw")
+region_enabled = true
+region_rect = Rect2(0, 16, 16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_76wwe")
+
+[node name="Timer" type="Timer" parent="."]
+process_mode = 3
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_4sggw")

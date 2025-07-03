@@ -1,0 +1,44 @@
+# Godot specific ignores
+.godot/
+.import/
+.export/
+*.import
+*.tmp
+
+# OS specific ignores
+.DS_Store
+Thumbs.db
+
+# Mono and C# specific ignores
+*.csproj
+*.csproj.user
+*.sln
+*.user
+
+# Build files
+/bin/
+/obj/
+/.mono/
+
+# Debugging files
+*.mono/
+*.suo
+*.pidb
+*.userprefs
+*.unityproj
+*.booproj
+*.sln.docstates
+
+# Miscellaneous files
+*.log
+*.orig
+
+# Backup files
+*.bak
+
+# Temporary files
+*.swp
+
+# Directories
+.vscode/
+.idea/
