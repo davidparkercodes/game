@@ -4,29 +4,78 @@ using System;
 public partial class EnemySpawner : Node2D
 {
 	[Export] public PackedScene EnemyScene;
-	[Export] public float SpawnInterval = 2.0f;
+	[Export] public float BaseSpawnInterval = 2.0f;
 	[Export] public Vector2 SpawnXRange = new Vector2(64, 256);
 	[Export] public float SpawnY = -32;
 
-	private Timer _timer;
+	public static EnemySpawner Instance { get; private set; }
+
+	private Timer _spawnTimer;
+	private int _enemiesToSpawn = 0;
+	private bool _isSpawning = false;
+	private float _currentSpawnInterval;
 
 	public override void _Ready()
 	{
-		SpawnEnemy();
-		StartTimer();
+		Instance = this;
+		_currentSpawnInterval = BaseSpawnInterval;
+		
+		_spawnTimer = new Timer();
+		_spawnTimer.WaitTime = _currentSpawnInterval;
+		_spawnTimer.OneShot = true;
+		_spawnTimer.Timeout += OnSpawnTimerTimeout;
+		AddChild(_spawnTimer);
+
+		GD.Print("🏭 EnemySpawner ready");
 	}
 
-	private void StartTimer()
+	public void StartWave(int enemyCount)
 	{
-		_timer = new Timer
+		if (_isSpawning)
 		{
-			WaitTime = SpawnInterval,
-			Autostart = true,
-			OneShot = false
-		};
+			GD.PrintErr("⚠️ Already spawning enemies!");
+			return;
+		}
 
-		_timer.Timeout += () => SpawnEnemy();
-		AddChild(_timer);
+		_enemiesToSpawn = enemyCount;
+		_isSpawning = true;
+		
+		GD.Print($"🌊 Starting wave with {enemyCount} enemies");
+		
+		// Start spawning immediately
+		SpawnNextEnemy();
+	}
+
+	public void StopWave()
+	{
+		_isSpawning = false;
+		_enemiesToSpawn = 0;
+		_spawnTimer.Stop();
+		GD.Print("🛑 Wave stopped");
+	}
+
+	private void SpawnNextEnemy()
+	{
+		if (!_isSpawning || _enemiesToSpawn <= 0)
+		{
+			_isSpawning = false;
+			GD.Print("✅ Wave spawning completed");
+			return;
+		}
+
+		SpawnEnemy();
+		_enemiesToSpawn--;
+
+		// Schedule next spawn if there are more enemies
+		if (_enemiesToSpawn > 0)
+		{
+			_spawnTimer.Start();
+		}
+		else
+		{
+			_isSpawning = false;
+			GD.Print("✅ All enemies spawned for this wave");
+		}
 	}
 
 	private void SpawnEnemy()
@@ -38,7 +87,33 @@ public partial class EnemySpawner : Node2D
 		}
 
 		var enemy = EnemyScene.Instantiate<Node2D>();
-		enemy.GlobalPosition = GlobalPosition;
+		
+		// Randomize spawn position within range
+		var randomX = GD.Randf() * (SpawnXRange.Y - SpawnXRange.X) + SpawnXRange.X;
+		enemy.GlobalPosition = new Vector2(randomX, GlobalPosition.Y + SpawnY);
+		
 		GetTree().Root.CallDeferred("add_child", enemy);
+		GD.Print($"👾 Enemy spawned at {enemy.GlobalPosition}");
+	}
+
+	private void OnSpawnTimerTimeout()
+	{
+		SpawnNextEnemy();
+	}
+
+	public void SetSpawnInterval(float interval)
+	{
+		_currentSpawnInterval = interval;
+		_spawnTimer.WaitTime = interval;
+	}
+
+	public bool IsCurrentlySpawning()
+	{
+		return _isSpawning;
+	}
+
+	public int GetRemainingEnemies()
+	{
+		return _enemiesToSpawn;
 	}
 }
