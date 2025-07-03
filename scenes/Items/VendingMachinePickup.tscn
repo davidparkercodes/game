@@ -1,12 +1,11 @@
 [gd_scene load_steps=5 format=3 uid="uid://dh34v5ge0ktyv"]
 
-[ext_resource type="Script" uid="uid://b276blnmn0scv" path="res://scripts/LootablePickup.cs" id="1_k0fgs"]
+[ext_resource type="Script" uid="uid://b276blnmn0scv" path="res://scripts/Items/LootablePickup.cs" id="1_k0fgs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lgr22"]
 size = Vector2(46.5, 71.5)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_48mid"]
-load_path = "res://.godot/imported/vending machine 01.png-89d1b5bdafd3d63300ae9d93104f8f17.ctex"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3dxm6"]
 size = Vector2(46.5, 59.5)

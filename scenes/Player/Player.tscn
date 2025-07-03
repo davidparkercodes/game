@@ -1,8 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dkr0iqwlu118r"]
+[gd_scene load_steps=9 format=3 uid="uid://dskbs3v14dukk"]
 
 [ext_resource type="Script" uid="uid://b0fuy4tbr4lia" path="res://scripts/Player/Player.cs" id="1_kpjcp"]
-[ext_resource type="Texture2D" path="res://assets/basic_colors_tilesheet_16x16.png" id="2_3li8b"]
-[ext_resource type="Script" path="res://Hitbox.cs" id="3_3li8b"]
+[ext_resource type="Texture2D" uid="uid://8y8jt8dxd382" path="res://assets/sprites/basic_colors_tilesheet_16x16.png" id="2_3li8b"]
+[ext_resource type="Script" uid="uid://bmu44si40loc0" path="res://scripts/Components/Hitbox.cs" id="3_3li8b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kpjcp"]
 size = Vector2(16, 16)
@@ -79,7 +79,6 @@ shape = SubResource("RectangleShape2D_kpjcp")
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("3_3li8b")
-Damage = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("RectangleShape2D_v6fml")

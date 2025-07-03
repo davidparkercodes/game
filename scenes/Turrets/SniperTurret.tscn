@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://db86u6pd501cl"]
 
 [ext_resource type="Script" uid="uid://b0354xnfsvo0j" path="res://scripts/Turrets/SniperTurret.cs" id="1_ih2c0"]
-[ext_resource type="PackedScene" uid="uid://vq6ajim058j0" path="res://scenes/Bullet.tscn" id="2_jfomq"]
-[ext_resource type="Texture2D" uid="uid://8y8jt8dxd382" path="res://assets/basic_colors_tilesheet_16x16.png" id="3_bpmw8"]
+[ext_resource type="PackedScene" uid="uid://vq6ajim058j0" path="res://scenes/Projectiles/Bullet.tscn" id="2_jfomq"]
+[ext_resource type="Texture2D" uid="uid://8y8jt8dxd382" path="res://assets/sprites/basic_colors_tilesheet_16x16.png" id="3_bpmw8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_76wwe"]
 size = Vector2(16, 16)
@@ -10,7 +10,7 @@ size = Vector2(16, 16)
 [sub_resource type="CircleShape2D" id="CircleShape2D_4sggw"]
 radius = 112.0
 
-[node name="StaticBody2D" type="StaticBody2D"]
+[node name="StaticBody2D2" type="StaticBody2D"]
 script = ExtResource("1_ih2c0")
 BulletScene = ExtResource("2_jfomq")
 
