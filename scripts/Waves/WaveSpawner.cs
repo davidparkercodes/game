@@ -297,23 +297,31 @@ public partial class WaveSpawner : Node2D
 		var spawnTimer = CreateTimer(group.SpawnInterval);
 		spawnTimer.Timeout += () =>
 		{
+			GD.Print($"⏰ Spawn timer fired: Group has {enemiesSpawnedInGroup}/{group.Count}, Wave in progress: {_waveInProgress}");
 			if (enemiesSpawnedInGroup < group.Count && _waveInProgress)
 			{
 				SpawnEnemy(enemyScene, group);
 				enemiesSpawnedInGroup++;
 				EnemiesSpawned++;
+				GD.Print($"👾 Spawned enemy {enemiesSpawnedInGroup}/{group.Count} in group, total spawned: {EnemiesSpawned}/{TotalEnemiesInWave}");
 				
 				// Continue spawning if more enemies in this group
 				if (enemiesSpawnedInGroup < group.Count)
 				{
+					GD.Print($"⏰ Restarting spawn timer for next enemy in {group.SpawnInterval}s");
 					spawnTimer.Start();
 				}
 				else
 				{
 					// This group is complete
+					GD.Print($"✅ Enemy group {group.EnemyType} completed!");
 					EmitSignal(SignalName.EnemyGroupCompleted, group.EnemyType);
 					CheckWaveCompletion();
 				}
+			}
+			else
+			{
+				GD.Print($"❌ Spawn timer fired but conditions not met: enemiesSpawned={enemiesSpawnedInGroup}/{group.Count}, waveInProgress={_waveInProgress}");
 			}
 		};
 		
@@ -409,9 +417,14 @@ public partial class WaveSpawner : Node2D
 
 	private void CompleteWave()
 	{
-		if (!_waveInProgress) return;
+		if (!_waveInProgress)
+		{
+			GD.Print("⚠️ CompleteWave called but wave not in progress - skipping");
+			return;
+		}
 		
 		var wave = CurrentWave;
+		GD.Print($"🏁 CompleteWave called: {EnemiesSpawned}/{TotalEnemiesInWave} spawned, stopping wave");
 		_waveInProgress = false;
 		IsSpawning = false;
 		
