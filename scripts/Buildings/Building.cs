@@ -1,8 +1,8 @@
-// scripts/Turrets/Turret.cs
+// scripts/Buildings/Building.cs
 using Godot;
 using System;
 
-public partial class Turret : StaticBody2D
+public partial class Building : StaticBody2D
 {
 	[Export] public PackedScene BulletScene;
 	[Export] public int Cost     = 10;
@@ -16,9 +16,9 @@ public partial class Turret : StaticBody2D
 	private bool _showRange = false;
 	private bool _isSelected = false;
 	private Color _rangeColor = new Color(0.2f, 0.8f, 1.0f, 0.3f); // Light blue with transparency
-	private Color _selectedRangeColor = new Color(1.0f, 1.0f, 0.2f, 0.4f); // Yellow for selected turret
+	private Color _selectedRangeColor = new Color(1.0f, 1.0f, 0.2f, 0.4f); // Yellow for selected building
 	
-	public static Turret SelectedTurret { get; private set; }
+	public static Building SelectedBuilding { get; private set; }
 
 	public override void _Ready()
 	{
@@ -38,11 +38,11 @@ public partial class Turret : StaticBody2D
 		_fireTimer.Timeout += OnFireTimerTimeout;
 		
 		InputPickable = true;
-		InputEvent += OnTurretInput;
+		InputEvent += OnBuildingInput;
 		MouseEntered += OnMouseEntered;
 		MouseExited += OnMouseExited;
 
-		GD.Print($"[TURRET] {GetType().Name}: Damage={Damage}, FireRate={FireRate}, Range={Range}, InputPickable={InputPickable}");
+		GD.Print($"[BUILDING] {GetType().Name}: Damage={Damage}, FireRate={FireRate}, Range={Range}, InputPickable={InputPickable}");
 	}
 
 	protected virtual void ConfigureStats() { }
@@ -71,39 +71,39 @@ public partial class Turret : StaticBody2D
 			QueueRedraw();
 	}
 	
-	public void SelectTurret()
+	public void SelectBuilding()
 	{
-		if (SelectedTurret != null && SelectedTurret != this)
+		if (SelectedBuilding != null && SelectedBuilding != this)
 		{
-			SelectedTurret.DeselectTurret();
+			SelectedBuilding.DeselectBuilding();
 		}
 		
 		_isSelected = true;
-		SelectedTurret = this;
+		SelectedBuilding = this;
 		ShowRange();
 		
-		ShowTurretStatsInHUD();
+		ShowBuildingStatsInHUD();
 		
 		GD.Print($"🎯 Selected {GetType().Name} - Range: {Range}, Damage: {Damage}, Cost: ${Cost}");
 	}
 	
-	public void DeselectTurret()
+	public void DeselectBuilding()
 	{
 		_isSelected = false;
-		if (SelectedTurret == this)
-			SelectedTurret = null;
+		if (SelectedBuilding == this)
+			SelectedBuilding = null;
 		HideRange();
 		
-		HideTurretStatsInHUD();
+		HideBuildingStatsInHUD();
 	}
 	
 	public void ToggleSelection()
 	{
 		GD.Print($"🔄 Toggling selection for {GetType().Name}. Currently selected: {_isSelected}");
 		if (_isSelected)
-			DeselectTurret();
+			DeselectBuilding();
 		else
-			SelectTurret();
+			SelectBuilding();
 	}
 	
 	public bool IsSelected => _isSelected;
@@ -121,12 +121,12 @@ public partial class Turret : StaticBody2D
 		return "basic_bullet_impact";
 	}
 	
-	private void ShowTurretStatsInHUD()
+	private void ShowBuildingStatsInHUD()
 	{
 		if (GameManager.Instance?.Hud != null)
 		{
-			string turretName = GetType().Name.Replace("Turret", "");
-			GameManager.Instance.Hud.ShowTurretStats(turretName, Cost, Damage, Range, FireRate);
+			string buildingName = GetType().Name.Replace("Building", "");
+			GameManager.Instance.Hud.ShowBuildingStats(buildingName, Cost, Damage, Range, FireRate);
 		}
 		
 		CancelPlayerBuildMode();
@@ -141,11 +141,11 @@ public partial class Turret : StaticBody2D
 		}
 	}
 	
-	private void HideTurretStatsInHUD()
+	private void HideBuildingStatsInHUD()
 	{
 		if (GameManager.Instance?.Hud != null)
 		{
-			GameManager.Instance.Hud.HideTurretStats();
+			GameManager.Instance.Hud.HideBuildingStats();
 		}
 	}
 
@@ -217,14 +217,14 @@ public partial class Turret : StaticBody2D
 		PlayShootSound();
 	}
 	
-	private void OnTurretInput(Node viewport, InputEvent @event, long shapeIdx)
+	private void OnBuildingInput(Node viewport, InputEvent @event, long shapeIdx)
 	{
 		if (@event is InputEventMouseButton button && button.Pressed)
 		{
-				GD.Print($"🖱️ Turret received mouse input: {button.ButtonIndex}");
+				GD.Print($"🖱️ Building received mouse input: {button.ButtonIndex}");
 				if (button.ButtonIndex == MouseButton.Left)
 				{
-					GD.Print($"🎯 Left click on {GetType().Name} turret");
+					GD.Print($"🎯 Left click on {GetType().Name} building");
 					ToggleSelection();
 				}
 		}

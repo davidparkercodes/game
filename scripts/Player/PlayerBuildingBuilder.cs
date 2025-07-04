@@ -1,12 +1,12 @@
 using Godot;
 
-public class PlayerTurretBuilder
+public class PlayerBuildingBuilder
 {
 	private readonly Player _player;
-	private TurretPreview _currentPreview;
+	private BuildingPreview _currentPreview;
 	private bool _isInBuildMode = false;
 
-	public PlayerTurretBuilder(Player player)
+	public PlayerBuildingBuilder(Player player)
 	{
 		_player = player;
 	}
@@ -17,8 +17,8 @@ public class PlayerTurretBuilder
 		{
 			if (mouse.ButtonIndex == MouseButton.Left && _isInBuildMode)
 			{
-				// Left click to place turret
-				BuildTurret();
+				// Left click to place building
+				BuildBuilding();
 			}
 			else if (mouse.ButtonIndex == MouseButton.Right && _isInBuildMode)
 			{
@@ -33,32 +33,32 @@ public class PlayerTurretBuilder
 		}
 	}
 
-	public void StartBuildMode(PackedScene turretScene)
+	public void StartBuildMode(PackedScene buildingScene)
 	{
-		if (turretScene == null)
+		if (buildingScene == null)
 		{
-			GD.PrintErr("❌ No turret scene provided!");
+			GD.PrintErr("❌ No building scene provided!");
 			return;
 		}
 		
 		// If already in build mode, update the existing preview
 		if (_isInBuildMode && _currentPreview != null)
 		{
-			_currentPreview.UpdateTurretScene(turretScene);
-			GD.Print($"🔄 Switched to {turretScene.ResourcePath.GetFile().GetBaseName()} turret");
+			_currentPreview.UpdateBuildingScene(buildingScene);
+			GD.Print($"🔄 Switched to {buildingScene.ResourcePath.GetFile().GetBaseName()} building");
 			return;
 		}
 		
 		_isInBuildMode = true;
 		
 		// Create preview
-		_currentPreview = new TurretPreview();
-		_currentPreview.TurretScene = turretScene;
+		_currentPreview = new BuildingPreview();
+		_currentPreview.BuildingScene = buildingScene;
 		_player.GetTree().Root.AddChild(_currentPreview);
 		
-		GD.Print("🔨 Entered turret build mode - Left click to place, Right click or ESC to cancel");
+		GD.Print("🔨 Entered building build mode - Left click to place, Right click or ESC to cancel");
 	}
-	
+
 	public void CancelBuildMode()
 	{
 		if (!_isInBuildMode) return;
@@ -71,20 +71,20 @@ public class PlayerTurretBuilder
 			_currentPreview = null;
 		}
 		
-		GD.Print("❌ Cancelled turret build mode");
+		GD.Print("❌ Cancelled building build mode");
 		
-		// Clear the current turret selection in the player
-		_player.ClearTurretSelection();
+		// Clear the current building selection in the player
+		_player.ClearBuildingSelection();
 	}
-	
-	private void BuildTurret()
+
+	private void BuildBuilding()
 	{
 		if (!_isInBuildMode || _currentPreview == null)
 			return;
 		
-		if (!_currentPreview.CanPlaceTurret())
+		if (!_currentPreview.CanPlaceBuilding())
 		{
-			GD.PrintErr("❌ Cannot place turret at this location!");
+			GD.PrintErr("❌ Cannot place building at this location!");
 			return;
 		}
 
@@ -95,22 +95,26 @@ public class PlayerTurretBuilder
 			return;
 		}
 		
-		int cost = _currentPreview.GetTurretCost();
+		int cost = _currentPreview.GetBuildingCost();
 		if (!GameManager.Instance.SpendMoney(cost))
 		{
 			GD.PrintErr($"❌ Not enough money! Need ${cost}, but have ${GameManager.Instance.Money}");
 			return;
 		}
 
-		// Create the actual turret
-		var turret = _currentPreview.TurretScene.Instantiate<Turret>();
-		turret.GlobalPosition = _currentPreview.GetPlacementPosition();
-		_player.GetTree().Root.AddChild(turret);
+		// Create the actual building
+		var building = _currentPreview.BuildingScene.Instantiate<Building>();
+		building.GlobalPosition = _currentPreview.GetPlacementPosition();
+		_player.GetTree().Root.AddChild(building);
 
-		GD.Print($"🔧 Built turret at {turret.GlobalPosition} for ${cost}");
+		// Register with BuildingManager
+		var buildingManager = _player.GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;
+		buildingManager?.AddBuilding(building);
+
+		GD.Print($"🔧 Built building at {building.GlobalPosition} for ${cost}");
 		
 		// Exit build mode and clear selection
 		CancelBuildMode();
 	}
-	
+
 }

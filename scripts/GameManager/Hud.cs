@@ -65,6 +65,7 @@ public partial class Hud : CanvasLayer
 	public void UpdateLives(int lives)  => LivesLabel?.SetText($"Lives: {lives}");
 	public void UpdateWave(int wave)    => WaveLabel?.SetText($"Wave: {wave}");
 	public void UpdateSelectedTurret(string turretName) => SelectedTurretLabel?.SetText($"Selected: {turretName}");
+	public void UpdateSelectedBuilding(string buildingName) => SelectedTurretLabel?.SetText($"Selected: {buildingName}");
 	
 	public void ShowTurretStats(string turretName, int cost, int damage, float range, float fireRate)
 	{
@@ -80,6 +81,27 @@ public partial class Hud : CanvasLayer
 	}
 	
 	public void HideTurretStats()
+	{
+		if (TurretStatsPanel != null)
+		{
+			TurretStatsPanel.Visible = false;
+		}
+	}
+	
+	public void ShowBuildingStats(string buildingName, int cost, int damage, float range, float fireRate)
+	{
+		if (TurretStatsPanel != null)
+		{
+			TurretStatsPanel.Visible = true;
+			TurretNameLabel?.SetText(buildingName);
+			CostLabel?.SetText($"Cost: ${cost}");
+			DamageLabel?.SetText($"Damage: {damage}");
+			RangeLabel?.SetText($"Range: {range:F0}");
+			FireRateLabel?.SetText($"Fire Rate: {fireRate:F1}s");
+		}
+	}
+	
+	public void HideBuildingStats()
 	{
 		if (TurretStatsPanel != null)
 		{

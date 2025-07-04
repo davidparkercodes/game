@@ -30,7 +30,7 @@ public static class BuildingZoneValidator
         
         if (!isBuildable)
         {
-            GD.Print($"🚫 Cannot build at {worldPosition} (tile {tileCoords}) - on restricted area");
+            GD.Print($"🚫 Cannot place building at {worldPosition} (tile {tileCoords}) - on restricted area");
         }
         
         return isBuildable;

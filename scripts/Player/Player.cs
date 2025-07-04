@@ -1,6 +1,6 @@
 using Godot;
 
-public class TurretStats
+public class BuildingStats
 {
 	public int Cost { get; set; }
 	public int Damage { get; set; }
@@ -15,22 +15,22 @@ public partial class Player : CharacterBody2D
 	[Export] public PackedScene BasicTurretScene;
 	[Export] public PackedScene SniperTurretScene;
 
-	public PackedScene CurrentTurretScene { get; private set; } = null; // Start with no turret selected
+	public PackedScene CurrentBuildingScene { get; private set; } = null; // Start with no building selected
 
 	private PlayerMovement _movement;
-	private PlayerTurretBuilder _turretBuilder;
+	private PlayerBuildingBuilder _buildingBuilder;
 
 	public override void _Ready()
 	{
 		// Add to player group for easy reference
 		AddToGroup("player");
 		
-		// Start with no turret selected
-		CurrentTurretScene = null;
-		UpdateSelectedTurretDisplay("None");
+		// Start with no building selected
+		CurrentBuildingScene = null;
+		UpdateSelectedBuildingDisplay("None");
 
 		_movement = new PlayerMovement(this);
-		_turretBuilder = new PlayerTurretBuilder(this);
+		_buildingBuilder = new PlayerBuildingBuilder(this);
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -41,7 +41,7 @@ public partial class Player : CharacterBody2D
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		_turretBuilder.HandleInput(@event);
+		_buildingBuilder.HandleInput(@event);
 
 		if (@event is InputEventKey key && key.Pressed)
 		{
@@ -51,9 +51,9 @@ public partial class Player : CharacterBody2D
 					if (BasicTurretScene != null)
 					{
 						// Start building basic turret immediately
-						CurrentTurretScene = BasicTurretScene;
-						UpdateSelectedTurretDisplay("Basic");
-						_turretBuilder.StartBuildMode(BasicTurretScene);
+						CurrentBuildingScene = BasicTurretScene;
+						UpdateSelectedBuildingDisplay("Basic");
+						_buildingBuilder.StartBuildMode(BasicTurretScene);
 						GD.Print("📦 Selected Basic Turret for building");
 					}
 					else
@@ -66,9 +66,9 @@ public partial class Player : CharacterBody2D
 					if (SniperTurretScene != null)
 					{
 						// Start building sniper turret immediately
-						CurrentTurretScene = SniperTurretScene;
-						UpdateSelectedTurretDisplay("Sniper");
-						_turretBuilder.StartBuildMode(SniperTurretScene);
+						CurrentBuildingScene = SniperTurretScene;
+						UpdateSelectedBuildingDisplay("Sniper");
+						_buildingBuilder.StartBuildMode(SniperTurretScene);
 						GD.Print("🎯 Selected Sniper Turret for building");
 					}
 					else
@@ -80,116 +80,116 @@ public partial class Player : CharacterBody2D
 		}
 	}
 	
-	public void SelectTurret(string turretId)
+	public void SelectBuilding(string buildingId)
 	{
-		switch (turretId)
+		switch (buildingId)
 		{
 			case "Basic":
-				CurrentTurretScene = BasicTurretScene;
-				UpdateSelectedTurretDisplay("Basic");
-				_turretBuilder.StartBuildMode(BasicTurretScene);
+				CurrentBuildingScene = BasicTurretScene;
+				UpdateSelectedBuildingDisplay("Basic");
+				_buildingBuilder.StartBuildMode(BasicTurretScene);
 				break;
 			case "Sniper":
-				CurrentTurretScene = SniperTurretScene;
-				UpdateSelectedTurretDisplay("Sniper");
-				_turretBuilder.StartBuildMode(SniperTurretScene);
+				CurrentBuildingScene = SniperTurretScene;
+				UpdateSelectedBuildingDisplay("Sniper");
+				_buildingBuilder.StartBuildMode(SniperTurretScene);
 				break;
 		}
 	}
 	
-	public void ClearTurretSelection()
+	public void ClearBuildingSelection()
 	{
-		CurrentTurretScene = null;
-		UpdateSelectedTurretDisplay("None");
-		HideTurretStats();
-		GD.Print("🚫 Cleared turret selection");
+		CurrentBuildingScene = null;
+		UpdateSelectedBuildingDisplay("None");
+		HideBuildingStats();
+		GD.Print("🚫 Cleared building selection");
 	}
 	
 	public void CancelBuildMode()
 	{
-		// Cancel any active build mode through the turret builder
-		_turretBuilder?.CancelBuildMode();
+		// Cancel any active build mode through the building builder
+		_buildingBuilder?.CancelBuildMode();
 	}
 
-	private void UpdateSelectedTurretDisplay(string turretName)
+	private void UpdateSelectedBuildingDisplay(string buildingName)
 	{
 		if (GameManager.Instance?.Hud != null)
 		{
-			GameManager.Instance.Hud.UpdateSelectedTurret(turretName);
-			UpdateTurretStats(turretName);
+			GameManager.Instance.Hud.UpdateSelectedBuilding(buildingName);
+			UpdateBuildingStats(buildingName);
 		}
 		else
 		{
 			// Defer the call until GameManager is ready
-			CallDeferred(nameof(DelayedUpdateSelectedTurret), turretName);
+			CallDeferred(nameof(DelayedUpdateSelectedBuilding), buildingName);
 		}
 	}
 	
-	private void UpdateTurretStats(string turretName)
+	private void UpdateBuildingStats(string buildingName)
 	{
-		if (turretName == "None")
+		if (buildingName == "None")
 		{
-			HideTurretStats();
+			HideBuildingStats();
 			return;
 		}
 		
-		var stats = GetTurretStats(turretName);
+		var stats = GetBuildingStats(buildingName);
 		if (stats != null)
 		{
-			ShowTurretStats(turretName, stats.Cost, stats.Damage, stats.Range, stats.FireRate);
+			ShowBuildingStats(buildingName, stats.Cost, stats.Damage, stats.Range, stats.FireRate);
 		}
 	}
 	
-	private TurretStats GetTurretStats(string turretName)
+	private BuildingStats GetBuildingStats(string buildingName)
 	{
-		PackedScene turretScene = turretName switch
+		PackedScene buildingScene = buildingName switch
 		{
 			"Basic" => BasicTurretScene,
 			"Sniper" => SniperTurretScene,
 			_ => null
 		};
 		
-		if (turretScene == null) return null;
+		if (buildingScene == null) return null;
 		
 		// Create a temporary instance to get stats
-		var tempTurret = turretScene.Instantiate<Turret>();
-		tempTurret.InitializeStats(); // Configure stats before accessing them
+		var tempBuilding = buildingScene.Instantiate<Building>();
+		tempBuilding.InitializeStats(); // Configure stats before accessing them
 		
-		var stats = new TurretStats
+		var stats = new BuildingStats
 		{
-			Cost = tempTurret.Cost,
-			Damage = tempTurret.Damage,
-			Range = tempTurret.Range,
-			FireRate = tempTurret.FireRate
+			Cost = tempBuilding.Cost,
+			Damage = tempBuilding.Damage,
+			Range = tempBuilding.Range,
+			FireRate = tempBuilding.FireRate
 		};
 		
-		tempTurret.QueueFree();
+		tempBuilding.QueueFree();
 		return stats;
 	}
 	
-	private void ShowTurretStats(string turretName, int cost, int damage, float range, float fireRate)
+	private void ShowBuildingStats(string buildingName, int cost, int damage, float range, float fireRate)
 	{
 		if (GameManager.Instance?.Hud != null)
 		{
-			GameManager.Instance.Hud.ShowTurretStats(turretName, cost, damage, range, fireRate);
+			GameManager.Instance.Hud.ShowBuildingStats(buildingName, cost, damage, range, fireRate);
 		}
 	}
 	
-	private void HideTurretStats()
+	private void HideBuildingStats()
 	{
 		if (GameManager.Instance?.Hud != null)
 		{
-			GameManager.Instance.Hud.HideTurretStats();
+			GameManager.Instance.Hud.HideBuildingStats();
 		}
 	}
 
 
-	private void DelayedUpdateSelectedTurret(string turretName)
+	private void DelayedUpdateSelectedBuilding(string buildingName)
 	{
 		if (GameManager.Instance?.Hud != null)
 		{
-			GameManager.Instance.Hud.UpdateSelectedTurret(turretName);
-			UpdateTurretStats(turretName);
+			GameManager.Instance.Hud.UpdateSelectedBuilding(buildingName);
+			UpdateBuildingStats(buildingName);
 		}
 	}
 }

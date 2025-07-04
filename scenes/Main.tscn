@@ -16,7 +16,7 @@
 [ext_resource type="Resource" path="res://data/levels/level_01.tres" id="11_ft6cd"]
 [ext_resource type="Script" uid="uid://btltgcqd0jtul" path="res://scripts/Map/PathManager.cs" id="11_pathmanager"]
 [ext_resource type="Script" uid="uid://b11tq5gvh7h7k" path="res://scripts/Waves/WaveSpawner.cs" id="12_wavespawner"]
-[ext_resource type="Script" uid="uid://cloejlfj83ln2" path="res://scripts/Systems/TurretManager.cs" id="13_turretmanager"]
+[ext_resource type="Script" uid="uid://c83arw1pxq2xv" path="res://scripts/Systems/BuildingManager.cs" id="13_turretmanager"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cm0pq"]
 size = Vector2(58, 60)

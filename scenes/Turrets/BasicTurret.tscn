@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://ddkixe5gb73sy"]
 
-[ext_resource type="Script" uid="uid://bds13km047p4h" path="res://scripts/Turrets/BasicTurret.cs" id="1_dtl24"]
+[ext_resource type="Script" path="res://scripts/Turrets/BasicTurret.cs" id="1_dtl24"]
 [ext_resource type="Texture2D" uid="uid://8y8jt8dxd382" path="res://assets/sprites/basic_colors_tilesheet_16x16.png" id="2_4sggw"]
 [ext_resource type="PackedScene" path="res://scenes/Projectiles/Bullet.tscn" id="2_tbwx1"]
 
@@ -13,6 +13,10 @@ radius = 112.0
 [node name="StaticBody2D" type="StaticBody2D"]
 script = ExtResource("1_dtl24")
 BulletScene = ExtResource("2_tbwx1")
+Cost = null
+Damage = null
+Range = null
+FireRate = null
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_4sggw")
