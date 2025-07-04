@@ -6,6 +6,7 @@ public partial class Bullet : Area2D
 	[Export] public int Damage = 50;
 
 	private Vector2 _velocity;
+	private string _impactSoundKey = "basic_bullet_impact";
 
 	public override void _Ready()
 	{
@@ -15,6 +16,11 @@ public partial class Bullet : Area2D
 	public void SetBulletVelocity(Vector2 velocity)
 	{
 		_velocity = velocity;
+	}
+	
+	public void SetImpactSound(string soundKey)
+	{
+		_impactSoundKey = soundKey;
 	}
 
 	public override void _Process(double delta)
@@ -34,6 +40,11 @@ public partial class Bullet : Area2D
 			if (body is Enemy enemy)
 			{
 				enemy.TakeDamage(Damage);
+			}
+			
+			if (SoundManager.Instance != null)
+			{
+				SoundManager.Instance.PlaySound(_impactSoundKey);
 			}
 
 			QueueFree();

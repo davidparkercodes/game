@@ -96,18 +96,20 @@ public partial class RoundManager : Node
 	{
 		CurrentPhase = RoundPhase.Defend;
 		_phaseTimer.Stop();
+		
+		if (SoundManager.Instance != null)
+		{
+			SoundManager.Instance.PlaySound("round_start");
+		}
 
-		// Use WaveSpawner if available, otherwise fallback to old system
 		if (WaveSpawner.Instance != null)
 		{
-			// Start the wave corresponding to current round
 			WaveSpawner.Instance.StartWave(CurrentRound - 1);
 			EnemiesRemaining = WaveSpawner.Instance.TotalEnemiesInWave;
 			GD.Print($"⚔️ Defend Phase Started - Round {CurrentRound} using WaveSpawner");
 		}
 		else
 		{
-			// Fallback to old system
 			EnemiesRemaining = Mathf.RoundToInt(BaseEnemyCount * Mathf.Pow(EnemyCountMultiplier, CurrentRound - 1));
 			GD.Print($"⚔️ Defend Phase Started - Round {CurrentRound} ({EnemiesRemaining} enemies)");
 			
@@ -135,14 +137,11 @@ public partial class RoundManager : Node
 	{
 		if (CurrentPhase == RoundPhase.Defend)
 		{
-			// If using WaveSpawner, let it handle completion
 			if (WaveSpawner.Instance != null)
 			{
-				// WaveSpawner will handle round completion through its own system
 				return;
 			}
 			
-			// Fallback for old enemy spawner system
 			EnemiesRemaining--;
 			GD.Print($"👾 Enemy defeated! Remaining: {EnemiesRemaining}");
 			
@@ -161,7 +160,6 @@ public partial class RoundManager : Node
 		GD.Print($"✅ Round {CurrentRound} Completed!");
 		EmitSignal(SignalName.RoundCompleted, CurrentRound);
 
-		// Transition phase
 		CurrentPhase = RoundPhase.Transition;
 		EmitSignal(SignalName.PhaseChanged, (int)CurrentPhase);
 
@@ -200,7 +198,6 @@ public partial class RoundManager : Node
 		StartRound();
 	}
 
-	// Debug methods
 	public void _on_skip_build_phase_pressed()
 	{
 		ForceStartDefendPhase();

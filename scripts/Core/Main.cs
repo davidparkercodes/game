@@ -9,6 +9,9 @@ public partial class Main : Node2D
 
 	public override void _Ready()
 	{
+		var soundManager = new SoundManager();
+		AddChild(soundManager);
+		
 		_inventoryPanel = GetNode<Panel>("InventoryUI/InventoryPanel");
 		_inventoryList = _inventoryPanel.GetNode<VBoxContainer>("MarginContainer/InventoryList");
 	}

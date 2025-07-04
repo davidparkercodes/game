@@ -1,0 +1,57 @@
+{
+  "sounds": {
+    "turrets": {
+      "basic_turret_shoot": {
+        "file": "res://assets/audio/turrets/basic_turret_shoot.mp3",
+        "category": "SFX",
+        "volume": 0.0,
+        "description": "Basic turret firing sound"
+      },
+      "sniper_turret_shoot": {
+        "file": "res://assets/audio/turrets/sniper_turret_shoot.mp3",
+        "category": "SFX",
+        "volume": 0.0,
+        "description": "Sniper turret firing sound"
+      }
+    },
+    "projectiles": {
+      "basic_bullet_impact": {
+        "file": "res://assets/audio/projectiles/basic_bullet_impact.mp3",
+        "category": "SFX",
+        "volume": 0.0,
+        "description": "Basic bullet impact sound"
+      },
+      "sniper_bullet_impact": {
+        "file": "res://assets/audio/projectiles/sniper_bullet_impact.mp3",
+        "category": "SFX",
+        "volume": 0.0,
+        "description": "Sniper bullet impact sound"
+      }
+    },
+    "game": {
+      "round_start": {
+        "file": "res://assets/audio/game/round_start.mp3",
+        "category": "SFX",
+        "volume": 0.0,
+        "description": "Round start sound"
+      }
+    },
+    "ui": {},
+    "enemies": {},
+    "music": {}
+  },
+  "categories": {
+    "SFX": {
+      "defaultVolume": 1.0,
+      "description": "Sound effects"
+    },
+    "UI": {
+      "defaultVolume": 1.0,
+      "description": "User interface sounds"
+    },
+    "Music": {
+      "defaultVolume": 0.8,
+      "description": "Background music"
+    }
+  }
+}

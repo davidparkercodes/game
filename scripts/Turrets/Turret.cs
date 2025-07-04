@@ -37,8 +37,7 @@ public partial class Turret : StaticBody2D
 		_fireTimer.WaitTime = FireRate;
 		_fireTimer.Timeout += OnFireTimerTimeout;
 		
-		// Enable mouse input for hover detection
-		InputPickable = true; // Enable input detection for StaticBody2D
+		InputPickable = true;
 		InputEvent += OnTurretInput;
 		MouseEntered += OnMouseEntered;
 		MouseExited += OnMouseExited;
@@ -46,16 +45,13 @@ public partial class Turret : StaticBody2D
 		GD.Print($"[TURRET] {GetType().Name}: Damage={Damage}, FireRate={FireRate}, Range={Range}, InputPickable={InputPickable}");
 	}
 
-	// ---------- OVERRIDES ----------------------------------------------------
 	protected virtual void ConfigureStats() { }
 	
-	// Public method to manually configure stats before _Ready() is called
 	public void InitializeStats()
 	{
 		ConfigureStats();
 	}
 	
-	// Range visualization methods
 	public void ShowRange()
 	{
 		_showRange = true;
@@ -77,7 +73,6 @@ public partial class Turret : StaticBody2D
 	
 	public void SelectTurret()
 	{
-		// Deselect previous turret
 		if (SelectedTurret != null && SelectedTurret != this)
 		{
 			SelectedTurret.DeselectTurret();
@@ -87,7 +82,6 @@ public partial class Turret : StaticBody2D
 		SelectedTurret = this;
 		ShowRange();
 		
-		// Show turret stats in HUD
 		ShowTurretStatsInHUD();
 		
 		GD.Print($"🎯 Selected {GetType().Name} - Range: {Range}, Damage: {Damage}, Cost: ${Cost}");
@@ -100,7 +94,6 @@ public partial class Turret : StaticBody2D
 			SelectedTurret = null;
 		HideRange();
 		
-		// Hide turret stats in HUD
 		HideTurretStatsInHUD();
 	}
 	
@@ -115,6 +108,19 @@ public partial class Turret : StaticBody2D
 	
 	public bool IsSelected => _isSelected;
 	
+	protected virtual void PlayShootSound()
+	{
+		if (SoundManager.Instance != null)
+		{
+			SoundManager.Instance.PlaySound("basic_turret_shoot");
+		}
+	}
+	
+	protected virtual string GetImpactSoundKey()
+	{
+		return "basic_bullet_impact";
+	}
+	
 	private void ShowTurretStatsInHUD()
 	{
 		if (GameManager.Instance?.Hud != null)
@@ -123,13 +129,11 @@ public partial class Turret : StaticBody2D
 			GameManager.Instance.Hud.ShowTurretStats(turretName, Cost, Damage, Range, FireRate);
 		}
 		
-		// Cancel any active turret building mode when selecting a built turret
 		CancelPlayerBuildMode();
 	}
 	
 	private void CancelPlayerBuildMode()
 	{
-		// Find the player and cancel build mode if active
 		var player = GetTree().GetFirstNodeInGroup("player") as Player;
 		if (player != null)
 		{
@@ -155,26 +159,18 @@ public partial class Turret : StaticBody2D
 	{
 		if (_showRange)
 		{
-			// Use selected color if this turret is selected
 			var currentRangeColor = _isSelected ? _selectedRangeColor : _rangeColor;
-			
-			// Draw range circle
 			DrawArc(Vector2.Zero, Range, 0, Mathf.Tau, 64, currentRangeColor, 2.0f);
-			
-			// Draw filled circle with transparency
 			var fillColor = new Color(currentRangeColor.R, currentRangeColor.G, currentRangeColor.B, currentRangeColor.A * 0.5f);
 			DrawCircle(Vector2.Zero, Range, fillColor);
 		}
 		
-		// Draw selection indicator
 		if (_isSelected)
 		{
-			// Draw a small circle around the turret to show it's selected
 			DrawArc(Vector2.Zero, 20, 0, Mathf.Tau, 32, Colors.Yellow, 3.0f);
 		}
 	}
 
-	// ---------- SIGNAL CALLBACKS --------------------------------------------
 	private void OnBodyEntered(Node2D body)
 	{
 		if (body.IsInGroup("enemies") && _currentTarget == null)
@@ -210,28 +206,32 @@ public partial class Turret : StaticBody2D
 		var bullet = BulletScene.Instantiate<Area2D>();
 		bullet.GlobalPosition = GlobalPosition;
 
-		if (bullet is Bullet b) b.SetBulletVelocity(direction * bulletSpeed);
+		if (bullet is Bullet b)
+		{
+			b.SetBulletVelocity(direction * bulletSpeed);
+			b.SetImpactSound(GetImpactSoundKey());
+		}
 
 		GetTree().Root.AddChild(bullet);
+		
+		PlayShootSound();
 	}
 	
 	private void OnTurretInput(Node viewport, InputEvent @event, long shapeIdx)
 	{
 		if (@event is InputEventMouseButton button && button.Pressed)
 		{
-			GD.Print($"🖱️ Turret received mouse input: {button.ButtonIndex}");
-			if (button.ButtonIndex == MouseButton.Left)
-			{
-				// Left click to select/deselect turret
-				GD.Print($"🎯 Left click on {GetType().Name} turret");
-				ToggleSelection();
-			}
+				GD.Print($"🖱️ Turret received mouse input: {button.ButtonIndex}");
+				if (button.ButtonIndex == MouseButton.Left)
+				{
+					GD.Print($"🎯 Left click on {GetType().Name} turret");
+					ToggleSelection();
+				}
 		}
 	}
 	
 	private void OnMouseEntered()
 	{
-		// Show range on hover (only if not selected)
 		if (!_isSelected)
 		{
 			ShowRange();
@@ -240,7 +240,6 @@ public partial class Turret : StaticBody2D
 	
 	private void OnMouseExited()
 	{
-		// Hide range when mouse leaves (only if not selected)
 		if (!_isSelected)
 		{
 			HideRange();
