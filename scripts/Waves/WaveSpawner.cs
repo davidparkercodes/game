@@ -145,11 +145,15 @@ public partial class WaveSpawner : Node2D
 
 	private void RegisterEnemyTypes()
 	{
-		// Register enemy scene mappings
+		// Register enemy scene mappings - all use the same BasicEnemyScene
+		// but will have different stats loaded based on EnemyType from StatsManager
 		_enemyScenes["Basic"] = BasicEnemyScene;
-		// Add more enemy types here as they're created
-		// _enemyScenes["Fast"] = FastEnemyScene;
-		// _enemyScenes["Heavy"] = HeavyEnemyScene;
+		_enemyScenes["basic_enemy"] = BasicEnemyScene;
+		_enemyScenes["fast_enemy"] = BasicEnemyScene;
+		_enemyScenes["tank_enemy"] = BasicEnemyScene;
+		_enemyScenes["elite_enemy"] = BasicEnemyScene;
+		
+		GD.Print($"📋 Registered {_enemyScenes.Count} enemy types for wave spawning");
 	}
 
 	private void CreateDefaultWaveSet()
@@ -349,9 +353,13 @@ public partial class WaveSpawner : Node2D
 	{
 		var enemy = enemyScene.Instantiate<Enemy>();
 		
-		// Apply group modifiers
-		enemy.MaxHealth = Mathf.RoundToInt(enemy.MaxHealth * group.HealthMultiplier);
-		enemy.Speed *= group.SpeedMultiplier;
+		// Set enemy type for stats loading
+		enemy.EnemyType = group.EnemyType;
+		
+		// Enemy will load base stats from JSON in _Ready()
+		// Then we apply wave-specific multipliers on top
+		// We need to defer this until after _Ready() is called
+		Callable.From(() => ApplyWaveModifiers(enemy, group)).CallDeferred();
 		
 		// Set spawn position using PathManager if available
 		if (PathManager.Instance != null)
@@ -363,12 +371,35 @@ public partial class WaveSpawner : Node2D
 			enemy.GlobalPosition = GlobalPosition;
 		}
 		
-		// Connect to enemy events
-		enemy.EnemyKilled += () => OnEnemyKilled(group.MoneyReward);
+		// Connect to enemy events  
+		enemy.EnemyKilled += () => OnEnemyKilled(CalculateEnemyReward(group, enemy));
 		enemy.EnemyReachedEnd += OnEnemyReachedEnd;
 		
 		GetTree().Root.AddChild(enemy);
 		GD.Print($"👾 Spawned {group.EnemyType} enemy ({EnemiesSpawned}/{TotalEnemiesInWave})");
+	}
+	
+	private void ApplyWaveModifiers(Enemy enemy, EnemySpawnGroup group)
+	{
+		// Apply wave-specific multipliers on top of base stats from JSON
+		var baseHealth = enemy.MaxHealth;
+		var baseSpeed = enemy.Speed;
+		
+		enemy.ApplyHealthMultiplier(group.HealthMultiplier);
+		enemy.SetSpeed(baseSpeed * group.SpeedMultiplier);
+		
+		GD.Print($"🔧 Applied wave modifiers to {group.EnemyType}: HP {baseHealth}→{enemy.MaxHealth}, Speed {baseSpeed:F1}→{enemy.Speed:F1}");
+	}
+	
+	private int CalculateEnemyReward(EnemySpawnGroup group, Enemy enemy)
+	{
+		// Use enemy's base reward from stats plus wave bonus
+		var baseReward = enemy.RewardGold;
+		var waveBonus = group.MoneyReward;
+		var totalReward = baseReward + waveBonus;
+		
+		GD.Print($"💰 Enemy reward: {baseReward} (base) + {waveBonus} (wave bonus) = {totalReward}");
+		return totalReward;
 	}
 
 	private void OnEnemyKilled(int moneyReward)

@@ -8,7 +8,7 @@ public partial class PathFollower : Node
 	[Signal] public delegate void PathCompletedEventHandler();
 	[Signal] public delegate void PathProgressChangedEventHandler(float progress);
 	
-	private CharacterBody2D _body;
+	private Node2D _body;
 	private float _pathProgress = 0.0f;
 	private bool _isFollowingPath = false;
 	private PathManager _pathManager;
@@ -23,12 +23,12 @@ public partial class PathFollower : Node
 
 	public override void _Ready()
 	{
-		_body = GetParent<CharacterBody2D>();
+		_body = GetParent<Node2D>();
 		_pathManager = PathManager.Instance;
 		
 		if (_body == null)
 		{
-			GD.PrintErr("❌ PathFollower must be a child of CharacterBody2D");
+			GD.PrintErr("❌ PathFollower must be a child of Node2D (or derived class)");
 			return;
 		}
 
@@ -79,13 +79,9 @@ public partial class PathFollower : Node
 		Vector2 targetPosition = _pathManager.GetPathPosition(_pathProgress);
 		Vector2 direction = _pathManager.GetPathDirection(_pathProgress);
 		
-		// Move towards target position
-		Vector2 currentPosition = _body.GlobalPosition;
-		Vector2 velocity = direction * Speed;
-		
-		// Use CharacterBody2D's movement system
-		_body.Velocity = velocity;
-		_body.MoveAndSlide();
+		// Move directly to target position without collision detection
+		// This allows enemies to pass through each other in tower defense style
+		_body.GlobalPosition = targetPosition;
 		
 		// Emit progress signal
 		EmitSignal(SignalName.PathProgressChanged, _pathProgress);

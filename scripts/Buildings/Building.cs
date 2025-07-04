@@ -5,10 +5,14 @@ using System;
 public partial class Building : StaticBody2D
 {
 	[Export] public PackedScene BulletScene;
-	[Export] public int Cost     = 10;
-	[Export] public int Damage   = 10;
-	[Export] public float Range  = 150.0f;
-	[Export] public float FireRate = 1.0f;
+	[Export] public string BuildingType = "basic_turret";
+	public int Cost { get; protected set; }
+	public int Damage { get; protected set; }
+	public float Range { get; protected set; }
+	public float FireRate { get; protected set; }
+	public float BulletSpeed { get; protected set; }
+	public string ShootSound { get; protected set; }
+	public string ImpactSound { get; protected set; }
 
 	private Timer  _fireTimer;
 	private Area2D _detectionArea;
@@ -17,6 +21,7 @@ public partial class Building : StaticBody2D
 	private bool _isSelected = false;
 	private Color _rangeColor = new Color(0.2f, 0.8f, 1.0f, 0.3f); // Light blue with transparency
 	private Color _selectedRangeColor = new Color(1.0f, 1.0f, 0.2f, 0.4f); // Yellow for selected building
+	private BuildingStatsData _stats;
 	
 	public static Building SelectedBuilding { get; private set; }
 
@@ -25,9 +30,11 @@ public partial class Building : StaticBody2D
 		_fireTimer     = GetNode<Timer>("Timer");
 		_detectionArea = GetNode<Area2D>("Area2D");
 
-		_detectionArea.BodyEntered += OnBodyEntered;
-		_detectionArea.BodyExited  += OnBodyExited;
+		_detectionArea.AreaEntered += OnAreaEntered;
+		_detectionArea.AreaExited  += OnAreaExited;
 
+		// Load stats from configuration first, then allow override
+		LoadStatsFromConfig();
 		ConfigureStats(); 
 
 		var shape = _detectionArea.GetNode<CollisionShape2D>("CollisionShape2D");
@@ -41,10 +48,33 @@ public partial class Building : StaticBody2D
 		MouseEntered += OnMouseEntered;
 		MouseExited += OnMouseExited;
 
-		GD.Print($"[BUILDING] {GetType().Name}: Damage={Damage}, FireRate={FireRate}, Range={Range}, InputPickable={InputPickable}");
+		GD.Print($"[BUILDING] {GetType().Name} ({BuildingType}): Cost=${Cost}, Damage={Damage}, FireRate={FireRate}, Range={Range}");
 	}
 
 	protected virtual void ConfigureStats() { }
+	
+	private void LoadStatsFromConfig()
+	{
+		if (StatsManager.Instance != null)
+		{
+			_stats = StatsManager.Instance.GetBuildingStats(BuildingType);
+		}
+		else
+		{
+			// Fallback to default stats if StatsManager not available
+			_stats = new BuildingStatsData();
+			GD.PrintErr($"⚠️ StatsManager not available, using default stats for building {Name}");
+		}
+		
+		// Apply stats from configuration
+		Cost = _stats.cost;
+		Damage = _stats.damage;
+		Range = _stats.range;
+		FireRate = _stats.fire_rate;
+		BulletSpeed = _stats.bullet_speed;
+		ShootSound = _stats.shoot_sound;
+		ImpactSound = _stats.impact_sound;
+	}
 	
 	public void InitializeStats()
 	{
@@ -111,13 +141,13 @@ public partial class Building : StaticBody2D
 	{
 		if (SoundManager.Instance != null)
 		{
-			SoundManager.Instance.PlaySound("basic_turret_shoot");
+			SoundManager.Instance.PlaySound(ShootSound);
 		}
 	}
 	
 	protected virtual string GetImpactSoundKey()
 	{
-		return "basic_bullet_impact";
+		return ImpactSound;
 	}
 	
 	private void ShowBuildingStatsInHUD()
@@ -170,18 +200,18 @@ public partial class Building : StaticBody2D
 		}
 	}
 
-	private void OnBodyEntered(Node2D body)
+	private void OnAreaEntered(Area2D area)
 	{
-		if (body.IsInGroup("enemies") && _currentTarget == null)
+		if (area.IsInGroup("enemies") && _currentTarget == null)
 		{
-			_currentTarget = body;
+			_currentTarget = area;
 			Callable.From(() => _fireTimer.Start()).CallDeferred();
 		}
 	}
 
-	private void OnBodyExited(Node2D body)
+	private void OnAreaExited(Area2D area)
 	{
-		if (body == _currentTarget)
+		if (area == _currentTarget)
 		{
 			_currentTarget = null;
 			_fireTimer.Stop();
@@ -193,11 +223,11 @@ public partial class Building : StaticBody2D
 		if (_currentTarget == null || !IsInstanceValid(_currentTarget)) return;
 
 		Vector2 toTarget       = _currentTarget.GlobalPosition - GlobalPosition;
-		Vector2 targetVelocity = _currentTarget is CharacterBody2D cb ? cb.Velocity : Vector2.Zero;
+		// Enemies are now Area2D and use direct position movement, so no velocity prediction needed
+		Vector2 targetVelocity = Vector2.Zero;
 
-		const float bulletSpeed = 900;
 		float distance          = toTarget.Length();
-		float timeToTarget      = distance / bulletSpeed;
+		float timeToTarget      = distance / BulletSpeed;
 
 		Vector2 predictedPosition = _currentTarget.GlobalPosition + targetVelocity * timeToTarget;
 		Vector2 direction         = (predictedPosition - GlobalPosition).Normalized();
@@ -207,7 +237,7 @@ public partial class Building : StaticBody2D
 
 		if (bullet is Bullet b)
 		{
-			b.SetBulletVelocity(direction * bulletSpeed);
+			b.SetBulletVelocity(direction * BulletSpeed);
 			b.SetImpactSound(GetImpactSoundKey());
 		}
 

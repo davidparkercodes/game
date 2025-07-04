@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mpr68"]
 size = Vector2(16, 16)
 
-[node name="CharacterBody2D" type="CharacterBody2D" groups=["enemies"]]
+[node name="Enemy" type="Area2D" groups=["enemies"]]
 script = ExtResource("1_55jtl")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -16,3 +16,4 @@ region_rect = Rect2(32, 0, 16, 16)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_mpr68")
+

@@ -10,7 +10,7 @@ public partial class Bullet : Area2D
 
 	public override void _Ready()
 	{
-		Connect("body_entered", new Callable(this, nameof(OnBodyEntered)));
+		Connect("area_entered", new Callable(this, nameof(OnAreaEntered)));
 	}
 
 	public void SetBulletVelocity(Vector2 velocity)
@@ -31,12 +31,11 @@ public partial class Bullet : Area2D
 			QueueFree();
 	}
 
-	private void OnBodyEntered(Node body)
+	private void OnAreaEntered(Area2D area)
 	{
-
-		if (body.IsInGroup("enemies"))
+		if (area.IsInGroup("enemies"))
 		{
-			if (body is Enemy enemy)
+			if (area is Enemy enemy)
 			{
 				enemy.TakeDamage(Damage);
 			}

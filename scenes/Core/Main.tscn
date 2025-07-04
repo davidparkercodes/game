@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://wgthd0eexbcv"]
+[gd_scene load_steps=19 format=4 uid="uid://wgthd0eexbcv"]
 
 [ext_resource type="Script" uid="uid://cj8x4bx2mnr6p" path="res://scripts/Core/Main.cs" id="1_c01mt"]
 [ext_resource type="PackedScene" path="res://scenes/Player/Player.tscn" id="2_nxtc6"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" uid="uid://btltgcqd0jtul" path="res://scripts/Map/PathManager.cs" id="11_pathmanager"]
 [ext_resource type="Script" uid="uid://b11tq5gvh7h7k" path="res://scripts/Waves/WaveSpawner.cs" id="12_wavespawner"]
 [ext_resource type="Script" uid="uid://c83arw1pxq2xv" path="res://scripts/Systems/BuildingManager.cs" id="13_turretmanager"]
+[ext_resource type="Script" uid="uid://bw2b6hg2ouhmd" path="res://scripts/Systems/StatsManager.cs" id="14_statsmanager"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cm0pq"]
 size = Vector2(58, 60)
@@ -90,6 +91,9 @@ CurrentLevel = ExtResource("11_ft6cd")
 [node name="WaveSpawner" type="Node2D" parent="."]
 script = ExtResource("12_wavespawner")
 BasicEnemyScene = ExtResource("10_lhr70")
+
+[node name="StatsManager" type="Node" parent="."]
+script = ExtResource("14_statsmanager")
 
 [node name="BuildingManager" type="Node" parent="."]
 script = ExtResource("13_turretmanager")

@@ -3,11 +3,9 @@ using Godot;
 
 public partial class BasicTurret : Building
 {
-	protected override void ConfigureStats()
+	public override void _Ready()
 	{
-		Cost = 15;
-		Damage = 10;
-		Range = 120.0f;
-		FireRate = 1.2f;
+		BuildingType = "basic_turret";
+		base._Ready();
 	}
 }

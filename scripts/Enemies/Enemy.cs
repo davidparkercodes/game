@@ -1,12 +1,17 @@
 using Godot;
 
-public partial class Enemy : CharacterBody2D
+public partial class Enemy : Area2D
 {
-	[Export] public int MaxHealth = 100;
-	[Export] public float Speed = 60.0f;
+	[Export] public string EnemyType = "basic_enemy";
+	public int MaxHealth { get; private set; }
+	public float Speed { get; private set; }
+	public int Damage { get; private set; }
+	public int RewardGold { get; private set; }
+	public int RewardXp { get; private set; }
 	
 	private int _currentHealth;
 	private PathFollower _pathFollower;
+	private EnemyStatsData _stats;
 	
 	[Signal]
 	public delegate void EnemyKilledEventHandler();
@@ -15,6 +20,9 @@ public partial class Enemy : CharacterBody2D
 
 	public override void _Ready()
 	{
+		// Load stats from configuration
+		LoadStatsFromConfig();
+		
 		_currentHealth = MaxHealth;
 		
 		// Add to enemies group for wave completion tracking
@@ -28,7 +36,28 @@ public partial class Enemy : CharacterBody2D
 		// Connect to PathFollower signals
 		_pathFollower.PathCompleted += OnPathCompleted;
 		
-		GD.Print($"👾 Enemy {Name} ready with path following");
+		GD.Print($"👾 Enemy {Name} ({EnemyType}) ready: HP={MaxHealth}, Speed={Speed}, Damage={Damage}");
+	}
+	
+	private void LoadStatsFromConfig()
+	{
+		if (StatsManager.Instance != null)
+		{
+			_stats = StatsManager.Instance.GetEnemyStats(EnemyType);
+		}
+		else
+		{
+			// Fallback to default stats if StatsManager not available
+			_stats = new EnemyStatsData();
+			GD.PrintErr($"⚠️ StatsManager not available, using default stats for enemy {Name}");
+		}
+		
+		// Apply stats from configuration
+		MaxHealth = _stats.max_health;
+		Speed = _stats.speed;
+		Damage = _stats.damage;
+		RewardGold = _stats.reward_gold;
+		RewardXp = _stats.reward_xp;
 	}
 	
 	public override void _PhysicsProcess(double delta)
@@ -86,5 +115,28 @@ public partial class Enemy : CharacterBody2D
 	{
 		Speed = newSpeed;
 		_pathFollower?.SetSpeed(newSpeed);
+	}
+	
+	public void SetEnemyType(string enemyType)
+	{
+		EnemyType = enemyType;
+		LoadStatsFromConfig();
+	}
+	
+	public EnemyStatsData GetStats()
+	{
+		return _stats;
+	}
+	
+	public void ApplyHealthMultiplier(float multiplier)
+	{
+		MaxHealth = Mathf.RoundToInt(MaxHealth * multiplier);
+		_currentHealth = MaxHealth; // Also update current health
+	}
+	
+	public void SetMaxHealth(int newMaxHealth)
+	{
+		MaxHealth = newMaxHealth;
+		_currentHealth = MaxHealth; // Reset current health to max
 	}
 }

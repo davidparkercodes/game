@@ -1,0 +1,43 @@
+{
+  "enemy_types": {
+    "basic_enemy": {
+      "max_health": 100,
+      "speed": 60.0,
+      "damage": 10,
+      "reward_gold": 5,
+      "reward_xp": 10,
+      "description": "Basic enemy unit with standard stats"
+    },
+    "fast_enemy": {
+      "max_health": 60,
+      "speed": 90.0,
+      "damage": 8,
+      "reward_gold": 7,
+      "reward_xp": 12,
+      "description": "Fast but fragile enemy unit"
+    },
+    "tank_enemy": {
+      "max_health": 200,
+      "speed": 30.0,
+      "damage": 15,
+      "reward_gold": 12,
+      "reward_xp": 20,
+      "description": "Heavy armored enemy with high health"
+    },
+    "elite_enemy": {
+      "max_health": 150,
+      "speed": 75.0,
+      "damage": 20,
+      "reward_gold": 15,
+      "reward_xp": 25,
+      "description": "Elite enemy with balanced stats"
+    }
+  },
+  "default_stats": {
+    "max_health": 100,
+    "speed": 60.0,
+    "damage": 10,
+    "reward_gold": 5,
+    "reward_xp": 10
+  }
+}
