@@ -7,22 +7,16 @@ public partial class Player : CharacterBody2D
 	[Export] public PackedScene BasicTurretScene;
 	[Export] public PackedScene SniperTurretScene;
 
-	public PackedScene CurrentTurretScene { get; private set; }
+	public PackedScene CurrentTurretScene { get; private set; } = null; // Start with no turret selected
 
 	private PlayerMovement _movement;
 	private PlayerTurretBuilder _turretBuilder;
 
 	public override void _Ready()
 	{
-		if (BasicTurretScene != null)
-		{
-			CurrentTurretScene = BasicTurretScene;
-			UpdateSelectedTurretDisplay("Basic");
-		}
-		else
-		{
-			GD.PrintErr("❌ BasicTurretScene not assigned!");
-		}
+		// Start with no turret selected
+		CurrentTurretScene = null;
+		UpdateSelectedTurretDisplay("None");
 
 		_movement = new PlayerMovement(this);
 		_turretBuilder = new PlayerTurretBuilder(this);
@@ -45,10 +39,11 @@ public partial class Player : CharacterBody2D
 				case Key.Key1:
 					if (BasicTurretScene != null)
 					{
+						// Start building basic turret immediately
 						CurrentTurretScene = BasicTurretScene;
 						UpdateSelectedTurretDisplay("Basic");
-						_turretBuilder.UpdateTurretSelection();
-						GD.Print("📦 Switched to Basic Turret");
+						_turretBuilder.StartBuildMode(BasicTurretScene);
+						GD.Print("📦 Selected Basic Turret for building");
 					}
 					else
 					{
@@ -59,10 +54,11 @@ public partial class Player : CharacterBody2D
 				case Key.Key2:
 					if (SniperTurretScene != null)
 					{
+						// Start building sniper turret immediately
 						CurrentTurretScene = SniperTurretScene;
 						UpdateSelectedTurretDisplay("Sniper");
-						_turretBuilder.UpdateTurretSelection();
-						GD.Print("🎯 Switched to Sniper Turret");
+						_turretBuilder.StartBuildMode(SniperTurretScene);
+						GD.Print("🎯 Selected Sniper Turret for building");
 					}
 					else
 					{
@@ -78,16 +74,23 @@ public partial class Player : CharacterBody2D
 		switch (turretId)
 		{
 			case "Basic":
-				CurrentTurretScene = BasicTurretScene;   // make sure this PackedScene field exists/exported
+				CurrentTurretScene = BasicTurretScene;
 				UpdateSelectedTurretDisplay("Basic");
-				_turretBuilder.UpdateTurretSelection();
+				_turretBuilder.StartBuildMode(BasicTurretScene);
 				break;
 			case "Sniper":
-				CurrentTurretScene = SniperTurretScene;  // same here
+				CurrentTurretScene = SniperTurretScene;
 				UpdateSelectedTurretDisplay("Sniper");
-				_turretBuilder.UpdateTurretSelection();
+				_turretBuilder.StartBuildMode(SniperTurretScene);
 				break;
 		}
+	}
+	
+	public void ClearTurretSelection()
+	{
+		CurrentTurretScene = null;
+		UpdateSelectedTurretDisplay("None");
+		GD.Print("🚫 Cleared turret selection");
 	}
 
 	private void UpdateSelectedTurretDisplay(string turretName)

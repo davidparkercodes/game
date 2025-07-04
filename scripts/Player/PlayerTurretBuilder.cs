@@ -15,19 +15,14 @@ public class PlayerTurretBuilder
 	{
 		if (@event is InputEventMouseButton mouse && mouse.Pressed)
 		{
-			if (mouse.ButtonIndex == MouseButton.Right)
+			if (mouse.ButtonIndex == MouseButton.Left && _isInBuildMode)
 			{
-				if (_isInBuildMode)
-				{
-					BuildTurret();
-				}
-				else
-				{
-					StartBuildMode();
-				}
+				// Left click to place turret
+				BuildTurret();
 			}
-			else if (mouse.ButtonIndex == MouseButton.Left && _isInBuildMode)
+			else if (mouse.ButtonIndex == MouseButton.Right && _isInBuildMode)
 			{
+				// Right click to cancel build mode
 				CancelBuildMode();
 			}
 		}
@@ -38,11 +33,11 @@ public class PlayerTurretBuilder
 		}
 	}
 
-	private void StartBuildMode()
+	public void StartBuildMode(PackedScene turretScene)
 	{
-		if (_player.CurrentTurretScene == null)
+		if (turretScene == null)
 		{
-			GD.PrintErr("❌ No turret scene selected!");
+			GD.PrintErr("❌ No turret scene provided!");
 			return;
 		}
 		
@@ -52,10 +47,10 @@ public class PlayerTurretBuilder
 		
 		// Create preview
 		_currentPreview = new TurretPreview();
-		_currentPreview.TurretScene = _player.CurrentTurretScene;
+		_currentPreview.TurretScene = turretScene;
 		_player.GetTree().Root.AddChild(_currentPreview);
 		
-		GD.Print("🔨 Entered turret build mode - Right click to place, Left click or ESC to cancel");
+		GD.Print("🔨 Entered turret build mode - Left click to place, Right click or ESC to cancel");
 	}
 	
 	private void CancelBuildMode()
@@ -71,6 +66,9 @@ public class PlayerTurretBuilder
 		}
 		
 		GD.Print("❌ Cancelled turret build mode");
+		
+		// Clear the current turret selection in the player
+		_player.ClearTurretSelection();
 	}
 	
 	private void BuildTurret()
@@ -99,13 +97,13 @@ public class PlayerTurretBuilder
 		}
 
 		// Create the actual turret
-		var turret = _player.CurrentTurretScene.Instantiate<Turret>();
+		var turret = _currentPreview.TurretScene.Instantiate<Turret>();
 		turret.GlobalPosition = _currentPreview.GetPlacementPosition();
 		_player.GetTree().Root.AddChild(turret);
 
 		GD.Print($"🔧 Built turret at {turret.GlobalPosition} for ${cost}");
 		
-		// Exit build mode
+		// Exit build mode and clear selection
 		CancelBuildMode();
 	}
 	
