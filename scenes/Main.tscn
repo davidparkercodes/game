@@ -97,7 +97,7 @@ CurrentLevel = ExtResource("11_ft6cd")
 script = ExtResource("12_wavespawner")
 BasicEnemyScene = ExtResource("10_lhr70")
 
-[node name="TurretManager" type="Node" parent="."]
+[node name="BuildingManager" type="Node" parent="."]
 script = ExtResource("13_turretmanager")
 
 [node name="Archive" type="Node" parent="."]
