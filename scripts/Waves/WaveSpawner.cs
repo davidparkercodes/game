@@ -27,6 +27,7 @@ public partial class WaveSpawner : Node2D
 	private List<Timer> _activeTimers = new();
 	private int _currentGroupIndex = 0;
 	private bool _waveInProgress = false;
+	private Dictionary<int, int> _groupSpawnCounts = new(); // Track spawned count per group
 
 	public override void _Ready()
 	{
@@ -209,6 +210,7 @@ public partial class WaveSpawner : Node2D
 		_waveInProgress = true;
 		_currentGroupIndex = 0;
 		EnemiesSpawned = 0;
+		_groupSpawnCounts.Clear(); // Reset group spawn tracking
 		
 		// Calculate total enemies in this wave
 		TotalEnemiesInWave = wave.EnemyGroups.Sum(group => group.Count);
@@ -226,7 +228,6 @@ public partial class WaveSpawner : Node2D
 				GD.Print("⏰ Pre-wave delay timer fired, starting spawning groups");
 				StartSpawningGroups();
 			};
-			preDelayTimer.Start();
 		}
 		else
 		{
@@ -258,31 +259,38 @@ public partial class WaveSpawner : Node2D
 				GD.Print($"⏰ Delaying group {i} start by {group.StartDelay}s");
 				var groupDelayTimer = CreateTimer(group.StartDelay);
 				var groupIndex = i; // Capture for closure
-				groupDelayTimer.Timeout += () => StartEnemyGroup(groupIndex);
+				groupDelayTimer.Timeout += () => {
+					GD.Print($"⏰ Group {groupIndex} delay timer fired after {group.StartDelay}s");
+					StartEnemyGroupAtIndex(groupIndex);
+				};
 			}
 			else
 			{
 				GD.Print($"▶️ Starting group {i} immediately");
-				StartEnemyGroup(i);
+				StartEnemyGroupAtIndex(i);
 			}
 		}
 	}
 
-	private void StartEnemyGroup(int groupIndex)
+	private void StartEnemyGroupAtIndex(int groupIndex)
 	{
 		var wave = CurrentWave;
-		if (wave == null || groupIndex >= wave.EnemyGroups.Count) return;
+		if (wave == null || groupIndex >= wave.EnemyGroups.Count)
+		{
+			GD.PrintErr($"❌ Invalid group index {groupIndex} for wave with {wave?.EnemyGroups.Count ?? 0} groups");
+			return;
+		}
 		
 		var group = wave.EnemyGroups[groupIndex];
 		
-		GD.Print($"👥 Starting enemy group: {group.Count}x {group.EnemyType}");
+		GD.Print($"👥 Starting enemy group {groupIndex}: {group.Count}x {group.EnemyType}");
 		EmitSignal(SignalName.EnemyGroupStarted, group.EnemyType, group.Count);
 		
 		// Spawn enemies in this group with intervals
-		SpawnEnemyGroup(group);
+		SpawnEnemyGroupAtIndex(group, groupIndex);
 	}
 
-	private void SpawnEnemyGroup(EnemySpawnGroup group)
+	private void SpawnEnemyGroupAtIndex(EnemySpawnGroup group, int groupIndex)
 	{
 		if (!_enemyScenes.ContainsKey(group.EnemyType))
 		{
@@ -291,57 +299,49 @@ public partial class WaveSpawner : Node2D
 		}
 
 		var enemyScene = _enemyScenes[group.EnemyType];
-		int enemiesSpawnedInGroup = 0;
+		_groupSpawnCounts[groupIndex] = 0; // Initialize spawn count for this group
+
+		GD.Print($"🚀 Initializing spawn for group {groupIndex}: {group.Count}x {group.EnemyType} with {group.SpawnInterval}s interval");
 
 		// Create a timer for spawning enemies in this group
 		var spawnTimer = CreateTimer(group.SpawnInterval);
-		spawnTimer.Timeout += () =>
-		{
-			GD.Print($"⏰ Spawn timer fired: Group has {enemiesSpawnedInGroup}/{group.Count}, Wave in progress: {_waveInProgress}");
-			if (enemiesSpawnedInGroup < group.Count && _waveInProgress)
-			{
-				SpawnEnemy(enemyScene, group);
-				enemiesSpawnedInGroup++;
-				EnemiesSpawned++;
-				GD.Print($"👾 Spawned enemy {enemiesSpawnedInGroup}/{group.Count} in group, total spawned: {EnemiesSpawned}/{TotalEnemiesInWave}");
-				
-				// Continue spawning if more enemies in this group
-				if (enemiesSpawnedInGroup < group.Count)
-				{
-					GD.Print($"⏰ Restarting spawn timer for next enemy in {group.SpawnInterval}s");
-					spawnTimer.Start();
-				}
-				else
-				{
-					// This group is complete
-					GD.Print($"✅ Enemy group {group.EnemyType} completed!");
-					EmitSignal(SignalName.EnemyGroupCompleted, group.EnemyType);
-					CheckWaveCompletion();
-				}
-			}
-			else
-			{
-				GD.Print($"❌ Spawn timer fired but conditions not met: enemiesSpawned={enemiesSpawnedInGroup}/{group.Count}, waveInProgress={_waveInProgress}");
-			}
-		};
+		spawnTimer.Timeout += () => SpawnEnemyFromGroup(enemyScene, group, groupIndex, spawnTimer);
 		
 		// Start spawning immediately for the first enemy
+		SpawnEnemyFromGroup(enemyScene, group, groupIndex, spawnTimer);
+	}
+	
+	private void SpawnEnemyFromGroup(PackedScene enemyScene, EnemySpawnGroup group, int groupIndex, Timer spawnTimer)
+	{
+		var enemiesSpawnedInGroup = _groupSpawnCounts.GetValueOrDefault(groupIndex, 0);
+		
+		GD.Print($"⏰ Spawn timer fired: Group {groupIndex} has {enemiesSpawnedInGroup}/{group.Count}, Wave in progress: {_waveInProgress}");
+		
 		if (enemiesSpawnedInGroup < group.Count && _waveInProgress)
 		{
 			SpawnEnemy(enemyScene, group);
 			enemiesSpawnedInGroup++;
+			_groupSpawnCounts[groupIndex] = enemiesSpawnedInGroup;
 			EnemiesSpawned++;
+			GD.Print($"👾 Spawned enemy {enemiesSpawnedInGroup}/{group.Count} in group {groupIndex}, total spawned: {EnemiesSpawned}/{TotalEnemiesInWave}");
 			
-			// Start the timer for subsequent spawns
-			if (enemiesSpawnedInGroup < group.Count)
-			{
-				spawnTimer.Start();
-			}
+			// Continue spawning if more enemies in this group
+				if (enemiesSpawnedInGroup < group.Count)
+				{
+					GD.Print($"⏰ Restarting spawn timer for next enemy in {group.SpawnInterval}s");
+					spawnTimer.Start(); // This one needs to stay since it's restarting an existing timer
+				}
 			else
 			{
+				// This group is complete
+				GD.Print($"✅ Enemy group {groupIndex} ({group.EnemyType}) completed!");
 				EmitSignal(SignalName.EnemyGroupCompleted, group.EnemyType);
-				CheckWaveCompletion();
+				CallDeferred(MethodName.CheckWaveCompletion);
 			}
+		}
+		else
+		{
+			GD.Print($"❌ Spawn timer fired but conditions not met: enemiesSpawned={enemiesSpawnedInGroup}/{group.Count}, waveInProgress={_waveInProgress}");
 		}
 	}
 
@@ -461,6 +461,9 @@ public partial class WaveSpawner : Node2D
 		AddChild(timer);
 		_activeTimers.Add(timer);
 		GD.Print($"⏱️ Created timer with {waitTime}s wait time. Active timers: {_activeTimers.Count}");
+		// Auto-start the timer
+		timer.Start();
+		GD.Print($"▶️ Timer started automatically");
 		return timer;
 	}
 
