@@ -86,6 +86,10 @@ public partial class Turret : StaticBody2D
 		_isSelected = true;
 		SelectedTurret = this;
 		ShowRange();
+		
+		// Show turret stats in HUD
+		ShowTurretStatsInHUD();
+		
 		GD.Print($"🎯 Selected {GetType().Name} - Range: {Range}, Damage: {Damage}, Cost: ${Cost}");
 	}
 	
@@ -95,6 +99,9 @@ public partial class Turret : StaticBody2D
 		if (SelectedTurret == this)
 			SelectedTurret = null;
 		HideRange();
+		
+		// Hide turret stats in HUD
+		HideTurretStatsInHUD();
 	}
 	
 	public void ToggleSelection()
@@ -107,6 +114,36 @@ public partial class Turret : StaticBody2D
 	}
 	
 	public bool IsSelected => _isSelected;
+	
+	private void ShowTurretStatsInHUD()
+	{
+		if (GameManager.Instance?.Hud != null)
+		{
+			string turretName = GetType().Name.Replace("Turret", "");
+			GameManager.Instance.Hud.ShowTurretStats(turretName, Cost, Damage, Range, FireRate);
+		}
+		
+		// Cancel any active turret building mode when selecting a built turret
+		CancelPlayerBuildMode();
+	}
+	
+	private void CancelPlayerBuildMode()
+	{
+		// Find the player and cancel build mode if active
+		var player = GetTree().GetFirstNodeInGroup("player") as Player;
+		if (player != null)
+		{
+			player.CancelBuildMode();
+		}
+	}
+	
+	private void HideTurretStatsInHUD()
+	{
+		if (GameManager.Instance?.Hud != null)
+		{
+			GameManager.Instance.Hud.HideTurretStats();
+		}
+	}
 
 	public override void _Process(double delta)
 	{

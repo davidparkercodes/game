@@ -22,6 +22,9 @@ public partial class Player : CharacterBody2D
 
 	public override void _Ready()
 	{
+		// Add to player group for easy reference
+		AddToGroup("player");
+		
 		// Start with no turret selected
 		CurrentTurretScene = null;
 		UpdateSelectedTurretDisplay("None");
@@ -100,6 +103,12 @@ public partial class Player : CharacterBody2D
 		UpdateSelectedTurretDisplay("None");
 		HideTurretStats();
 		GD.Print("🚫 Cleared turret selection");
+	}
+	
+	public void CancelBuildMode()
+	{
+		// Cancel any active build mode through the turret builder
+		_turretBuilder?.CancelBuildMode();
 	}
 
 	private void UpdateSelectedTurretDisplay(string turretName)

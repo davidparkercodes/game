@@ -53,7 +53,7 @@ public class PlayerTurretBuilder
 		GD.Print("🔨 Entered turret build mode - Left click to place, Right click or ESC to cancel");
 	}
 	
-	private void CancelBuildMode()
+	public void CancelBuildMode()
 	{
 		if (!_isInBuildMode) return;
 		
