@@ -17,6 +17,9 @@ public partial class Enemy : CharacterBody2D
 	{
 		_currentHealth = MaxHealth;
 		
+		// Add to enemies group for wave completion tracking
+		AddToGroup("enemies");
+		
 		// Create and add PathFollower component
 		_pathFollower = new PathFollower();
 		_pathFollower.Speed = Speed;
@@ -48,6 +51,10 @@ public partial class Enemy : CharacterBody2D
 	private void Die()
 	{
 		GD.Print($"{Name} died!");
+		
+		// Remove from enemies group before destruction
+		RemoveFromGroup("enemies");
+		
 		EmitSignal(SignalName.EnemyKilled);
 		QueueFree();
 	}
@@ -55,6 +62,10 @@ public partial class Enemy : CharacterBody2D
 	private void OnPathCompleted()
 	{
 		GD.Print($"{Name} reached the end!");
+		
+		// Remove from enemies group before destruction
+		RemoveFromGroup("enemies");
+		
 		EmitSignal(SignalName.EnemyReachedEnd);
 		
 		// Notify GameManager that enemy reached the end

@@ -17,7 +17,7 @@ public partial class Bullet : Area2D
 	{
 		_velocity = velocity;
 	}
-	
+
 	public void SetImpactSound(string soundKey)
 	{
 		_impactSoundKey = soundKey;
@@ -30,10 +30,9 @@ public partial class Bullet : Area2D
 		if (Position.Length() > 3000)
 			QueueFree();
 	}
-	
+
 	private void OnBodyEntered(Node body)
 	{
-		GD.Print("Bullet hit: " + body.Name);
 
 		if (body.IsInGroup("enemies"))
 		{
@@ -41,7 +40,7 @@ public partial class Bullet : Area2D
 			{
 				enemy.TakeDamage(Damage);
 			}
-			
+
 			if (SoundManager.Instance != null)
 			{
 				SoundManager.Instance.PlaySound(_impactSoundKey);

@@ -5,6 +5,7 @@ public partial class GameManager : Node
 	[Signal] public delegate void MoneyChangedEventHandler(int newAmount);
 	[Signal] public delegate void LivesChangedEventHandler(int newAmount);
 	[Signal] public delegate void GameOverEventHandler();
+	[Signal] public delegate void GameWonEventHandler();
 
 	[Export] public PackedScene HudScene;
 	[Export] public int StartingMoney = 100;
@@ -16,6 +17,9 @@ public partial class GameManager : Node
 	public int Money { get; private set; }
 	public int Lives { get; private set; }
 	public bool IsGameOver { get; private set; } = false;
+	public bool IsGameWon { get; private set; } = false;
+	
+	[Export] public int TotalRounds = 5;
 
 	public Hud Hud { get; private set; }
 	public RoundManager RoundManager { get; private set; }
@@ -28,9 +32,18 @@ public partial class GameManager : Node
 		Money = StartingMoney;
 		Lives = StartingLives;
 
-		// Create RoundManager
-		RoundManager = new RoundManager();
-		AddChild(RoundManager);
+		// Get or create RoundManager
+		RoundManager = RoundManager.Instance;
+		if (RoundManager == null)
+		{
+			RoundManager = new RoundManager();
+			AddChild(RoundManager);
+			GD.Print("🎮 Created new RoundManager instance");
+		}
+		else
+		{
+			GD.Print("🎮 Using existing RoundManager instance");
+		}
 
 		// Create HUD
 		Hud = HudScene?.Instantiate<Hud>();
@@ -114,6 +127,14 @@ public partial class GameManager : Node
 		// You can add game over screen logic here
 	}
 
+	private void TriggerGameWon()
+	{
+		IsGameWon = true;
+		EmitSignal(SignalName.GameWon);
+		GD.Print("🎉 GAME WON! Congratulations!");
+		// You can add victory screen logic here
+	}
+
 	private void UpdateHUD()
 	{
 		if (Hud != null)
@@ -132,12 +153,18 @@ public partial class GameManager : Node
 		{
 			if (newPhase == RoundPhase.Build)
 			{
+				GD.Print("🔄 Showing skip button for build phase");
 				Hud.ShowSkipButton();
 			}
 			else
 			{
+				GD.Print($"🎯 Hiding skip button for {newPhase} phase");
 				Hud.HideSkipButton();
 			}
+		}
+		else
+		{
+			GD.PrintErr("❌ HUD is null, cannot update button visibility");
 		}
 	}
 
@@ -150,7 +177,12 @@ public partial class GameManager : Node
 	private void OnRoundCompleted(int roundNumber)
 	{
 		GD.Print($"🏆 Round {roundNumber} completed!");
-		// Maybe give bonus money or other rewards
+		
+		// Check if player has completed all rounds
+		if (roundNumber >= TotalRounds)
+		{
+			TriggerGameWon();
+		}
 	}
 	
 	private void ConnectToWaveSpawner()
@@ -158,14 +190,27 @@ public partial class GameManager : Node
 		if (WaveSpawner.Instance != null)
 		{
 			WaveSpawner.Instance.WaveCompleted += OnWaveCompleted;
-			GD.Print("🔗 Connected to WaveSpawner signals");
+			WaveSpawner.Instance.AllWavesCompleted += OnAllWavesCompleted;
+			GD.Print("🔗 Connected to WaveSpawner signals successfully");
+			GD.Print($"🌊 WaveSpawner has {WaveSpawner.Instance.GetTotalWaves()} total waves");
+		}
+		else
+		{
+			GD.PrintErr("❌ WaveSpawner.Instance is null! Cannot connect signals.");
 		}
 	}
 	
 	private void OnWaveCompleted(int waveNumber, int bonusMoney)
 	{
 		GD.Print($"✅ Wave {waveNumber} completed! Bonus: ${bonusMoney}");
+		GD.Print($"📞 Telling RoundManager to complete round {RoundManager?.CurrentRound}");
 		// Tell RoundManager to complete the round
 		RoundManager.CompleteRound();
+	}
+	
+	private void OnAllWavesCompleted()
+	{
+		GD.Print("🏆 All waves completed! Player wins!");
+		TriggerGameWon();
 	}
 }

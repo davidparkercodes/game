@@ -63,7 +63,7 @@ public partial class Hud : CanvasLayer
 
 	public void UpdateMoney(int amount) => MoneyLabel?.SetText($"Money: ${amount}");
 	public void UpdateLives(int lives)  => LivesLabel?.SetText($"Lives: {lives}");
-	public void UpdateWave(int wave)    => WaveLabel?.SetText($"Wave: {wave}");
+	public void UpdateWave(int wave)    => WaveLabel?.SetText($"Wave: {wave}/{RoundManager.Instance?.TotalRounds ?? 5}");
 	public void UpdateSelectedTurret(string turretName) => SelectedTurretLabel?.SetText($"Selected: {turretName}");
 	public void UpdateSelectedBuilding(string buildingName) => SelectedTurretLabel?.SetText($"Selected: {buildingName}");
 	

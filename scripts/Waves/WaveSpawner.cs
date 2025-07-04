@@ -179,6 +179,12 @@ public partial class WaveSpawner : Node2D
 		}
 	}
 
+	public void SetWaveIndex(int waveIndex)
+	{
+		CurrentWaveIndex = waveIndex;
+		GD.Print($"🌊 Set wave index to {waveIndex}");
+	}
+	
 	public void StartWave(int waveIndex = -1)
 	{
 		if (_waveInProgress)
@@ -188,7 +194,9 @@ public partial class WaveSpawner : Node2D
 		}
 
 		if (waveIndex >= 0)
-			CurrentWaveIndex = waveIndex;
+		{
+			SetWaveIndex(waveIndex);
+		}
 
 		if (!IsValidWaveIndex(CurrentWaveIndex))
 		{
@@ -206,16 +214,23 @@ public partial class WaveSpawner : Node2D
 		TotalEnemiesInWave = wave.EnemyGroups.Sum(group => group.Count);
 		
 		GD.Print($"🌊 Starting {wave.WaveName} (Wave {wave.WaveNumber}) - {TotalEnemiesInWave} enemies");
+		GD.Print($"📊 Wave details: {wave.EnemyGroups.Count} groups, PreWaveDelay: {wave.PreWaveDelay}s");
 		EmitSignal(SignalName.WaveStarted, wave.WaveNumber, wave.WaveName);
 		
 		// Start with pre-wave delay if configured
 		if (wave.PreWaveDelay > 0)
 		{
+			GD.Print($"⏰ Creating pre-wave delay timer for {wave.PreWaveDelay}s");
 			var preDelayTimer = CreateTimer(wave.PreWaveDelay);
-			preDelayTimer.Timeout += () => StartSpawningGroups();
+			preDelayTimer.Timeout += () => {
+				GD.Print("⏰ Pre-wave delay timer fired, starting spawning groups");
+				StartSpawningGroups();
+			};
+			preDelayTimer.Start();
 		}
 		else
 		{
+			GD.Print("▶️ No pre-wave delay, starting spawning groups immediately");
 			StartSpawningGroups();
 		}
 	}
@@ -223,23 +238,31 @@ public partial class WaveSpawner : Node2D
 	private void StartSpawningGroups()
 	{
 		var wave = CurrentWave;
-		if (wave == null) return;
+		if (wave == null)
+		{
+			GD.PrintErr("❌ StartSpawningGroups: CurrentWave is null!");
+			return;
+		}
 
+		GD.Print($"🚀 StartSpawningGroups: Starting {wave.EnemyGroups.Count} enemy groups for {wave.WaveName}");
 		IsSpawning = true;
 		
 		// Start all enemy groups with their respective delays
 		for (int i = 0; i < wave.EnemyGroups.Count; i++)
 		{
 			var group = wave.EnemyGroups[i];
+			GD.Print($"📋 Group {i}: {group.Count}x {group.EnemyType}, StartDelay: {group.StartDelay}s");
 			
 			if (group.StartDelay > 0)
 			{
+				GD.Print($"⏰ Delaying group {i} start by {group.StartDelay}s");
 				var groupDelayTimer = CreateTimer(group.StartDelay);
 				var groupIndex = i; // Capture for closure
 				groupDelayTimer.Timeout += () => StartEnemyGroup(groupIndex);
 			}
 			else
 			{
+				GD.Print($"▶️ Starting group {i} immediately");
 				StartEnemyGroup(i);
 			}
 		}
@@ -342,13 +365,16 @@ public partial class WaveSpawner : Node2D
 
 	private void OnEnemyKilled(int moneyReward)
 	{
+		GD.Print($"💀 WaveSpawner received enemy killed signal, reward: ${moneyReward}");
+		
 		// Award money through GameManager
 		if (GameManager.Instance != null)
 		{
 			GameManager.Instance.AddMoney(moneyReward);
 		}
 		
-		CheckWaveCompletion();
+		// Use CallDeferred to check wave completion after QueueFree has processed
+		CallDeferred(MethodName.CheckWaveCompletion);
 	}
 
 	private void OnEnemyReachedEnd()
@@ -359,7 +385,8 @@ public partial class WaveSpawner : Node2D
 			GameManager.Instance.OnEnemyReachedEnd();
 		}
 		
-		CheckWaveCompletion();
+		// Use CallDeferred to check wave completion after QueueFree has processed
+		CallDeferred(MethodName.CheckWaveCompletion);
 	}
 
 	private void CheckWaveCompletion()
@@ -367,9 +394,16 @@ public partial class WaveSpawner : Node2D
 		// Check if all enemies have been spawned and defeated/reached end
 		var enemiesInScene = GetTree().GetNodesInGroup("enemies").Count;
 		
+		GD.Print($"🔍 Wave completion check: Spawned={EnemiesSpawned}/{TotalEnemiesInWave}, EnemiesInScene={enemiesInScene}, WaveInProgress={_waveInProgress}");
+		
 		if (EnemiesSpawned >= TotalEnemiesInWave && enemiesInScene == 0)
 		{
+			GD.Print("✅ Wave completion conditions met - calling CompleteWave()");
 			CompleteWave();
+		}
+		else
+		{
+			GD.Print($"❌ Wave not complete yet - need {TotalEnemiesInWave - EnemiesSpawned} more spawned or {enemiesInScene} enemies still alive");
 		}
 	}
 
@@ -394,19 +428,8 @@ public partial class WaveSpawner : Node2D
 		// Clean up timers
 		CleanupTimers();
 		
-		// Auto-advance to next wave after post-wave delay
-		if (wave.PostWaveDelay > 0)
-		{
-			var postDelayTimer = CreateTimer(wave.PostWaveDelay);
-			postDelayTimer.Timeout += () => {
-				CurrentWaveIndex++;
-				// Don't auto-start next wave, let RoundManager control this
-			};
-		}
-		else
-		{
-			CurrentWaveIndex++;
-		}
+		// Don't auto-advance wave index - let RoundManager control progression
+		// Post-wave delay is handled by RoundManager transition
 	}
 
 	public void StopCurrentWave()
@@ -424,11 +447,13 @@ public partial class WaveSpawner : Node2D
 		timer.OneShot = true;
 		AddChild(timer);
 		_activeTimers.Add(timer);
+		GD.Print($"⏱️ Created timer with {waitTime}s wait time. Active timers: {_activeTimers.Count}");
 		return timer;
 	}
 
 	private void CleanupTimers()
 	{
+		GD.Print($"🧹 Cleaning up {_activeTimers.Count} timers");
 		foreach (var timer in _activeTimers)
 		{
 			if (IsInstanceValid(timer))
@@ -437,6 +462,7 @@ public partial class WaveSpawner : Node2D
 			}
 		}
 		_activeTimers.Clear();
+		GD.Print("🧹 Timer cleanup complete");
 	}
 
 	private bool IsValidWaveIndex(int index)
