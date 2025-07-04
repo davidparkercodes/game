@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="LevelData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Data/LevelData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+LevelName = "Serpentine Challenge"
+Description = "An S-shaped path with more strategic placement opportunities"
+PathPoints = Array[Vector2]([Vector2(50, -50), Vector2(50, 100), Vector2(200, 200), Vector2(400, 100), Vector2(550, 200), Vector2(400, 350), Vector2(200, 450), Vector2(50, 350), Vector2(200, 500), Vector2(400, 600), Vector2(400, 750)])
+PathWidth = 80.0
+SpawnPoint = Vector2(50, -50)
+EndPoint = Vector2(400, 750)
+InitialMoney = 120
+InitialLives = 25
+PathColor = Color(0, 1, 1, 1)

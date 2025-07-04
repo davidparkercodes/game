@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="LevelData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Data/LevelData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+LevelName = "Training Grounds"
+Description = "A simple zigzag path to learn the basics"
+PathPoints = Array[Vector2]([Vector2(100, -50), Vector2(100, 150), Vector2(400, 150), Vector2(400, 300), Vector2(150, 300), Vector2(150, 450), Vector2(500, 450), Vector2(500, 600), Vector2(300, 600), Vector2(300, 750)])
+PathWidth = 64.0
+SpawnPoint = Vector2(100, -50)
+EndPoint = Vector2(300, 750)
+InitialMoney = 150
+InitialLives = 20
+PathColor = Color(1, 1, 0, 1)

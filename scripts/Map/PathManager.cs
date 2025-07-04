@@ -3,32 +3,85 @@ using System.Collections.Generic;
 
 public partial class PathManager : Node2D
 {
+	[Export] public LevelData CurrentLevel;
 	[Export] public Curve2D LanePath;
 	[Export] public float PathWidth = 64.0f;
 	
 	public static PathManager Instance { get; private set; }
 	
 	private Path2D _pathNode;
+	private Line2D _pathLine;
 	private List<Vector2> _pathPoints = new List<Vector2>();
 
 	public override void _Ready()
 	{
 		Instance = this;
-		CreateDefaultPath();
+		
+		if (CurrentLevel != null)
+		{
+			LoadLevelPath();
+		}
+		else
+		{
+			CreateDefaultPath();
+		}
+		
 		GD.Print("🗺️ PathManager ready with lane path");
+	}
+	
+	private void LoadLevelPath()
+	{
+		// Clear existing path components
+		ClearExistingPath();
+		
+		// Use the level data
+		LanePath = CurrentLevel.PathCurve;
+		PathWidth = CurrentLevel.PathWidth;
+		
+		// Convert Godot.Collections.Array to List
+		_pathPoints.Clear();
+		foreach (var point in CurrentLevel.PathPoints)
+		{
+			_pathPoints.Add(point);
+		}
+		
+		// If PathCurve is null, create it from points
+		if (LanePath == null && _pathPoints.Count > 0)
+		{
+			LanePath = new Curve2D();
+			foreach (var point in _pathPoints)
+			{
+				LanePath.AddPoint(point);
+			}
+			CurrentLevel.PathCurve = LanePath;
+		}
+		
+		// Create visual representation
+		CreateVisualPath();
+		
+		GD.Print($"🛤️ Loaded level path: {CurrentLevel.LevelName} with {_pathPoints.Count} points");
 	}
 
 	private void CreateDefaultPath()
 	{
-		// Create a simple straight lane from top to bottom of the screen
-		LanePath = new Curve2D();
+		// Clear existing path components
+		ClearExistingPath();
 		
-		// Define path points for a single lane (adjust these based on your screen size)
-		_pathPoints.Add(new Vector2(200, -50));  // Start above screen
-		_pathPoints.Add(new Vector2(200, 100));  // Entry point
-		_pathPoints.Add(new Vector2(200, 300));  // Middle
-		_pathPoints.Add(new Vector2(200, 500));  // End point
-		_pathPoints.Add(new Vector2(200, 650));  // Exit below screen
+		// Create a zigzag path that moves across the screen
+		LanePath = new Curve2D();
+		_pathPoints.Clear();
+		
+		// Define zigzag path points (adjust these based on your screen size)
+		_pathPoints.Add(new Vector2(100, -50));   // Start above screen (left side)
+		_pathPoints.Add(new Vector2(100, 150));   // Entry point
+		_pathPoints.Add(new Vector2(400, 150));   // Move right
+		_pathPoints.Add(new Vector2(400, 300));   // Move down
+		_pathPoints.Add(new Vector2(150, 300));   // Move left
+		_pathPoints.Add(new Vector2(150, 450));   // Move down
+		_pathPoints.Add(new Vector2(500, 450));   // Move right
+		_pathPoints.Add(new Vector2(500, 600));   // Move down
+		_pathPoints.Add(new Vector2(300, 600));   // Move left
+		_pathPoints.Add(new Vector2(300, 750));   // Exit below screen
 		
 		// Add points to the curve
 		foreach (var point in _pathPoints)
@@ -36,12 +89,46 @@ public partial class PathManager : Node2D
 			LanePath.AddPoint(point);
 		}
 		
-		// Create visual Path2D node for debugging
+		// Create visual representation
+		CreateVisualPath();
+		
+		GD.Print($"🛤️ Created default zigzag lane path with {_pathPoints.Count} points");
+	}
+	
+	private void CreateVisualPath()
+	{
+		// Create visual Path2D node
 		_pathNode = new Path2D();
 		_pathNode.Curve = LanePath;
+		_pathNode.Name = "EnemyPath";
 		AddChild(_pathNode);
 		
-		GD.Print($"🛤️ Created lane path with {_pathPoints.Count} points");
+		// Add a Line2D for better visibility
+		_pathLine = new Line2D();
+		_pathLine.Name = "PathLine";
+		_pathLine.Width = 4.0f;
+		_pathLine.DefaultColor = CurrentLevel?.PathColor ?? Colors.Yellow;
+		foreach (var point in _pathPoints)
+		{
+			_pathLine.AddPoint(point);
+		}
+		AddChild(_pathLine);
+	}
+	
+	private void ClearExistingPath()
+	{
+		// Remove existing path nodes
+		if (_pathNode != null && IsInstanceValid(_pathNode))
+		{
+			_pathNode.QueueFree();
+			_pathNode = null;
+		}
+		
+		if (_pathLine != null && IsInstanceValid(_pathLine))
+		{
+			_pathLine.QueueFree();
+			_pathLine = null;
+		}
 	}
 
 	public Vector2 GetPathPosition(float progress)

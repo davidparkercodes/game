@@ -1,18 +1,19 @@
-[gd_scene load_steps=18 format=3 uid="uid://wgthd0eexbcv"]
+[gd_scene load_steps=19 format=3 uid="uid://wgthd0eexbcv"]
 
 [ext_resource type="Script" uid="uid://cj8x4bx2mnr6p" path="res://scripts/Core/Main.cs" id="1_c01mt"]
-[ext_resource type="PackedScene" uid="uid://dskbs3v14dukk" path="res://scenes/Player/Player.tscn" id="2_nxtc6"]
+[ext_resource type="PackedScene" path="res://scenes/Player/Player.tscn" id="2_nxtc6"]
 [ext_resource type="PackedScene" uid="uid://ddkixe5gb73sy" path="res://scenes/Turrets/BasicTurret.tscn" id="3_wp0k4"]
-[ext_resource type="PackedScene" uid="uid://cfpq6psdv6vb0" path="res://scenes/Items/PunchingBag.tscn" id="4_jlsqs"]
+[ext_resource type="PackedScene" path="res://scenes/Items/PunchingBag.tscn" id="4_jlsqs"]
 [ext_resource type="Script" uid="uid://b5sxdd5hwqrku" path="res://scripts/Items/LootablePickup.cs" id="4_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://db86u6pd501cl" path="res://scenes/Turrets/SniperTurret.tscn" id="4_wp0k4"]
 [ext_resource type="Script" uid="uid://d2rlpnoefjg8s" path="res://scripts/Inventory/Inventory.cs" id="5_lhr70"]
 [ext_resource type="PackedScene" path="res://scenes/Levels/Level01.tscn" id="5_qmy6f"]
-[ext_resource type="PackedScene" uid="uid://dh34v5ge0ktyv" path="res://scenes/Items/VendingMachinePickup.tscn" id="6_c01mt"]
+[ext_resource type="PackedScene" path="res://scenes/Items/VendingMachinePickup.tscn" id="6_c01mt"]
 [ext_resource type="Script" uid="uid://d28wdl2bn0af2" path="res://scripts/GameManager/GameManager.cs" id="8_bjd11"]
 [ext_resource type="Script" uid="uid://do2bh7invyjpr" path="res://scripts/Enemies/EnemySpawner.cs" id="9_q8u5g"]
 [ext_resource type="PackedScene" path="res://scenes/UI/Hud.tscn" id="9_qmy6f"]
-[ext_resource type="PackedScene" uid="uid://bgtv2vjc6gxb3" path="res://scenes/Enemies/Enemy.tscn" id="10_lhr70"]
+[ext_resource type="PackedScene" path="res://scenes/Enemies/Enemy.tscn" id="10_lhr70"]
+[ext_resource type="Resource" path="res://data/levels/level_01.tres" id="11_ft6cd"]
 [ext_resource type="Script" uid="uid://btltgcqd0jtul" path="res://scripts/Map/PathManager.cs" id="11_pathmanager"]
 [ext_resource type="Script" uid="uid://b11tq5gvh7h7k" path="res://scripts/Waves/WaveSpawner.cs" id="12_wavespawner"]
 [ext_resource type="Script" uid="uid://cloejlfj83ln2" path="res://scripts/Systems/TurretManager.cs" id="13_turretmanager"]
@@ -89,6 +90,7 @@ HudScene = ExtResource("9_qmy6f")
 
 [node name="PathManager" type="Node2D" parent="."]
 script = ExtResource("11_pathmanager")
+CurrentLevel = ExtResource("11_ft6cd")
 
 [node name="WaveSpawner" type="Node2D" parent="."]
 script = ExtResource("12_wavespawner")

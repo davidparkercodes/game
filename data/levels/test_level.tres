@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="LevelData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/Data/LevelData.cs" id="1"]
+
+[resource]
+script = ExtResource("1")
+LevelName = "Test Level"
+Description = "Test description"
+PathPoints = Array[Vector2]([Vector2(100, 100), Vector2(200, 200)])
+PathWidth = 64.0
+SpawnPoint = Vector2(100, 100)
+EndPoint = Vector2(200, 200)
+InitialMoney = 100
+InitialLives = 20
+PathColor = Color(1, 1, 0, 1)
