@@ -45,20 +45,24 @@ public partial class TurretPreview : Node2D
 	
 	private void CheckPlacementValidity()
 	{
-		// For now, simple validity check - can be expanded later
-		// Check if we're within screen bounds or other placement rules
+		// Check if we're within screen bounds
 		var viewport = GetViewport();
+		bool withinBounds = true;
 		if (viewport != null)
 		{
 			var screenSize = viewport.GetVisibleRect().Size;
-			_isValidPlacement = _mousePosition.X >= 50 && _mousePosition.X <= screenSize.X - 50 &&
-			                   _mousePosition.Y >= 50 && _mousePosition.Y <= screenSize.Y - 50;
+			withinBounds = _mousePosition.X >= 50 && _mousePosition.X <= screenSize.X - 50 &&
+			               _mousePosition.Y >= 50 && _mousePosition.Y <= screenSize.Y - 50;
 		}
+		
+		// Check if the position is valid for building using BuildingZoneValidator
+		bool validBuildingZone = BuildingZoneValidator.CanBuildAt(_mousePosition);
+		
+		_isValidPlacement = withinBounds && validBuildingZone;
 		
 		// Could add more checks here:
 		// - Check for collisions with other turrets
-		// - Check for valid terrain
-		// - Check minimum distance from path
+		// - Check minimum distance requirements
 		// etc.
 	}
 	

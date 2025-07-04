@@ -14,6 +14,10 @@ public partial class Main : Node2D
 		
 		_inventoryPanel = GetNode<Panel>("InventoryUI/InventoryPanel");
 		_inventoryList = _inventoryPanel.GetNode<VBoxContainer>("MarginContainer/InventoryList");
+		
+		// Initialize BuildingZoneValidator with the GroundLayer
+		var groundLayer = GetNode<TileMapLayer>("GroundLayer");
+		BuildingZoneValidator.Initialize(groundLayer);
 	}
 
 	public override void _Input(InputEvent @event)
