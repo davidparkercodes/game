@@ -22,7 +22,6 @@ public partial class Building : StaticBody2D
 
 	public override void _Ready()
 	{
-
 		_fireTimer     = GetNode<Timer>("Timer");
 		_detectionArea = GetNode<Area2D>("Area2D");
 

@@ -5,6 +5,8 @@ public class PlayerBuildingBuilder
 	private readonly Player _player;
 	private BuildingPreview _currentPreview;
 	private bool _isInBuildMode = false;
+	
+	public bool IsInBuildMode => _isInBuildMode;
 
 	public PlayerBuildingBuilder(Player player)
 	{
@@ -19,11 +21,15 @@ public class PlayerBuildingBuilder
 			{
 				// Left click to place building
 				BuildBuilding();
+				// Mark the event as handled to prevent it from reaching buildings
+				_player.GetViewport().SetInputAsHandled();
 			}
 			else if (mouse.ButtonIndex == MouseButton.Right && _isInBuildMode)
 			{
-				// Right click to cancel build mode
+				// Right click to deselect current building
 				CancelBuildMode();
+				// Mark the event as handled
+				_player.GetViewport().SetInputAsHandled();
 			}
 		}
 		
@@ -72,9 +78,6 @@ public class PlayerBuildingBuilder
 		}
 		
 		GD.Print("❌ Cancelled building build mode");
-		
-		// Clear the current building selection in the player
-		_player.ClearBuildingSelection();
 	}
 
 	private void BuildBuilding()
@@ -113,8 +116,7 @@ public class PlayerBuildingBuilder
 
 		GD.Print($"🔧 Built building at {building.GlobalPosition} for ${cost}");
 		
-		// Exit build mode and clear selection
-		CancelBuildMode();
+		// Stay in build mode to allow building more of the same type
 	}
 
 }

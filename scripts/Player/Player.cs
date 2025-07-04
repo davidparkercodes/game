@@ -50,11 +50,21 @@ public partial class Player : CharacterBody2D
 				case Key.Key1:
 					if (BasicTurretScene != null)
 					{
-						// Start building basic turret immediately
-						CurrentBuildingScene = BasicTurretScene;
-						UpdateSelectedBuildingDisplay("Basic");
-						_buildingBuilder.StartBuildMode(BasicTurretScene);
-						GD.Print("📦 Selected Basic Turret for building");
+						// Toggle basic turret selection
+						if (CurrentBuildingScene == BasicTurretScene)
+						{
+							// Already selected, deselect
+							ClearBuildingSelection();
+							GD.Print("🚫 Deselected Basic Turret");
+						}
+						else
+						{
+							// Select basic turret
+							CurrentBuildingScene = BasicTurretScene;
+							UpdateSelectedBuildingDisplay("Basic");
+							_buildingBuilder.StartBuildMode(BasicTurretScene);
+							GD.Print("📦 Selected Basic Turret for building");
+						}
 					}
 					else
 					{
@@ -65,11 +75,21 @@ public partial class Player : CharacterBody2D
 				case Key.Key2:
 					if (SniperTurretScene != null)
 					{
-						// Start building sniper turret immediately
-						CurrentBuildingScene = SniperTurretScene;
-						UpdateSelectedBuildingDisplay("Sniper");
-						_buildingBuilder.StartBuildMode(SniperTurretScene);
-						GD.Print("🎯 Selected Sniper Turret for building");
+						// Toggle sniper turret selection
+						if (CurrentBuildingScene == SniperTurretScene)
+						{
+							// Already selected, deselect
+							ClearBuildingSelection();
+							GD.Print("🚫 Deselected Sniper Turret");
+						}
+						else
+						{
+							// Select sniper turret
+							CurrentBuildingScene = SniperTurretScene;
+							UpdateSelectedBuildingDisplay("Sniper");
+							_buildingBuilder.StartBuildMode(SniperTurretScene);
+							GD.Print("🎯 Selected Sniper Turret for building");
+						}
 					}
 					else
 					{
@@ -102,6 +122,7 @@ public partial class Player : CharacterBody2D
 		CurrentBuildingScene = null;
 		UpdateSelectedBuildingDisplay("None");
 		HideBuildingStats();
+		_buildingBuilder.CancelBuildMode();
 		GD.Print("🚫 Cleared building selection");
 	}
 	

@@ -7,7 +7,8 @@ public partial class BuildingManager : Node
 	
 	public override void _Ready()
 	{
-		
+		// Add to building_manager group for easy access
+		AddToGroup("building_manager");
 	}
 	
 	public void AddBuilding(Building building)
