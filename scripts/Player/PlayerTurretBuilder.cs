@@ -41,7 +41,13 @@ public class PlayerTurretBuilder
 			return;
 		}
 		
-		if (_isInBuildMode) return;
+		// If already in build mode, update the existing preview
+		if (_isInBuildMode && _currentPreview != null)
+		{
+			_currentPreview.UpdateTurretScene(turretScene);
+			GD.Print($"🔄 Switched to {turretScene.ResourcePath.GetFile().GetBaseName()} turret");
+			return;
+		}
 		
 		_isInBuildMode = true;
 		
@@ -107,12 +113,4 @@ public class PlayerTurretBuilder
 		CancelBuildMode();
 	}
 	
-	public void UpdateTurretSelection()
-	{
-		// Update preview if in build mode
-		if (_isInBuildMode && _currentPreview != null)
-		{
-			_currentPreview.UpdateTurretScene(_player.CurrentTurretScene);
-		}
-	}
 }

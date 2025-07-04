@@ -104,10 +104,18 @@ public partial class TurretPreview : Node2D
 		if (TurretScene != null)
 		{
 			_previewTurret = TurretScene.Instantiate<Turret>();
-			_previewTurret.InitializeStats();
+			_previewTurret.InitializeStats(); // Configure stats for correct range
 			AddChild(_previewTurret);
+			
+			// Make the turret semi-transparent for preview
 			_previewTurret.Modulate = new Color(1, 1, 1, 0.7f);
 			_previewTurret.ShowRange();
+			
+			// Disable collision and detection for preview turret
+			_previewTurret.SetCollisionLayerValue(1, false);
+			_previewTurret.SetCollisionMaskValue(1, false);
+			// Disable input for preview turret so it doesn't interfere with placement
+			_previewTurret.InputPickable = false;
 		}
 	}
 }
