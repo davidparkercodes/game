@@ -127,7 +127,18 @@ public partial class GameManager : Node
 	private void OnPhaseChanged(RoundPhase newPhase)
 	{
 		GD.Print($"📋 Phase changed to: {newPhase}");
-		// Update HUD phase indicator if needed
+		
+		if (Hud != null)
+		{
+			if (newPhase == RoundPhase.Build)
+			{
+				Hud.ShowSkipButton();
+			}
+			else
+			{
+				Hud.HideSkipButton();
+			}
+		}
 	}
 
 	private void OnRoundStarted(int roundNumber)

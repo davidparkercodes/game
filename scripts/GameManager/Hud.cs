@@ -6,6 +6,7 @@ public partial class Hud : CanvasLayer
 	[Export] public Label LivesLabel;
 	[Export] public Label WaveLabel;
 	[Export] public Label SelectedTurretLabel;
+	[Export] public Button SkipButton;
 	
 	// Turret stats panel
 	[Export] public Panel TurretStatsPanel;
@@ -22,6 +23,7 @@ public partial class Hud : CanvasLayer
 		LivesLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/LivesLabel");
 		WaveLabel  ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/WaveLabel");
 		SelectedTurretLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/SelectedTurretLabel");
+		SkipButton ??= GetNodeOrNull<Button>("SidebarPanel/VBoxContainer/SkipButton");
 		
 		// Turret stats panel nodes
 		TurretStatsPanel ??= GetNodeOrNull<Panel>("TurretStatsPanel");
@@ -30,6 +32,33 @@ public partial class Hud : CanvasLayer
 		DamageLabel ??= GetNodeOrNull<Label>("TurretStatsPanel/VBoxContainer/DamageLabel");
 		RangeLabel ??= GetNodeOrNull<Label>("TurretStatsPanel/VBoxContainer/RangeLabel");
 		FireRateLabel ??= GetNodeOrNull<Label>("TurretStatsPanel/VBoxContainer/FireRateLabel");
+		
+		// Connect Skip button
+		if (SkipButton != null)
+		{
+			SkipButton.Pressed += OnSkipButtonPressed;
+			GD.Print("✅ SkipButton found and connected");
+		}
+		else
+		{
+			GD.PrintErr("❌ SkipButton not found in HUD");
+		}
+		
+		// Force show button for initial testing
+		CallDeferred(nameof(TestButtonVisibility));
+	}
+	
+	private void TestButtonVisibility()
+	{
+		if (SkipButton != null)
+		{
+			GD.Print($"📍 Button found! Visible: {SkipButton.Visible}, Text: '{SkipButton.Text}'");
+			SkipButton.Visible = true;
+		}
+		else
+		{
+			GD.PrintErr("📍 Button still null in deferred call");
+		}
 	}
 
 	public void UpdateMoney(int amount) => MoneyLabel?.SetText($"Money: ${amount}");
@@ -55,6 +84,35 @@ public partial class Hud : CanvasLayer
 		if (TurretStatsPanel != null)
 		{
 			TurretStatsPanel.Visible = false;
+		}
+	}
+	
+	public void ShowSkipButton()
+	{
+		if (SkipButton != null)
+		{
+			SkipButton.Visible = true;
+			GD.Print("🔄 Skip button shown");
+		}
+		else
+		{
+			GD.PrintErr("❌ Cannot show skip button - button is null");
+		}
+	}
+	
+	public void HideSkipButton()
+	{
+		if (SkipButton != null)
+		{
+			SkipButton.Visible = false;
+		}
+	}
+	
+	private void OnSkipButtonPressed()
+	{
+		if (RoundManager.Instance != null)
+		{
+			RoundManager.Instance.ForceStartDefendPhase();
 		}
 	}
 }

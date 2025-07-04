@@ -34,6 +34,15 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.6, 1, 1)
 theme_override_font_sizes/font_size = 18
 
+[node name="SkipButton" type="Button" parent="SidebarPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_color_hover = Color(1, 1, 1, 1)
+theme_override_colors/font_color_pressed = Color(0.8, 0.8, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "⏭️ Start Wave"
+visible = true
+
 [node name="TurretStatsPanel" type="Panel" parent="."]
 anchors_preset = 1
 anchor_left = 1.0
