@@ -3,7 +3,6 @@ using Godot;
 public partial class Player : CharacterBody2D
 {
 	[Export] public float Speed = 200f;
-	[Export] public int AttackDamage = 10;
 
 	[Export] public PackedScene BasicTurretScene;
 	[Export] public PackedScene SniperTurretScene;
@@ -11,7 +10,6 @@ public partial class Player : CharacterBody2D
 	public PackedScene CurrentTurretScene { get; private set; }
 
 	private PlayerMovement _movement;
-	private PlayerCombat _combat;
 	private PlayerTurretBuilder _turretBuilder;
 
 	public override void _Ready()
@@ -27,7 +25,6 @@ public partial class Player : CharacterBody2D
 		}
 
 		_movement = new PlayerMovement(this);
-		_combat = new PlayerCombat(this);
 		_turretBuilder = new PlayerTurretBuilder(this);
 	}
 
@@ -36,10 +33,6 @@ public partial class Player : CharacterBody2D
 		_movement.Update(delta);
 	}
 
-	public override void _Process(double delta)
-	{
-		_combat.Update(delta);
-	}
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
@@ -110,21 +103,6 @@ public partial class Player : CharacterBody2D
 		}
 	}
 
-	private void TriggerHitbox()
-	{
-		var hitbox = GetNode<Area2D>("Hitbox");
-		if (hitbox != null)
-		{
-			hitbox.Call("ResetHits");
-			var collisionShape = hitbox.GetNode<CollisionShape2D>("CollisionShape2D");
-			if (collisionShape != null)
-			{
-				collisionShape.Disabled = false;
-				// Use a timer to disable it after a brief moment
-				GetTree().CreateTimer(0.1).Timeout += () => collisionShape.Disabled = true;
-			}
-		}
-	}
 
 	private void DelayedUpdateSelectedTurret(string turretName)
 	{

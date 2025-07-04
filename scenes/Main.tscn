@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://wgthd0eexbcv"]
+[gd_scene load_steps=18 format=3 uid="uid://wgthd0eexbcv"]
 
 [ext_resource type="Script" uid="uid://cj8x4bx2mnr6p" path="res://scripts/Core/Main.cs" id="1_c01mt"]
 [ext_resource type="PackedScene" uid="uid://dskbs3v14dukk" path="res://scenes/Player/Player.tscn" id="2_nxtc6"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://bgtv2vjc6gxb3" path="res://scenes/Enemies/Enemy.tscn" id="10_lhr70"]
 [ext_resource type="Script" uid="uid://btltgcqd0jtul" path="res://scripts/Map/PathManager.cs" id="11_pathmanager"]
 [ext_resource type="Script" uid="uid://b11tq5gvh7h7k" path="res://scripts/Waves/WaveSpawner.cs" id="12_wavespawner"]
+[ext_resource type="Script" uid="uid://cloejlfj83ln2" path="res://scripts/Systems/TurretManager.cs" id="13_turretmanager"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cm0pq"]
 size = Vector2(58, 60)
@@ -92,6 +93,9 @@ script = ExtResource("11_pathmanager")
 [node name="WaveSpawner" type="Node2D" parent="."]
 script = ExtResource("12_wavespawner")
 BasicEnemyScene = ExtResource("10_lhr70")
+
+[node name="TurretManager" type="Node" parent="."]
+script = ExtResource("13_turretmanager")
 
 [node name="Archive" type="Node" parent="."]
 

@@ -25,6 +25,8 @@ public partial class TurretPreview : Node2D
 			// Disable collision and detection for preview turret
 			_previewTurret.SetCollisionLayerValue(1, false);
 			_previewTurret.SetCollisionMaskValue(1, false);
+			// Disable input for preview turret so it doesn't interfere with placement
+			_previewTurret.InputPickable = false;
 		}
 	}
 

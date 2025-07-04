@@ -14,7 +14,11 @@ public partial class Turret : StaticBody2D
 	private Area2D _detectionArea;
 	private Node2D _currentTarget;
 	private bool _showRange = false;
+	private bool _isSelected = false;
 	private Color _rangeColor = new Color(0.2f, 0.8f, 1.0f, 0.3f); // Light blue with transparency
+	private Color _selectedRangeColor = new Color(1.0f, 1.0f, 0.2f, 0.4f); // Yellow for selected turret
+	
+	public static Turret SelectedTurret { get; private set; }
 
 	public override void _Ready()
 	{
@@ -34,9 +38,12 @@ public partial class Turret : StaticBody2D
 		_fireTimer.Timeout += OnFireTimerTimeout;
 		
 		// Enable mouse input for hover detection
+		InputPickable = true; // Enable input detection for StaticBody2D
 		InputEvent += OnTurretInput;
+		MouseEntered += OnMouseEntered;
+		MouseExited += OnMouseExited;
 
-		GD.Print($"[TURRET] {GetType().Name}: Damage={Damage}, FireRate={FireRate}, Range={Range}");
+		GD.Print($"[TURRET] {GetType().Name}: Damage={Damage}, FireRate={FireRate}, Range={Range}, InputPickable={InputPickable}");
 	}
 
 	// ---------- OVERRIDES ----------------------------------------------------
@@ -67,6 +74,39 @@ public partial class Turret : StaticBody2D
 		if (_showRange)
 			QueueRedraw();
 	}
+	
+	public void SelectTurret()
+	{
+		// Deselect previous turret
+		if (SelectedTurret != null && SelectedTurret != this)
+		{
+			SelectedTurret.DeselectTurret();
+		}
+		
+		_isSelected = true;
+		SelectedTurret = this;
+		ShowRange();
+		GD.Print($"🎯 Selected {GetType().Name} - Range: {Range}, Damage: {Damage}, Cost: ${Cost}");
+	}
+	
+	public void DeselectTurret()
+	{
+		_isSelected = false;
+		if (SelectedTurret == this)
+			SelectedTurret = null;
+		HideRange();
+	}
+	
+	public void ToggleSelection()
+	{
+		GD.Print($"🔄 Toggling selection for {GetType().Name}. Currently selected: {_isSelected}");
+		if (_isSelected)
+			DeselectTurret();
+		else
+			SelectTurret();
+	}
+	
+	public bool IsSelected => _isSelected;
 
 	public override void _Process(double delta)
 	{
@@ -78,12 +118,22 @@ public partial class Turret : StaticBody2D
 	{
 		if (_showRange)
 		{
+			// Use selected color if this turret is selected
+			var currentRangeColor = _isSelected ? _selectedRangeColor : _rangeColor;
+			
 			// Draw range circle
-			DrawArc(Vector2.Zero, Range, 0, Mathf.Tau, 64, _rangeColor, 2.0f);
+			DrawArc(Vector2.Zero, Range, 0, Mathf.Tau, 64, currentRangeColor, 2.0f);
 			
 			// Draw filled circle with transparency
-			var fillColor = new Color(_rangeColor.R, _rangeColor.G, _rangeColor.B, _rangeColor.A * 0.5f);
+			var fillColor = new Color(currentRangeColor.R, currentRangeColor.G, currentRangeColor.B, currentRangeColor.A * 0.5f);
 			DrawCircle(Vector2.Zero, Range, fillColor);
+		}
+		
+		// Draw selection indicator
+		if (_isSelected)
+		{
+			// Draw a small circle around the turret to show it's selected
+			DrawArc(Vector2.Zero, 20, 0, Mathf.Tau, 32, Colors.Yellow, 3.0f);
 		}
 	}
 
@@ -130,14 +180,32 @@ public partial class Turret : StaticBody2D
 	
 	private void OnTurretInput(Node viewport, InputEvent @event, long shapeIdx)
 	{
-		if (@event is InputEventMouseMotion)
+		if (@event is InputEventMouseButton button && button.Pressed)
 		{
-			// Show range on hover
+			GD.Print($"🖱️ Turret received mouse input: {button.ButtonIndex}");
+			if (button.ButtonIndex == MouseButton.Left)
+			{
+				// Left click to select/deselect turret
+				GD.Print($"🎯 Left click on {GetType().Name} turret");
+				ToggleSelection();
+			}
+		}
+	}
+	
+	private void OnMouseEntered()
+	{
+		// Show range on hover (only if not selected)
+		if (!_isSelected)
+		{
 			ShowRange();
 		}
-		else if (@event is InputEventMouseButton button && !button.Pressed)
+	}
+	
+	private void OnMouseExited()
+	{
+		// Hide range when mouse leaves (only if not selected)
+		if (!_isSelected)
 		{
-			// Hide range when mouse leaves
 			HideRange();
 		}
 	}
