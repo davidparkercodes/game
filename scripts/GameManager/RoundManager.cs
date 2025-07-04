@@ -108,6 +108,13 @@ public partial class RoundManager : Node
 		CurrentPhase = RoundPhase.Defend;
 		_phaseTimer.Stop();
 		
+		// Cancel any active build mode before starting defend phase
+		var player = GetTree().GetFirstNodeInGroup("player") as Player;
+		if (player != null)
+		{
+			player.CancelBuildMode();
+		}
+		
 		if (SoundManager.Instance != null)
 		{
 			SoundManager.Instance.PlaySound("round_start");

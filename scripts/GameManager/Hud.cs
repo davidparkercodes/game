@@ -5,7 +5,6 @@ public partial class Hud : CanvasLayer
 	[Export] public Label MoneyLabel;
 	[Export] public Label LivesLabel;
 	[Export] public Label WaveLabel;
-	[Export] public Label SelectedTurretLabel;
 	[Export] public Button SkipButton;
 	
 	// Turret stats panel
@@ -22,7 +21,6 @@ public partial class Hud : CanvasLayer
 		MoneyLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/MoneyLabel");
 		LivesLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/LivesLabel");
 		WaveLabel  ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/WaveLabel");
-		SelectedTurretLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/SelectedTurretLabel");
 		SkipButton ??= GetNodeOrNull<Button>("SidebarPanel/VBoxContainer/SkipButton");
 		
 		// Turret stats panel nodes
@@ -64,8 +62,6 @@ public partial class Hud : CanvasLayer
 	public void UpdateMoney(int amount) => MoneyLabel?.SetText($"Money: ${amount}");
 	public void UpdateLives(int lives)  => LivesLabel?.SetText($"Lives: {lives}");
 	public void UpdateWave(int wave)    => WaveLabel?.SetText($"Wave: {wave}/{RoundManager.Instance?.TotalRounds ?? 5}");
-	public void UpdateSelectedTurret(string turretName) => SelectedTurretLabel?.SetText($"Selected: {turretName}");
-	public void UpdateSelectedBuilding(string buildingName) => SelectedTurretLabel?.SetText($"Selected: {buildingName}");
 	
 	public void ShowTurretStats(string turretName, int cost, int damage, float range, float fireRate)
 	{

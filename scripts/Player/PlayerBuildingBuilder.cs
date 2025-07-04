@@ -77,6 +77,9 @@ public class PlayerBuildingBuilder
 			_currentPreview = null;
 		}
 		
+		// Notify Player to clear its building selection state
+		_player.ClearPlayerSelectionState();
+		
 		GD.Print("❌ Cancelled building build mode");
 	}
 

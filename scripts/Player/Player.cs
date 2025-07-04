@@ -50,6 +50,11 @@ public partial class Player : CharacterBody2D
 				case Key.Key1:
 					if (BasicTurretScene != null)
 					{
+						// Debug: Print current state
+						GD.Print($"🔍 Key1 pressed. CurrentBuildingScene: {(CurrentBuildingScene == null ? "null" : CurrentBuildingScene.ResourcePath.GetFile().GetBaseName())}");
+						GD.Print($"🔍 BasicTurretScene: {BasicTurretScene.ResourcePath.GetFile().GetBaseName()}");
+						GD.Print($"🔍 Are they equal? {CurrentBuildingScene == BasicTurretScene}");
+						
 						// Toggle basic turret selection
 						if (CurrentBuildingScene == BasicTurretScene)
 						{
@@ -128,22 +133,32 @@ public partial class Player : CharacterBody2D
 	
 	public void CancelBuildMode()
 	{
+		GD.Print($"🔧 CancelBuildMode called. CurrentBuildingScene before: {(CurrentBuildingScene == null ? "null" : CurrentBuildingScene.ResourcePath.GetFile().GetBaseName())}");
+		
 		// Cancel any active build mode through the building builder
 		_buildingBuilder?.CancelBuildMode();
+		
+		// Also clear the Player's building selection state
+		CurrentBuildingScene = null;
+		HideBuildingStats();
+		
+		GD.Print($"🔧 CancelBuildMode finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")})");
+	}
+	
+	// Called by PlayerBuildingBuilder to clear Player state without circular calls
+	public void ClearPlayerSelectionState()
+	{
+		GD.Print($"🧹 ClearPlayerSelectionState called. CurrentBuildingScene before: {(CurrentBuildingScene == null ? "null" : CurrentBuildingScene.ResourcePath.GetFile().GetBaseName())}");
+		
+		CurrentBuildingScene = null;
+		HideBuildingStats();
+		
+		GD.Print($"🧹 ClearPlayerSelectionState finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")})");
 	}
 
 	private void UpdateSelectedBuildingDisplay(string buildingName)
 	{
-		if (GameManager.Instance?.Hud != null)
-		{
-			GameManager.Instance.Hud.UpdateSelectedBuilding(buildingName);
-			UpdateBuildingStats(buildingName);
-		}
-		else
-		{
-			// Defer the call until GameManager is ready
-			CallDeferred(nameof(DelayedUpdateSelectedBuilding), buildingName);
-		}
+		UpdateBuildingStats(buildingName);
 	}
 	
 	private void UpdateBuildingStats(string buildingName)
@@ -205,12 +220,4 @@ public partial class Player : CharacterBody2D
 	}
 
 
-	private void DelayedUpdateSelectedBuilding(string buildingName)
-	{
-		if (GameManager.Instance?.Hud != null)
-		{
-			GameManager.Instance.Hud.UpdateSelectedBuilding(buildingName);
-			UpdateBuildingStats(buildingName);
-		}
-	}
 }
