@@ -54,6 +54,7 @@ public partial class Player : CharacterBody2D
 					{
 						CurrentTurretScene = BasicTurretScene;
 						UpdateSelectedTurretDisplay("Basic");
+						_turretBuilder.UpdateTurretSelection();
 						GD.Print("📦 Switched to Basic Turret");
 					}
 					else
@@ -67,6 +68,7 @@ public partial class Player : CharacterBody2D
 					{
 						CurrentTurretScene = SniperTurretScene;
 						UpdateSelectedTurretDisplay("Sniper");
+						_turretBuilder.UpdateTurretSelection();
 						GD.Print("🎯 Switched to Sniper Turret");
 					}
 					else
@@ -85,10 +87,12 @@ public partial class Player : CharacterBody2D
 			case "Basic":
 				CurrentTurretScene = BasicTurretScene;   // make sure this PackedScene field exists/exported
 				UpdateSelectedTurretDisplay("Basic");
+				_turretBuilder.UpdateTurretSelection();
 				break;
 			case "Sniper":
 				CurrentTurretScene = SniperTurretScene;  // same here
 				UpdateSelectedTurretDisplay("Sniper");
+				_turretBuilder.UpdateTurretSelection();
 				break;
 		}
 	}

@@ -13,6 +13,8 @@ public partial class Turret : StaticBody2D
 	private Timer  _fireTimer;
 	private Area2D _detectionArea;
 	private Node2D _currentTarget;
+	private bool _showRange = false;
+	private Color _rangeColor = new Color(0.2f, 0.8f, 1.0f, 0.3f); // Light blue with transparency
 
 	public override void _Ready()
 	{
@@ -30,6 +32,9 @@ public partial class Turret : StaticBody2D
 
 		_fireTimer.WaitTime = FireRate;
 		_fireTimer.Timeout += OnFireTimerTimeout;
+		
+		// Enable mouse input for hover detection
+		InputEvent += OnTurretInput;
 
 		GD.Print($"[TURRET] {GetType().Name}: Damage={Damage}, FireRate={FireRate}, Range={Range}");
 	}
@@ -42,11 +47,44 @@ public partial class Turret : StaticBody2D
 	{
 		ConfigureStats();
 	}
+	
+	// Range visualization methods
+	public void ShowRange()
+	{
+		_showRange = true;
+		QueueRedraw();
+	}
+	
+	public void HideRange()
+	{
+		_showRange = false;
+		QueueRedraw();
+	}
+	
+	public void SetRangeColor(Color color)
+	{
+		_rangeColor = color;
+		if (_showRange)
+			QueueRedraw();
+	}
 
 	public override void _Process(double delta)
 	{
 		if (_currentTarget != null && IsInstanceValid(_currentTarget))
 			LookAt(_currentTarget.GlobalPosition);
+	}
+	
+	public override void _Draw()
+	{
+		if (_showRange)
+		{
+			// Draw range circle
+			DrawArc(Vector2.Zero, Range, 0, Mathf.Tau, 64, _rangeColor, 2.0f);
+			
+			// Draw filled circle with transparency
+			var fillColor = new Color(_rangeColor.R, _rangeColor.G, _rangeColor.B, _rangeColor.A * 0.5f);
+			DrawCircle(Vector2.Zero, Range, fillColor);
+		}
 	}
 
 	// ---------- SIGNAL CALLBACKS --------------------------------------------
@@ -89,4 +127,19 @@ public partial class Turret : StaticBody2D
 
 		GetTree().Root.AddChild(bullet);
 	}
+	
+	private void OnTurretInput(Node viewport, InputEvent @event, long shapeIdx)
+	{
+		if (@event is InputEventMouseMotion)
+		{
+			// Show range on hover
+			ShowRange();
+		}
+		else if (@event is InputEventMouseButton button && !button.Pressed)
+		{
+			// Hide range when mouse leaves
+			HideRange();
+		}
+	}
+	
 }
