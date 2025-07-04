@@ -14,15 +14,16 @@ public partial class SoundManager : Node
 	public static SoundManager Instance { get; private set; }
 	
 	private Dictionary<string, AudioStream> _sounds = new Dictionary<string, AudioStream>();
+	private Dictionary<string, SoundConfigData> _soundConfigs = new Dictionary<string, SoundConfigData>();
 	private List<AudioStreamPlayer> _sfxPlayers = new List<AudioStreamPlayer>();
 	private AudioStreamPlayer _uiPlayer;
 	private AudioStreamPlayer _musicPlayer;
 	
 	[Export] public int MaxSimultaneousSFX = 10;
-	[Export] public float MasterVolume = 1.0f;
-	[Export] public float SFXVolume = 1.0f;
-	[Export] public float UIVolume = 1.0f;
-	[Export] public float MusicVolume = 1.0f;
+	[Export] public float MasterVolume = 0.6f;
+	[Export] public float SFXVolume = 0.7f;
+	[Export] public float UIVolume = 0.5f;
+	[Export] public float MusicVolume = 0.4f;
 	
 	public override void _Ready()
 	{
@@ -49,6 +50,14 @@ public partial class SoundManager : Node
 	private void LoadSounds()
 	{
 		_sounds = SoundLoader.LoadSounds();
+		
+		// Also load sound configurations to get individual volume settings
+		var config = SoundLoader.LoadConfiguration();
+		if (config != null)
+		{
+			_soundConfigs = config.GetAllSounds();
+			GD.Print($"🔊 Loaded {_soundConfigs.Count} sound configurations");
+		}
 	}
 	
 	public void PlaySound(string soundKey, SoundCategory category = SoundCategory.SFX, float volumeDb = 0.0f)
@@ -66,8 +75,15 @@ public partial class SoundManager : Node
 			return;
 		}
 		
+		// Get individual sound volume from configuration
+		float individualSoundVolume = 0.0f;
+		if (_soundConfigs.ContainsKey(soundKey))
+		{
+			individualSoundVolume = _soundConfigs[soundKey].Volume;
+		}
+		
 		player.Stream = _sounds[soundKey];
-		player.VolumeDb = volumeDb + GetCategoryVolumeDb(category);
+		player.VolumeDb = volumeDb + individualSoundVolume + GetCategoryVolumeDb(category);
 		player.Play();
 	}
 	
