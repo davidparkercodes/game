@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://dh34v5ge0ktyv" path="res://scenes/Items/VendingMachinePickup.tscn" id="6_c01mt"]
 [ext_resource type="Script" uid="uid://d28wdl2bn0af2" path="res://scripts/GameManager/GameManager.cs" id="8_bjd11"]
 [ext_resource type="Script" uid="uid://do2bh7invyjpr" path="res://scripts/Enemies/EnemySpawner.cs" id="9_q8u5g"]
-[ext_resource type="PackedScene" uid="uid://dhgcatjlalax7" path="res://scenes/UI/Hud.tscn" id="9_qmy6f"]
+[ext_resource type="PackedScene" path="res://scenes/UI/Hud.tscn" id="9_qmy6f"]
 [ext_resource type="PackedScene" uid="uid://bgtv2vjc6gxb3" path="res://scenes/Enemies/Enemy.tscn" id="10_lhr70"]
 [ext_resource type="Script" uid="uid://btltgcqd0jtul" path="res://scripts/Map/PathManager.cs" id="11_pathmanager"]
 [ext_resource type="Script" uid="uid://b11tq5gvh7h7k" path="res://scripts/Waves/WaveSpawner.cs" id="12_wavespawner"]

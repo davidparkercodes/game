@@ -1,5 +1,13 @@
 using Godot;
 
+public class TurretStats
+{
+	public int Cost { get; set; }
+	public int Damage { get; set; }
+	public float Range { get; set; }
+	public float FireRate { get; set; }
+}
+
 public partial class Player : CharacterBody2D
 {
 	[Export] public float Speed = 200f;
@@ -90,6 +98,7 @@ public partial class Player : CharacterBody2D
 	{
 		CurrentTurretScene = null;
 		UpdateSelectedTurretDisplay("None");
+		HideTurretStats();
 		GD.Print("🚫 Cleared turret selection");
 	}
 
@@ -98,11 +107,70 @@ public partial class Player : CharacterBody2D
 		if (GameManager.Instance?.Hud != null)
 		{
 			GameManager.Instance.Hud.UpdateSelectedTurret(turretName);
+			UpdateTurretStats(turretName);
 		}
 		else
 		{
 			// Defer the call until GameManager is ready
 			CallDeferred(nameof(DelayedUpdateSelectedTurret), turretName);
+		}
+	}
+	
+	private void UpdateTurretStats(string turretName)
+	{
+		if (turretName == "None")
+		{
+			HideTurretStats();
+			return;
+		}
+		
+		var stats = GetTurretStats(turretName);
+		if (stats != null)
+		{
+			ShowTurretStats(turretName, stats.Cost, stats.Damage, stats.Range, stats.FireRate);
+		}
+	}
+	
+	private TurretStats GetTurretStats(string turretName)
+	{
+		PackedScene turretScene = turretName switch
+		{
+			"Basic" => BasicTurretScene,
+			"Sniper" => SniperTurretScene,
+			_ => null
+		};
+		
+		if (turretScene == null) return null;
+		
+		// Create a temporary instance to get stats
+		var tempTurret = turretScene.Instantiate<Turret>();
+		tempTurret.InitializeStats(); // Configure stats before accessing them
+		
+		var stats = new TurretStats
+		{
+			Cost = tempTurret.Cost,
+			Damage = tempTurret.Damage,
+			Range = tempTurret.Range,
+			FireRate = tempTurret.FireRate
+		};
+		
+		tempTurret.QueueFree();
+		return stats;
+	}
+	
+	private void ShowTurretStats(string turretName, int cost, int damage, float range, float fireRate)
+	{
+		if (GameManager.Instance?.Hud != null)
+		{
+			GameManager.Instance.Hud.ShowTurretStats(turretName, cost, damage, range, fireRate);
+		}
+	}
+	
+	private void HideTurretStats()
+	{
+		if (GameManager.Instance?.Hud != null)
+		{
+			GameManager.Instance.Hud.HideTurretStats();
 		}
 	}
 
@@ -112,6 +180,7 @@ public partial class Player : CharacterBody2D
 		if (GameManager.Instance?.Hud != null)
 		{
 			GameManager.Instance.Hud.UpdateSelectedTurret(turretName);
+			UpdateTurretStats(turretName);
 		}
 	}
 }
