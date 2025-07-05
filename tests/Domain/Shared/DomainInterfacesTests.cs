@@ -3,7 +3,7 @@ using Xunit;
 using FluentAssertions;
 using Moq;
 using Game.Domain.Shared.Interfaces;
-using Game.Domain.ValueObjects;
+using Game.Domain.Buildings.ValueObjects;
 
 namespace Game.Tests.Domain.Shared;
 

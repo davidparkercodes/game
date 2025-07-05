@@ -1,4 +1,5 @@
-using Game.Domain.ValueObjects;
+using Game.Domain.Enemies.ValueObjects;
+using Game.Domain.Levels.ValueObjects;
 
 namespace Game.Domain.Shared.Interfaces;
 
@@ -12,5 +13,5 @@ public interface IWaveService
     float GetWaveProgress();
     EnemyStats GetNextEnemyType();
     bool IsWaveComplete();
-    void LoadWaveConfiguration(LevelConfiguration levelConfig);
+    void LoadWaveConfiguration(LevelData levelConfig);
 }

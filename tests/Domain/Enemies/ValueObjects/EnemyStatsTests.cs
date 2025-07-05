@@ -1,9 +1,9 @@
 using System;
 using Xunit;
 using FluentAssertions;
-using Game.Domain.ValueObjects;
+using Game.Domain.Enemies.ValueObjects;
 
-namespace Game.Tests.Domain.ValueObjects
+namespace Game.Tests.Domain.Enemies.ValueObjects
 {
     public class EnemyStatsTests
     {

@@ -1,9 +1,9 @@
 using System;
 using Xunit;
 using FluentAssertions;
-using Game.Domain.ValueObjects;
+using Game.Domain.Buildings.ValueObjects;
 
-namespace Game.Tests.Domain.ValueObjects
+namespace Game.Tests.Domain.Buildings.ValueObjects
 {
     public class BuildingStatsTests
     {

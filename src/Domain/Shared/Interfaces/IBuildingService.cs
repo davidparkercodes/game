@@ -1,4 +1,4 @@
-using Game.Domain.ValueObjects;
+using Game.Domain.Buildings.ValueObjects;
 
 namespace Game.Domain.Shared.Interfaces;
 
