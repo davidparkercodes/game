@@ -24,7 +24,7 @@ public class GetTurretStatsQueryHandler : IQueryHandler<GetTurretStatsQuery, Tur
             return Task.FromResult(TurretStatsResponse.NotFound(""));
 
         var buildingStats = _statsService.GetBuildingStats(query.TurretType);
-        if (buildingStats == null)
+        if (buildingStats.cost == 0 && query.TurretType != "basic_tower")
             return Task.FromResult(TurretStatsResponse.NotFound(query.TurretType));
 
         var response = new TurretStatsResponse(

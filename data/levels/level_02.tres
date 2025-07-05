@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="LevelData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="LevelDataResource" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://src/Domain/Levels/ValueObjects/LevelData.cs" id="1"]
+[ext_resource type="Script" path="res://src/Domain/Levels/ValueObjects/LevelDataResource.cs" id="1"]
 
 [resource]
 script = ExtResource("1")

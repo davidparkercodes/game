@@ -2,6 +2,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Waves.Commands;
+using Game.Infrastructure.Managers;
+using Game.Infrastructure.Configuration;
 
 namespace Game.Application.Waves.Handlers;
 
@@ -27,7 +29,9 @@ public class StartWaveCommandHandler : ICommandHandler<StartWaveCommand, StartWa
 
         try
         {
-            waveSpawner.StartWave(command.WaveIndex);
+            // Create a basic wave config
+            var waveConfig = new WaveConfig(command.WaveIndex + 1, $"Wave {command.WaveIndex + 1}");
+            waveSpawner.StartWave(waveConfig);
             var waveName = $"Wave {command.WaveIndex + 1}";
             var totalEnemies = waveSpawner.TotalEnemiesInWave;
             

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using Game.Infrastructure.Interfaces;
+using Game.Infrastructure.Configuration;
 
 namespace Game.Infrastructure.Waves;
 

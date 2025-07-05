@@ -1,6 +1,8 @@
 using Godot;
 using Game.Presentation.Buildings;
 using Game.Presentation.Systems;
+using Game.Infrastructure.Managers;
+using Game.Infrastructure.Validators;
 
 namespace Game.Presentation.Player;
 
@@ -86,18 +88,19 @@ public class PlayerBuildingBuilder
 			return;
 		
 		Vector2 buildPosition = _currentPreview.GetPlacementPosition();
-		if (!BuildingZoneValidator.CanBuildAtWithLogging(buildPosition))
+		if (!Game.Infrastructure.Validators.BuildingZoneValidator.CanBuildAtWithLogging(buildPosition))
 		{
 			return;
 		}
 		
-		var buildingManager = _player.GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;
-		if (buildingManager != null && buildingManager.IsPositionOccupied(buildPosition, 16.0f))
-		{
-			var existingBuilding = buildingManager.GetBuildingAt(buildPosition, 16.0f);
-			GD.Print($"🏭 Cannot place building - overlapping with existing {existingBuilding?.GetType().Name ?? "building"} at {buildPosition}");
-			return;
-		}
+		// TODO: Implement proper building manager integration
+		// var buildingManager = _player.GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;
+		// if (buildingManager != null && buildingManager.IsPositionOccupied(buildPosition, 16.0f))
+		// {
+		// 	var existingBuilding = buildingManager.GetBuildingAt(buildPosition, 16.0f);
+		// 	GD.Print($"🏭 Cannot place building - overlapping with existing {existingBuilding?.GetType().Name ?? "building"} at {buildPosition}");
+		// 	return;
+		// }
 		
 		if (!_currentPreview.CanPlaceBuilding())
 		{
@@ -123,7 +126,8 @@ public class PlayerBuildingBuilder
 		building.GlobalPosition = _currentPreview.GetPlacementPosition();
 		_player.GetTree().Root.AddChild(building);
 
-		buildingManager?.AddBuilding(building);
+		// TODO: Register building with building manager
+		// buildingManager?.AddBuilding(building);
 
 		GD.Print($"🔧 Built building at {building.GlobalPosition} for ${cost}");
 	}

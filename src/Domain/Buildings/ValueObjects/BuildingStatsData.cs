@@ -10,6 +10,8 @@ public readonly struct BuildingStatsData
     public float attack_speed { get; }
     public int upgrade_cost { get; }
     public string description { get; }
+    public float fire_rate => attack_speed;
+    public float bullet_speed { get; }
 
     public BuildingStatsData(
         int cost = 0,
@@ -17,7 +19,8 @@ public readonly struct BuildingStatsData
         float range = 0f,
         float attackSpeed = 0f,
         int upgradeCost = 0,
-        string description = "")
+        string description = "",
+        float bulletSpeed = 300f)
     {
         if (cost < 0) throw new ArgumentException("Cost cannot be negative", nameof(cost));
         if (damage < 0) throw new ArgumentException("Damage cannot be negative", nameof(damage));
@@ -31,6 +34,7 @@ public readonly struct BuildingStatsData
         attack_speed = attackSpeed;
         upgrade_cost = upgradeCost;
         this.description = description ?? string.Empty;
+        bullet_speed = bulletSpeed;
     }
 
     public static BuildingStatsData CreateDefault() => new(
@@ -39,7 +43,8 @@ public readonly struct BuildingStatsData
         range: 150f,
         attackSpeed: 1.0f,
         upgradeCost: 50,
-        description: "Basic tower"
+        description: "Basic tower",
+        bulletSpeed: 300f
     );
 
     public override string ToString()

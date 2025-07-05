@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Game.Commands;
+using Game.Application.Queries.Game;
 using Game.Application.Rounds.Commands;
+using Game.Infrastructure.Managers;
 using Game.Infrastructure.DI;
 
 namespace Game.Application.Game;

@@ -1,6 +1,7 @@
 using Game.Infrastructure.Interfaces;
 using Game.Domain.Enemies.ValueObjects;
 using Game.Domain.Buildings.ValueObjects;
+using Game.Infrastructure.Managers;
 
 namespace Game.Infrastructure.Stats;
 

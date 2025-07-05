@@ -7,6 +7,7 @@ using Godot;
 using Game.Application.Buildings.Commands;
 using Game.Application.Buildings.Handlers;
 using Game.Infrastructure.Interfaces;
+using Game.Domain.Buildings.ValueObjects;
 
 namespace Game.Tests.Application.Buildings.Handlers;
 
@@ -69,7 +70,7 @@ public class PlaceBuildingCommandHandlerTests
     {
         // Arrange
         var command = new PlaceBuildingCommand("unknown_type", new Vector2(100, 100));
-        _mockStatsService.Setup(x => x.GetBuildingStats("unknown_type")).Returns((BuildingStatsData)null);
+        _mockStatsService.Setup(x => x.GetBuildingStats("unknown_type")).Returns(new BuildingStatsData());
 
         // Act
         var result = await _handler.HandleAsync(command);
@@ -84,7 +85,7 @@ public class PlaceBuildingCommandHandlerTests
     {
         // Arrange
         var command = new PlaceBuildingCommand("basic_turret", new Vector2(100, 100));
-        var buildingStats = new BuildingStatsData { cost = 50 };
+        var buildingStats = new BuildingStatsData(cost: 50);
         
         _mockStatsService.Setup(x => x.GetBuildingStats("basic_turret")).Returns(buildingStats);
         _mockZoneService.Setup(x => x.CanBuildAt(new Vector2(100, 100))).Returns(false);
@@ -103,7 +104,7 @@ public class PlaceBuildingCommandHandlerTests
         // Arrange
         var position = new Vector2(100, 100);
         var command = new PlaceBuildingCommand("basic_turret", position);
-        var buildingStats = new BuildingStatsData { cost = 50 };
+        var buildingStats = new BuildingStatsData(cost: 50);
         
         _mockStatsService.Setup(x => x.GetBuildingStats("basic_turret")).Returns(buildingStats);
         _mockZoneService.Setup(x => x.CanBuildAt(position)).Returns(false);
@@ -120,7 +121,7 @@ public class PlaceBuildingCommandHandlerTests
     {
         // Arrange
         var command = new PlaceBuildingCommand("basic_turret", new Vector2(100, 100));
-        var buildingStats = new BuildingStatsData { cost = 50 };
+        var buildingStats = new BuildingStatsData(cost: 50);
         
         _mockStatsService.Setup(x => x.GetBuildingStats("basic_turret")).Returns(buildingStats);
         _mockZoneService.Setup(x => x.CanBuildAt(It.IsAny<Vector2>())).Returns(false);

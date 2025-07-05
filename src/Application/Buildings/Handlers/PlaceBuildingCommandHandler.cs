@@ -4,6 +4,8 @@ using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
 using Game.Infrastructure.Interfaces;
 using Game.Domain.Buildings.ValueObjects;
+using Game.Infrastructure.Managers;
+using Game.Presentation.Buildings;
 
 namespace Game.Application.Buildings.Handlers;
 
@@ -28,7 +30,7 @@ public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand,
             return Task.FromResult(PlaceBuildingResult.Failed("Building type cannot be empty"));
 
         var buildingStats = _statsService.GetBuildingStats(command.BuildingType);
-        if (buildingStats == null)
+        if (buildingStats.cost == 0 && command.BuildingType != "basic_tower")
             return Task.FromResult(PlaceBuildingResult.Failed($"Unknown building type: {command.BuildingType}"));
 
         if (!_zoneService.CanBuildAt(command.Position))

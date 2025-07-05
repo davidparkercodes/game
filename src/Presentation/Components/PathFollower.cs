@@ -1,5 +1,6 @@
 using Godot;
-
+using System;
+using Game.Infrastructure.Managers;
 namespace Game.Presentation.Components;
 
 public partial class PathFollower : Node

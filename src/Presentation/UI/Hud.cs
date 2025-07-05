@@ -1,4 +1,5 @@
 using Godot;
+using Game.Infrastructure.Managers;
 
 namespace Game.Presentation.UI;
 
@@ -56,20 +57,20 @@ public partial class Hud : CanvasLayer
 		}
 	}
 
-	public void UpdateMoney(int amount) => MoneyLabel?.SetText($"Money: ${amount}");
-	public void UpdateLives(int lives)  => LivesLabel?.SetText($"Lives: {lives}");
-	public void UpdateWave(int wave)    => WaveLabel?.SetText($"Wave: {wave}/{RoundManager.Instance?.TotalRounds ?? 5}");
+	public void UpdateMoney(int amount) { if (MoneyLabel != null) MoneyLabel.Text = $"Money: ${amount}"; }
+	public void UpdateLives(int lives) { if (LivesLabel != null) LivesLabel.Text = $"Lives: {lives}"; }
+	public void UpdateWave(int wave) { if (WaveLabel != null) WaveLabel.Text = $"Wave: {wave}/{RoundManager.Instance?.TotalRounds ?? 5}"; }
 	
 	public void ShowTurretStats(string turretName, int cost, int damage, float range, float fireRate)
 	{
 		if (TurretStatsPanel != null)
 		{
 			TurretStatsPanel.Visible = true;
-			TurretNameLabel?.SetText(turretName);
-			CostLabel?.SetText($"Cost: ${cost}");
-			DamageLabel?.SetText($"Damage: {damage}");
-			RangeLabel?.SetText($"Range: {range:F0}");
-			FireRateLabel?.SetText($"Fire Rate: {fireRate:F1}s");
+			if (TurretNameLabel != null) TurretNameLabel.Text = turretName;
+			if (CostLabel != null) CostLabel.Text = $"Cost: ${cost}";
+			if (DamageLabel != null) DamageLabel.Text = $"Damage: {damage}";
+			if (RangeLabel != null) RangeLabel.Text = $"Range: {range:F0}";
+			if (FireRateLabel != null) FireRateLabel.Text = $"Fire Rate: {fireRate:F1}s";
 		}
 	}
 	

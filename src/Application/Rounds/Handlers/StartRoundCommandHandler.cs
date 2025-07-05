@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Rounds.Commands;
+using Game.Infrastructure.Managers;
 
 namespace Game.Application.Rounds.Handlers;
 
@@ -27,12 +28,12 @@ public class StartRoundCommandHandler : ICommandHandler<StartRoundCommand, Start
             return Task.FromResult(StartRoundResult.Failed($"Cannot start round {command.RoundNumber}. Current round is {roundManager.CurrentRound}"));
         }
 
-        if (roundManager.IsRoundActive)
+        if (roundManager.IsRoundActive())
         {
             return Task.FromResult(StartRoundResult.Failed($"Round {roundManager.CurrentRound} is already active"));
         }
 
-        roundManager.StartRound();
+        roundManager.StartRound(command.RoundNumber > 0 ? command.RoundNumber : roundManager.CurrentRound);
         return Task.FromResult(StartRoundResult.Successful(roundManager.CurrentRound, roundManager.CurrentPhase.ToString()));
     }
 }

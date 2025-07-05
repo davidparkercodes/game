@@ -1,3 +1,5 @@
+using Game.Infrastructure.Configuration;
+
 namespace Game.Infrastructure.Interfaces;
 
 public interface IWaveConfigService

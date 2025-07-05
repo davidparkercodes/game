@@ -1,4 +1,6 @@
 using Godot;
+using Game.Infrastructure.Managers;
+using Game.Presentation.Enemies;
 
 namespace Game.Presentation.Projectiles;
 

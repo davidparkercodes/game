@@ -2,7 +2,9 @@ using System;
 using Game.Infrastructure.Interfaces;
 using Game.Infrastructure.Stats;
 using Game.Infrastructure.Sound;
+using Game.Infrastructure.Buildings;
 using Game.Infrastructure.Waves;
+using Game.Infrastructure.Managers;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
 using Game.Application.Buildings.Handlers;
@@ -14,7 +16,7 @@ using Game.Application.Waves.Commands;
 using Game.Application.Waves.Handlers;
 using Game.Application.Queries;
 using Game.Application.Queries.Handlers;
-using Game.Infrastructure.Buildings;
+using Game.Application.Queries.Game;
 
 namespace Game.Infrastructure.DI;
 

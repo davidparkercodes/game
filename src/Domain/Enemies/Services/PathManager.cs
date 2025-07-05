@@ -1,26 +1,47 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Godot;
 using Game.Domain.Enemies.Entities;
+using Game.Domain.Levels.ValueObjects;
 
-namespace Game.Domain.Enemies.Services;
-
-public class PathManager
+namespace Game.Domain.Enemies.Services
 {
-    private readonly List<PathPoint> _pathPoints;
-    private readonly float _pathTolerance;
+	public partial class PathManager : Node2D
+	{
+		[Export] public LevelDataResource CurrentLevel { get; set; }
+		private readonly List<OrderedPathPoint> _pathPoints;
+		private readonly float _pathTolerance;
 
-    public PathManager(float pathTolerance = 10.0f)
-    {
-        _pathPoints = new List<PathPoint>();
-        _pathTolerance = pathTolerance;
-    }
+		public PathManager()
+		{
+			_pathPoints = new List<OrderedPathPoint>();
+			_pathTolerance = 10.0f;
+		}
+
+		public override void _Ready()
+		{
+			if (CurrentLevel != null)
+			{
+				LoadPathFromLevel(CurrentLevel.ToLevelData());
+			}
+		}
+
+		public void LoadPathFromLevel(LevelData levelData)
+		{
+			_pathPoints.Clear();
+			for (int i = 0; i < levelData.PathPoints.Count; i++)
+			{
+				var levelPoint = levelData.PathPoints[i];
+				_pathPoints.Add(new OrderedPathPoint(levelPoint.X, levelPoint.Y, i));
+			}
+		}
 
     public void AddPathPoint(float x, float y, int order = -1)
     {
         ValidatePosition(x, y);
         
-        var pathPoint = new PathPoint(x, y, order == -1 ? _pathPoints.Count : order);
+        var pathPoint = new OrderedPathPoint(x, y, order == -1 ? _pathPoints.Count : order);
         _pathPoints.Add(pathPoint);
         
         _pathPoints.Sort((a, b) => a.Order.CompareTo(b.Order));
@@ -38,7 +59,7 @@ public class PathManager
         }
     }
 
-    public PathPoint GetNextPathPoint(Game.Domain.Enemies.Entities.Enemy enemy)
+    public OrderedPathPoint GetNextPathPoint(Game.Domain.Enemies.Entities.Enemy enemy)
     {
         if (enemy == null)
             throw new ArgumentNullException(nameof(enemy));
@@ -54,7 +75,7 @@ public class PathManager
         return _pathPoints.FirstOrDefault(p => p.Order == nextIndex);
     }
 
-    public PathPoint GetCurrentPathPoint(Game.Domain.Enemies.Entities.Enemy enemy)
+    public OrderedPathPoint GetCurrentPathPoint(Game.Domain.Enemies.Entities.Enemy enemy)
     {
         if (enemy == null)
             throw new ArgumentNullException(nameof(enemy));
@@ -65,7 +86,7 @@ public class PathManager
             .FirstOrDefault();
     }
 
-    public bool IsEnemyAtPoint(Game.Domain.Enemies.Entities.Enemy enemy, PathPoint point)
+    public bool IsEnemyAtPoint(Game.Domain.Enemies.Entities.Enemy enemy, OrderedPathPoint point)
     {
         if (enemy == null || point == null)
             return false;
@@ -73,7 +94,7 @@ public class PathManager
         return enemy.CalculateDistance(point.X, point.Y) <= _pathTolerance;
     }
 
-    public float CalculatePathDistance(Game.Domain.Enemies.Entities.Enemy enemy, PathPoint targetPoint)
+    public float CalculatePathDistance(Game.Domain.Enemies.Entities.Enemy enemy, OrderedPathPoint targetPoint)
     {
         if (enemy == null || targetPoint == null)
             return float.MaxValue;
@@ -92,7 +113,7 @@ public class PathManager
         for (int i = currentIndex; i < targetIndex; i++)
         {
             var from = i == currentIndex ? 
-                new PathPoint(enemy.X, enemy.Y, i) : 
+                new OrderedPathPoint(enemy.X, enemy.Y, i) : 
                 _pathPoints.FirstOrDefault(p => p.Order == i);
             
             var to = _pathPoints.FirstOrDefault(p => p.Order == i + 1);
@@ -120,7 +141,7 @@ public class PathManager
         _pathPoints.Clear();
     }
 
-    public IReadOnlyList<PathPoint> GetPathPoints()
+    public IReadOnlyList<OrderedPathPoint> GetPathPoints()
     {
         return _pathPoints.AsReadOnly();
     }
@@ -129,7 +150,7 @@ public class PathManager
     {
         for (int i = 0; i < _pathPoints.Count; i++)
         {
-            _pathPoints[i] = new PathPoint(_pathPoints[i].X, _pathPoints[i].Y, i);
+            _pathPoints[i] = new OrderedPathPoint(_pathPoints[i].X, _pathPoints[i].Y, i);
         }
     }
 
@@ -150,13 +171,13 @@ public class PathManager
     }
 }
 
-public class PathPoint
+public class OrderedPathPoint
 {
     public float X { get; }
     public float Y { get; }
     public int Order { get; }
 
-    public PathPoint(float x, float y, int order)
+    public OrderedPathPoint(float x, float y, int order)
     {
         X = x;
         Y = y;
@@ -165,12 +186,12 @@ public class PathPoint
 
     public override string ToString()
     {
-        return $"PathPoint(X:{X:F1}, Y:{Y:F1}, Order:{Order})";
+        return $"OrderedPathPoint(X:{X:F1}, Y:{Y:F1}, Order:{Order})";
     }
 
     public override bool Equals(object obj)
     {
-        return obj is PathPoint other && 
+        return obj is OrderedPathPoint other && 
                Math.Abs(X - other.X) < 0.001f && 
                Math.Abs(Y - other.Y) < 0.001f && 
                Order == other.Order;
@@ -180,4 +201,5 @@ public class PathPoint
     {
         return HashCode.Combine(X, Y, Order);
     }
+}
 }
