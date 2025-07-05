@@ -60,4 +60,36 @@ public partial class BuildingManager : Node
 		}
 		return count;
 	}
+	
+	public bool IsPositionOccupied(Vector2 position, float checkRadius = 16.0f)
+	{
+		foreach (var building in _buildings)
+		{
+			if (building != null && IsInstanceValid(building))
+			{
+				float distance = building.GlobalPosition.DistanceTo(position);
+				if (distance < checkRadius)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public Building GetBuildingAt(Vector2 position, float checkRadius = 16.0f)
+	{
+		foreach (var building in _buildings)
+		{
+			if (building != null && IsInstanceValid(building))
+		{
+				float distance = building.GlobalPosition.DistanceTo(position);
+				if (distance < checkRadius)
+				{
+					return building;
+				}
+			}
+		}
+		return null;
+	}
 }

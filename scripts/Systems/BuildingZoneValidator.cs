@@ -26,14 +26,7 @@ public static class BuildingZoneValidator
             return false;
         }
         
-        bool isBuildable = IsValidBuildingTile(tileCoords);
-        
-        if (!isBuildable)
-        {
-            GD.Print($"🚫 Cannot place building at {worldPosition} (tile {tileCoords}) - on restricted area");
-        }
-        
-        return isBuildable;
+        return IsValidBuildingTile(tileCoords);
     }
     
     private static bool IsValidBuildingTile(Vector2I tileCoords)
@@ -53,12 +46,6 @@ public static class BuildingZoneValidator
         // Check if this is a lane tile (black tile at top-left atlas coordinates 0,0)
         bool isLaneTile = (atlasCoords.X == 0 && atlasCoords.Y == 0);
         
-        // Debug logging (can be removed later)
-        if (isLaneTile)
-        {
-            GD.Print($"🔍 Lane tile detected at {tileCoords}: atlas({atlasCoords.X},{atlasCoords.Y})");
-        }
-        
         return !isLaneTile;
     }
     
@@ -68,5 +55,18 @@ public static class BuildingZoneValidator
         
         Vector2I tileCoords = _groundLayer.LocalToMap(_groundLayer.ToLocal(worldPosition));
         return !IsValidBuildingTile(tileCoords);
+    }
+    
+    public static bool CanBuildAtWithLogging(Vector2 worldPosition)
+    {
+        bool canBuild = CanBuildAt(worldPosition);
+        
+        if (!canBuild && _groundLayer != null)
+        {
+            Vector2I tileCoords = _groundLayer.LocalToMap(_groundLayer.ToLocal(worldPosition));
+            GD.Print($"🚫 Cannot place building at {worldPosition} (tile {tileCoords}) - on restricted area");
+        }
+        
+        return canBuild;
     }
 }

@@ -88,6 +88,22 @@ public class PlayerBuildingBuilder
 		if (!_isInBuildMode || _currentPreview == null)
 			return;
 		
+		// Check placement validity and log if on restricted area
+		Vector2 buildPosition = _currentPreview.GetPlacementPosition();
+		if (!BuildingZoneValidator.CanBuildAtWithLogging(buildPosition))
+		{
+			return;
+		}
+		
+		// Check for building overlaps
+		var buildingManager = _player.GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;
+		if (buildingManager != null && buildingManager.IsPositionOccupied(buildPosition, 16.0f))
+		{
+			var existingBuilding = buildingManager.GetBuildingAt(buildPosition, 16.0f);
+			GD.Print($"🏭 Cannot place building - overlapping with existing {existingBuilding?.GetType().Name ?? "building"} at {buildPosition}");
+			return;
+		}
+		
 		if (!_currentPreview.CanPlaceBuilding())
 		{
 			GD.PrintErr("❌ Cannot place building at this location!");
@@ -104,7 +120,8 @@ public class PlayerBuildingBuilder
 		int cost = _currentPreview.GetBuildingCost();
 		if (!GameManager.Instance.SpendMoney(cost))
 		{
-			GD.PrintErr($"❌ Not enough money! Need ${cost}, but have ${GameManager.Instance.Money}");
+			GD.Print($"💰 Not enough money! Need ${cost}, but have ${GameManager.Instance.Money}");
+			_currentPreview.FlashRed();
 			return;
 		}
 
@@ -113,8 +130,7 @@ public class PlayerBuildingBuilder
 		building.GlobalPosition = _currentPreview.GetPlacementPosition();
 		_player.GetTree().Root.AddChild(building);
 
-		// Register with BuildingManager
-		var buildingManager = _player.GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;
+		// Register with BuildingManager (reuse existing variable)
 		buildingManager?.AddBuilding(building);
 
 		GD.Print($"🔧 Built building at {building.GlobalPosition} for ${cost}");

@@ -9,6 +9,9 @@ public partial class BuildingPreview : Node2D
 	private Building _previewBuilding;
 	private bool _isValidPlacement = true;
 	private Vector2 _mousePosition;
+	private bool _isFlashing = false;
+	private float _flashTimer = 0.0f;
+	private const float FlashDuration = 0.5f;
 	
 	public override void _Ready()
 	{
@@ -36,6 +39,16 @@ public partial class BuildingPreview : Node2D
 		_mousePosition = GetGlobalMousePosition();
 		GlobalPosition = _mousePosition;
 		
+		// Handle flash timer
+		if (_isFlashing)
+		{
+			_flashTimer -= (float)delta;
+			if (_flashTimer <= 0.0f)
+			{
+				_isFlashing = false;
+			}
+		}
+		
 		// Check if placement is valid
 		CheckPlacementValidity();
 		
@@ -58,19 +71,28 @@ public partial class BuildingPreview : Node2D
 		// Check if the position is valid for building using BuildingZoneValidator
 		bool validBuildingZone = BuildingZoneValidator.CanBuildAt(_mousePosition);
 		
-		_isValidPlacement = withinBounds && validBuildingZone;
+		// Check for overlaps with existing buildings
+		bool noOverlapWithBuildings = !IsOverlappingWithBuildings(_mousePosition);
 		
-		// Could add more checks here:
-		// - Check for collisions with other buildings
-		// - Check minimum distance requirements
-		// etc.
+		_isValidPlacement = withinBounds && validBuildingZone && noOverlapWithBuildings;
 	}
 	
 	private void UpdateVisualFeedback()
 	{
 		if (_previewBuilding != null)
 		{
-			// Update range color based on validity
+			// Handle flash effect for insufficient funds
+			if (_isFlashing)
+			{
+				// Flash red with pulsing effect
+				float flashIntensity = Mathf.Sin(_flashTimer * 20.0f) * 0.5f + 0.5f;
+				var flashColor = new Color(1.0f, 0.3f, 0.3f, 0.8f + flashIntensity * 0.2f);
+				_previewBuilding.Modulate = flashColor;
+				_previewBuilding.SetRangeColor(new Color(1.0f, 0.0f, 0.0f, 0.8f + flashIntensity * 0.2f));
+				return;
+			}
+			
+			// Normal visual feedback based on placement validity
 			var rangeColor = _isValidPlacement ? ValidColor : InvalidColor;
 			_previewBuilding.SetRangeColor(rangeColor);
 			
@@ -95,6 +117,26 @@ public partial class BuildingPreview : Node2D
 	public int GetBuildingCost()
 	{
 		return _previewBuilding?.Cost ?? 0;
+	}
+	
+	public void FlashRed()
+	{
+		_isFlashing = true;
+		_flashTimer = FlashDuration;
+		GD.Print("💰 Insufficient funds - flashing red indicator");
+	}
+	
+	private bool IsOverlappingWithBuildings(Vector2 position)
+	{
+		// Get BuildingManager to check for overlaps
+		var buildingManager = GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;
+		if (buildingManager == null)
+		{
+			return false; // If no BuildingManager, allow placement
+		}
+		
+		// Check if position is occupied (16 pixel radius to prevent overlap)
+		return buildingManager.IsPositionOccupied(position, 16.0f);
 	}
 	
 	public void UpdateBuildingScene(PackedScene newBuildingScene)
