@@ -1,0 +1,39 @@
+{
+  "name": "Quick Balance Test",
+  "description": "Fast 5-wave validation for rapid iteration during development",
+  "settings": {
+    "starting_money": 500,
+    "starting_lives": 20,
+    "max_waves": 5,
+    "random_seed": 42,
+    "fast_mode": true
+  },
+  "modifiers": {
+    "enemy_health_multiplier": 1.0,
+    "enemy_speed_multiplier": 1.0,
+    "building_cost_multiplier": 1.0,
+    "building_damage_multiplier": 1.0
+  },
+  "test_variations": [
+    {
+      "name": "baseline",
+      "description": "Standard configuration - should pass easily",
+      "enemy_health_multiplier": 1.0
+    },
+    {
+      "name": "+10% enemy health",
+      "description": "Slight difficulty increase - should still pass",
+      "enemy_health_multiplier": 1.1
+    },
+    {
+      "name": "+20% enemy health", 
+      "description": "Moderate difficulty increase - might be challenging",
+      "enemy_health_multiplier": 1.2
+    },
+    {
+      "name": "+30% enemy health",
+      "description": "High difficulty increase - might fail on later waves",
+      "enemy_health_multiplier": 1.3
+    }
+  ]
+}

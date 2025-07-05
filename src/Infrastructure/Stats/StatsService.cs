@@ -57,10 +57,12 @@ public class StatsService : IBuildingStatsProvider, IEnemyStatsProvider
     private EnemyStats ConvertToEnemyStats(EnemyStatsData data)
     {
         return new EnemyStats(
-            health: data.health,
+            maxHealth: data.max_health,
             speed: data.speed,
             damage: data.damage,
-            reward: data.reward
+            rewardGold: data.reward_gold,
+            rewardXp: data.reward_xp,
+            description: data.description
         );
     }
 
@@ -72,6 +74,8 @@ public class StatsService : IBuildingStatsProvider, IEnemyStatsProvider
             range: data.range,
             fireRate: data.fire_rate,
             bulletSpeed: data.bullet_speed,
+            shootSound: "",
+            impactSound: "",
             description: data.description
         );
     }

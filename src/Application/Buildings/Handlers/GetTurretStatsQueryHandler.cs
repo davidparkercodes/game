@@ -24,17 +24,17 @@ public class GetTurretStatsQueryHandler : IQueryHandler<GetTurretStatsQuery, Tur
             return Task.FromResult(TurretStatsResponse.NotFound(""));
 
         var buildingStats = _buildingStatsProvider.GetBuildingStats(query.TurretType);
-        if (buildingStats.cost == 0 && query.TurretType != "basic_tower")
+        if (buildingStats.Cost == 0 && query.TurretType != "basic_tower")
             return Task.FromResult(TurretStatsResponse.NotFound(query.TurretType));
 
         var response = new TurretStatsResponse(
             query.TurretType,
-            buildingStats.cost,
-            buildingStats.damage,
-            buildingStats.range,
-            buildingStats.fire_rate,
-            buildingStats.bullet_speed,
-            buildingStats.description,
+            buildingStats.Cost,
+            buildingStats.Damage,
+            buildingStats.Range,
+            buildingStats.FireRate,
+            buildingStats.BulletSpeed,
+            buildingStats.Description,
             true
         );
 

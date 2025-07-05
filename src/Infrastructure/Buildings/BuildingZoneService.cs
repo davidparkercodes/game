@@ -10,18 +10,18 @@ public class BuildingZoneService : IBuildingZoneService
     public bool CanBuildAt(Position worldPosition)
     {
         var godotPosition = new Vector2(worldPosition.X, worldPosition.Y);
-        return BuildingZoneValidator.CanBuildAt(godotPosition);
+        return Infrastructure.Validators.BuildingZoneValidator.CanBuildAt(godotPosition);
     }
 
     public bool IsOnPath(Position worldPosition)
     {
         var godotPosition = new Vector2(worldPosition.X, worldPosition.Y);
-        return BuildingZoneValidator.IsOnPath(godotPosition);
+        return Infrastructure.Validators.BuildingZoneValidator.IsOnPath(godotPosition);
     }
 
     public bool CanBuildAtWithLogging(Position worldPosition)
     {
         var godotPosition = new Vector2(worldPosition.X, worldPosition.Y);
-        return BuildingZoneValidator.CanBuildAtWithLogging(godotPosition);
+        return Infrastructure.Validators.BuildingZoneValidator.CanBuildAtWithLogging(godotPosition);
     }
 }

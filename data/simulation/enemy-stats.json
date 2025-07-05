@@ -1,0 +1,52 @@
+{
+  "version": "1.0",
+  "description": "Enemy stats for simulation testing",
+  "enemies": {
+    "basic_enemy": {
+      "max_health": 100,
+      "speed": 50.0,
+      "damage": 1,
+      "reward_gold": 10,
+      "reward_xp": 5,
+      "description": "Basic enemy"
+    },
+    "fast_enemy": {
+      "max_health": 75,
+      "speed": 80.0,
+      "damage": 1,
+      "reward_gold": 15,
+      "reward_xp": 8,
+      "description": "Fast enemy"
+    },
+    "tank_enemy": {
+      "max_health": 200,
+      "speed": 30.0,
+      "damage": 2,
+      "reward_gold": 25,
+      "reward_xp": 15,
+      "description": "Tank enemy"
+    },
+    "elite_enemy": {
+      "max_health": 150,
+      "speed": 60.0,
+      "damage": 2,
+      "reward_gold": 30,
+      "reward_xp": 20,
+      "description": "Elite enemy"
+    },
+    "boss_enemy": {
+      "max_health": 500,
+      "speed": 25.0,
+      "damage": 5,
+      "reward_gold": 100,
+      "reward_xp": 50,
+      "description": "Boss enemy"
+    }
+  },
+  "wave_scaling": {
+    "health_per_wave": 0.15,
+    "speed_per_wave": 0.05,
+    "damage_every_n_waves": 3,
+    "reward_per_wave": 0.1
+  }
+}

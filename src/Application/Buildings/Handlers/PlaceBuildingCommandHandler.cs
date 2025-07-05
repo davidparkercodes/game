@@ -31,23 +31,23 @@ public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand,
             return Task.FromResult(PlaceBuildingResult.Failed("Building type cannot be empty"));
 
         var buildingStats = _buildingStatsProvider.GetBuildingStats(command.BuildingType);
-        if (buildingStats.cost == 0 && command.BuildingType != "basic_tower")
+        if (buildingStats.Cost == 0 && command.BuildingType != "basic_tower")
             return Task.FromResult(PlaceBuildingResult.Failed($"Unknown building type: {command.BuildingType}"));
 
         var domainPosition = new Position(command.Position.X, command.Position.Y);
         if (!_zoneService.CanBuildAt(domainPosition))
             return Task.FromResult(PlaceBuildingResult.Failed("Cannot build at this location - invalid zone"));
 
-        if (!HasEnoughMoney(buildingStats.cost))
-            return Task.FromResult(PlaceBuildingResult.Failed($"Not enough money. Cost: ${buildingStats.cost}"));
+        if (!HasEnoughMoney(buildingStats.Cost))
+            return Task.FromResult(PlaceBuildingResult.Failed($"Not enough money. Cost: ${buildingStats.Cost}"));
 
         if (IsPositionOccupied(command.Position))
             return Task.FromResult(PlaceBuildingResult.Failed("Position is already occupied by another building"));
 
         var buildingId = CreateBuilding(command.BuildingType, command.Position, buildingStats);
-        SpendMoney(buildingStats.cost);
+        SpendMoney(buildingStats.Cost);
 
-        return Task.FromResult(PlaceBuildingResult.Successful(buildingId, buildingStats.cost));
+        return Task.FromResult(PlaceBuildingResult.Successful(buildingId, buildingStats.Cost));
     }
 
     private bool HasEnoughMoney(int cost)
@@ -66,7 +66,7 @@ public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand,
         return false;
     }
 
-    private int CreateBuilding(string buildingType, Vector2 position, BuildingStatsData stats)
+    private int CreateBuilding(string buildingType, Vector2 position, BuildingStats stats)
     {
         var buildingScene = LoadBuildingScene(buildingType);
         if (buildingScene == null)
