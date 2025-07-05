@@ -67,7 +67,7 @@ int attackDamage = Damage;
 
 ### File: `data/stats/building_stats.json`
 
-Contains configuration for all building/turret types.
+Contains configuration for all building/tower types.
 
 #### Structure
 ```json
@@ -79,7 +79,7 @@ Contains configuration for all building/turret types.
       "range": 120.0,
       "fire_rate": 1.2,
       "bullet_speed": 900,
-      "shoot_sound": "turret_shoot_sound",
+      "shoot_sound": "tower_shoot_sound",
       "impact_sound": "bullet_impact_sound",
       "description": "Description of building"
     }
@@ -91,18 +91,18 @@ Contains configuration for all building/turret types.
 ```
 
 #### Available Building Types
-- `basic_turret`: Balanced cost and performance
-- `sniper_turret`: High damage, long range, slow fire rate
-- `rapid_turret`: Fast firing, lower damage
-- `heavy_turret`: High damage, expensive, very slow
+- `basic_tower`: Balanced cost and performance
+- `sniper_tower`: High damage, long range, slow fire rate
+- `rapid_tower`: Fast firing, lower damage
+- `heavy_tower`: High damage, expensive, very slow
 
 ### Usage in Code
 
 ```csharp
-// In turret classes - set the building type
+// In tower classes - set the building type
 public override void _Ready()
 {
-    BuildingType = "basic_turret";  // or sniper_turret, etc.
+    BuildingType = "basic_tower";  // or sniper_tower, etc.
     base._Ready();
 }
 
@@ -124,11 +124,11 @@ The `StatsManager` singleton handles loading and providing access to stats.
 EnemyStatsData enemyStats = StatsManager.Instance.GetEnemyStats("basic_enemy");
 
 // Get building stats  
-BuildingStatsData buildingStats = StatsManager.Instance.GetBuildingStats("sniper_turret");
+BuildingStatsData buildingStats = StatsManager.Instance.GetBuildingStats("sniper_tower");
 
 // Check if types exist
 bool hasEnemy = StatsManager.Instance.HasEnemyType("elite_enemy");
-bool hasBuilding = StatsManager.Instance.HasBuildingType("rapid_turret");
+bool hasBuilding = StatsManager.Instance.HasBuildingType("rapid_tower");
 
 // Reload configurations (useful for development)
 StatsManager.Instance.ReloadConfigurations();
@@ -159,25 +159,25 @@ EnemyType = "new_enemy_type";
 
 1. Add entry to `building_stats.json`:
 ```json
-"new_turret_type": {
+"new_tower_type": {
   "cost": 40,
   "damage": 20,
   "range": 160.0,
   "fire_rate": 1.8,
   "bullet_speed": 1000,
-  "shoot_sound": "new_turret_shoot",
+  "shoot_sound": "new_tower_shoot",
   "impact_sound": "new_bullet_impact",
-  "description": "New turret variant"
+  "description": "New tower variant"
 }
 ```
 
-2. Create new turret class or set type:
+2. Create new tower class or set type:
 ```csharp
-public partial class NewTurret : Building
+public partial class NewTower : Building
 {
     public override void _Ready()
     {
-        BuildingType = "new_turret_type";
+        BuildingType = "new_tower_type";
         base._Ready();
     }
 }

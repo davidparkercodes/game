@@ -2,21 +2,21 @@ using Game.Domain.Buildings.ValueObjects;
 
 namespace Game.Domain.Buildings.Entities;
 
-public class BasicTurret : Building
+public class BasicTower : Building
 {
-    public const string TurretType = "BasicTurret";
+    public const string TowerType = "BasicTower";
 
-    public BasicTurret(float x, float y) : base(CreateBasicTurretStats(), x, y)
+    public BasicTower(float x, float y) : base(CreateBasicTowerStats(), x, y)
     {
         ValidatePosition(x, y);
     }
 
-    public BasicTurret(BuildingStats customStats, float x, float y) : base(customStats, x, y)
+    public BasicTower(BuildingStats customStats, float x, float y) : base(customStats, x, y)
     {
         ValidatePosition(x, y);
     }
 
-    public static BuildingStats CreateBasicTurretStats()
+    public static BuildingStats CreateBasicTowerStats()
     {
         return new BuildingStats(
             cost: 10,
@@ -24,9 +24,9 @@ public class BasicTurret : Building
             range: 150.0f,
             fireRate: 1.0f,
             bulletSpeed: 900.0f,
-            shootSound: "basic_turret_shoot",
+            shootSound: "basic_tower_shoot",
             impactSound: "basic_bullet_impact",
-            description: "Basic defensive turret"
+            description: "Basic defensive tower"
         );
     }
 
@@ -50,14 +50,14 @@ public class BasicTurret : Building
             bulletSpeed: Stats.BulletSpeed,
             shootSound: Stats.ShootSound,
             impactSound: Stats.ImpactSound,
-            description: "Upgraded basic turret"
+            description: "Upgraded basic tower"
         );
     }
 
     public void Upgrade()
     {
         if (!CanUpgrade())
-            throw new System.InvalidOperationException("Cannot upgrade inactive turret");
+            throw new System.InvalidOperationException("Cannot upgrade inactive tower");
         
         Stats = GetUpgradedStats();
     }

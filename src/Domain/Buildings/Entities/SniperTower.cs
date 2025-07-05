@@ -2,21 +2,21 @@ using Game.Domain.Buildings.ValueObjects;
 
 namespace Game.Domain.Buildings.Entities;
 
-public class SniperTurret : Building
+public class SniperTower : Building
 {
-    public const string TurretType = "SniperTurret";
+    public const string TowerType = "SniperTower";
 
-    public SniperTurret(float x, float y) : base(CreateSniperTurretStats(), x, y)
+    public SniperTower(float x, float y) : base(CreateSniperTowerStats(), x, y)
     {
         ValidatePosition(x, y);
     }
 
-    public SniperTurret(BuildingStats customStats, float x, float y) : base(customStats, x, y)
+    public SniperTower(BuildingStats customStats, float x, float y) : base(customStats, x, y)
     {
         ValidatePosition(x, y);
     }
 
-    public static BuildingStats CreateSniperTurretStats()
+    public static BuildingStats CreateSniperTowerStats()
     {
         return new BuildingStats(
             cost: 25,
@@ -24,9 +24,9 @@ public class SniperTurret : Building
             range: 300.0f,
             fireRate: 0.5f,
             bulletSpeed: 1200.0f,
-            shootSound: "sniper_turret_shoot",
+            shootSound: "sniper_tower_shoot",
             impactSound: "sniper_bullet_impact",
-            description: "High damage, long range turret"
+            description: "High damage, long range tower"
         );
     }
 
@@ -58,14 +58,14 @@ public class SniperTurret : Building
             bulletSpeed: Stats.BulletSpeed + 200.0f,
             shootSound: Stats.ShootSound,
             impactSound: Stats.ImpactSound,
-            description: "Upgraded sniper turret"
+            description: "Upgraded sniper tower"
         );
     }
 
     public void Upgrade()
     {
         if (!CanUpgrade())
-            throw new System.InvalidOperationException("Cannot upgrade inactive turret");
+            throw new System.InvalidOperationException("Cannot upgrade inactive tower");
         
         Stats = GetUpgradedStats();
     }

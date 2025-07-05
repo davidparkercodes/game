@@ -29,7 +29,7 @@ layout_mode = 2
 [node name="LivesLabel" type="Label" parent="SidebarPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="SelectedTurretLabel" type="Label" parent="SidebarPanel/VBoxContainer"]
+[node name="SelectedTowerLabel" type="Label" parent="SidebarPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.6, 1, 1)
 theme_override_font_sizes/font_size = 18
@@ -43,7 +43,7 @@ theme_override_font_sizes/font_size = 20
 text = "⏭️ Start Wave"
 visible = true
 
-[node name="TurretStatsPanel" type="Panel" parent="."]
+[node name="TowerStatsPanel" type="Panel" parent="."]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -54,38 +54,38 @@ offset_bottom = 160.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_wfueu")
 visible = false
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TurretStatsPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TowerStatsPanel"]
 layout_mode = 1
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 190.0
 offset_bottom = 140.0
 
-[node name="TurretNameLabel" type="Label" parent="TurretStatsPanel/VBoxContainer"]
+[node name="TowerNameLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.8, 0, 1)
 theme_override_font_sizes/font_size = 20
-text = "Basic Turret"
+text = "Basic Tower"
 
-[node name="CostLabel" type="Label" parent="TurretStatsPanel/VBoxContainer"]
+[node name="CostLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.8, 0, 1)
 theme_override_font_sizes/font_size = 16
 text = "Cost: $10"
 
-[node name="DamageLabel" type="Label" parent="TurretStatsPanel/VBoxContainer"]
+[node name="DamageLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
 theme_override_font_sizes/font_size = 16
 text = "Damage: 50"
 
-[node name="RangeLabel" type="Label" parent="TurretStatsPanel/VBoxContainer"]
+[node name="RangeLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
 theme_override_font_sizes/font_size = 16
 text = "Range: 75"
 
-[node name="FireRateLabel" type="Label" parent="TurretStatsPanel/VBoxContainer"]
+[node name="FireRateLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.4, 1, 1)
 theme_override_font_sizes/font_size = 16

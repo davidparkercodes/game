@@ -4,7 +4,8 @@ using Game.Domain.Buildings.Services;
 using Game.Domain.Enemies.Services;
 using Game.Domain.Enemies.ValueObjects;
 using Game.Domain.Buildings.ValueObjects;
-using Game.Infrastructure.Configuration;
+using Game.Application.Buildings.Configuration;
+using Game.Application.Enemies.Configuration;
 
 namespace Game.Infrastructure.Stats;
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using Game.Domain.Enemies.Services;
 using Game.Domain.Enemies.ValueObjects;
-using Game.Infrastructure.Configuration;
+using Game.Application.Enemies.Configuration;
 
 namespace Game.Application.Simulation.Services;
 

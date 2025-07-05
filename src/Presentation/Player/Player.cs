@@ -16,8 +16,8 @@ public partial class Player : CharacterBody2D
 {
 	[Export] public float Speed = 200f;
 
-	[Export] public PackedScene BasicTurretScene;
-	[Export] public PackedScene SniperTurretScene;
+	[Export] public PackedScene BasicTowerScene;
+	[Export] public PackedScene SniperTowerScene;
 
 	public PackedScene CurrentBuildingScene { get; private set; } = null;
 
@@ -52,50 +52,50 @@ public partial class Player : CharacterBody2D
 			switch (key.Keycode)
 			{
 				case Key.Key1:
-					if (BasicTurretScene != null)
+					if (BasicTowerScene != null)
 					{
 						GD.Print($"🔍 Key1 pressed. CurrentBuildingScene: {(CurrentBuildingScene == null ? "null" : CurrentBuildingScene.ResourcePath.GetFile().GetBaseName())}");
-						GD.Print($"🔍 BasicTurretScene: {BasicTurretScene.ResourcePath.GetFile().GetBaseName()}");
-						GD.Print($"🔍 Are they equal? {CurrentBuildingScene == BasicTurretScene}");
+						GD.Print($"🔍 BasicTowerScene: {BasicTowerScene.ResourcePath.GetFile().GetBaseName()}");
+						GD.Print($"🔍 Are they equal? {CurrentBuildingScene == BasicTowerScene}");
 						
-						if (CurrentBuildingScene == BasicTurretScene)
+						if (CurrentBuildingScene == BasicTowerScene)
 						{
 							ClearBuildingSelection();
-							GD.Print("🚫 Deselected Basic Turret");
+							GD.Print("🚫 Deselected Basic Tower");
 						}
 						else
 						{
-							CurrentBuildingScene = BasicTurretScene;
+							CurrentBuildingScene = BasicTowerScene;
 							UpdateSelectedBuildingDisplay("Basic");
-							_buildingBuilder.StartBuildMode(BasicTurretScene);
-							GD.Print("📦 Selected Basic Turret for building");
+							_buildingBuilder.StartBuildMode(BasicTowerScene);
+							GD.Print("📦 Selected Basic Tower for building");
 						}
 					}
 					else
 					{
-						GD.PrintErr("❌ No BasicTurretScene assigned!");
+						GD.PrintErr("❌ No BasicTowerScene assigned!");
 					}
 					break;
 
 				case Key.Key2:
-					if (SniperTurretScene != null)
+					if (SniperTowerScene != null)
 					{
-						if (CurrentBuildingScene == SniperTurretScene)
+						if (CurrentBuildingScene == SniperTowerScene)
 						{
 							ClearBuildingSelection();
-							GD.Print("🚫 Deselected Sniper Turret");
+							GD.Print("🚫 Deselected Sniper Tower");
 						}
 						else
 						{
-							CurrentBuildingScene = SniperTurretScene;
+							CurrentBuildingScene = SniperTowerScene;
 							UpdateSelectedBuildingDisplay("Sniper");
-							_buildingBuilder.StartBuildMode(SniperTurretScene);
-							GD.Print("🎯 Selected Sniper Turret for building");
+							_buildingBuilder.StartBuildMode(SniperTowerScene);
+							GD.Print("🎯 Selected Sniper Tower for building");
 						}
 					}
 					else
 					{
-						GD.PrintErr("❌ No SniperTurretScene assigned!");
+						GD.PrintErr("❌ No SniperTowerScene assigned!");
 					}
 					break;
 			}
@@ -107,14 +107,14 @@ public partial class Player : CharacterBody2D
 		switch (buildingId)
 		{
 			case "Basic":
-				CurrentBuildingScene = BasicTurretScene;
+				CurrentBuildingScene = BasicTowerScene;
 				UpdateSelectedBuildingDisplay("Basic");
-				_buildingBuilder.StartBuildMode(BasicTurretScene);
+				_buildingBuilder.StartBuildMode(BasicTowerScene);
 				break;
 			case "Sniper":
-				CurrentBuildingScene = SniperTurretScene;
+				CurrentBuildingScene = SniperTowerScene;
 				UpdateSelectedBuildingDisplay("Sniper");
-				_buildingBuilder.StartBuildMode(SniperTurretScene);
+				_buildingBuilder.StartBuildMode(SniperTowerScene);
 				break;
 		}
 	}
@@ -174,8 +174,8 @@ public partial class Player : CharacterBody2D
 	{
 		PackedScene buildingScene = buildingName switch
 		{
-			"Basic" => BasicTurretScene,
-			"Sniper" => SniperTurretScene,
+			"Basic" => BasicTowerScene,
+			"Sniper" => SniperTowerScene,
 			_ => null
 		};
 		

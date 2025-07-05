@@ -6,29 +6,29 @@ using Game.Domain.Buildings.Services;
 
 namespace Game.Application.Buildings.Handlers;
 
-public class GetTurretStatsQueryHandler : IQueryHandler<GetTurretStatsQuery, TurretStatsResponse>
+public class GetTowerStatsQueryHandler : IQueryHandler<GetTowerStatsQuery, TowerStatsResponse>
 {
     private readonly IBuildingStatsProvider _buildingStatsProvider;
 
-    public GetTurretStatsQueryHandler(IBuildingStatsProvider buildingStatsProvider)
+    public GetTowerStatsQueryHandler(IBuildingStatsProvider buildingStatsProvider)
     {
         _buildingStatsProvider = buildingStatsProvider ?? throw new System.ArgumentNullException(nameof(buildingStatsProvider));
     }
 
-    public Task<TurretStatsResponse> HandleAsync(GetTurretStatsQuery query, CancellationToken cancellationToken = default)
+    public Task<TowerStatsResponse> HandleAsync(GetTowerStatsQuery query, CancellationToken cancellationToken = default)
     {
         if (query == null)
             throw new System.ArgumentNullException(nameof(query));
 
-        if (string.IsNullOrEmpty(query.TurretType))
-            return Task.FromResult(TurretStatsResponse.NotFound(""));
+        if (string.IsNullOrEmpty(query.TowerType))
+            return Task.FromResult(TowerStatsResponse.NotFound(""));
 
-        var buildingStats = _buildingStatsProvider.GetBuildingStats(query.TurretType);
-        if (buildingStats.Cost == 0 && query.TurretType != "basic_tower")
-            return Task.FromResult(TurretStatsResponse.NotFound(query.TurretType));
+        var buildingStats = _buildingStatsProvider.GetBuildingStats(query.TowerType);
+        if (buildingStats.Cost == 0 && query.TowerType != "basic_tower")
+            return Task.FromResult(TowerStatsResponse.NotFound(query.TowerType));
 
-        var response = new TurretStatsResponse(
-            query.TurretType,
+        var response = new TowerStatsResponse(
+            query.TowerType,
             buildingStats.Cost,
             buildingStats.Damage,
             buildingStats.Range,

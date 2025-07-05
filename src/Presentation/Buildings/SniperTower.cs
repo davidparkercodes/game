@@ -2,14 +2,14 @@ using Godot;
 
 namespace Game.Presentation.Buildings;
 
-public partial class BasicTurret : Building
+public partial class SniperTower : Building
 {
 	public override void _Ready()
 	{
-		Cost = 10;
-		Damage = 10;
-		Range = 150.0f;
-		FireRate = 1.0f;
+		Cost = 25;
+		Damage = 30;
+		Range = 250.0f;
+		FireRate = 0.5f;
 		
 		base._Ready();
 	}

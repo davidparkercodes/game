@@ -1,4 +1,38 @@
 {
+  "building_types_metadata": {
+    "registry": {
+      "BASIC_TOWER": {
+        "config_key": "basic_tower",
+        "display_name": "Basic Tower",
+        "category": "starter",
+        "tier": 1,
+        "is_default": true
+      },
+      "SNIPER_TOWER": {
+        "config_key": "sniper_tower",
+        "display_name": "Sniper Tower",
+        "category": "precision",
+        "tier": 2,
+        "is_default": false
+      },
+      "RAPID_TOWER": {
+        "config_key": "rapid_tower",
+        "display_name": "Rapid Tower",
+        "category": "rapid",
+        "tier": 2,
+        "is_default": false
+      },
+      "HEAVY_TOWER": {
+        "config_key": "heavy_tower",
+        "display_name": "Heavy Tower",
+        "category": "heavy",
+        "tier": 3,
+        "is_default": false
+      }
+    },
+    "categories": ["starter", "precision", "rapid", "heavy"],
+    "default_category": "starter"
+  },
   "default_stats": {
     "cost": 0,
     "damage": 0,

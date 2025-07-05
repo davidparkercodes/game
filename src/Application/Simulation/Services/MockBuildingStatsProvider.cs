@@ -4,7 +4,7 @@ using System.IO;
 using System.Text.Json;
 using Game.Domain.Buildings.Services;
 using Game.Domain.Buildings.ValueObjects;
-using Game.Infrastructure.Configuration;
+using Game.Application.Buildings.Configuration;
 
 namespace Game.Application.Simulation.Services;
 

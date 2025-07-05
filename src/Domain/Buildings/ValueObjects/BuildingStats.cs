@@ -47,9 +47,9 @@ public readonly struct BuildingStats
             range: 150.0f,
             fireRate: 1.0f,
             bulletSpeed: 900.0f,
-            shootSound: "basic_turret_shoot",
+            shootSound: "basic_tower_shoot",
             impactSound: "basic_bullet_impact",
-            description: "Basic turret configuration"
+            description: "Basic tower configuration"
         );
     }
 

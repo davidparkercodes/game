@@ -1,17 +1,17 @@
 {
   "sounds": {
-    "turrets": {
-      "basic_turret_shoot": {
-        "file": "res://assets/audio/turrets/basic_turret_shoot.mp3",
+    "towers": {
+      "basic_tower_shoot": {
+        "file": "res://assets/audio/towers/basic_tower_shoot.mp3",
         "category": "SFX",
         "volume": -8.0,
-        "description": "Basic turret firing sound"
+        "description": "Basic tower firing sound"
       },
-      "sniper_turret_shoot": {
-        "file": "res://assets/audio/turrets/sniper_turret_shoot.mp3",
+      "sniper_tower_shoot": {
+        "file": "res://assets/audio/towers/sniper_tower_shoot.mp3",
         "category": "SFX",
         "volume": -6.0,
-        "description": "Sniper turret firing sound"
+        "description": "Sniper tower firing sound"
       }
     },
     "projectiles": {

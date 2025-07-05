@@ -51,8 +51,8 @@ public static class ServiceConfiguration
         serviceLocator.RegisterFactory<ICommandHandler<StartWaveCommand, StartWaveResult>>(() => 
             new StartWaveCommandHandler());
         
-        serviceLocator.RegisterFactory<IQueryHandler<GetTurretStatsQuery, TurretStatsResponse>>(() => 
-            new GetTurretStatsQueryHandler(serviceLocator.Resolve<IBuildingStatsProvider>()));
+        serviceLocator.RegisterFactory<IQueryHandler<GetTowerStatsQuery, TowerStatsResponse>>(() => 
+            new GetTowerStatsQueryHandler(serviceLocator.Resolve<IBuildingStatsProvider>()));
         
         serviceLocator.RegisterFactory<IQueryHandler<GetGameStateQuery, GameStateResponse>>(() => 
             new GetGameStateQueryHandler());

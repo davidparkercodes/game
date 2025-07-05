@@ -4,9 +4,9 @@
 
 ```
 assets/audio/
-├── turrets/          # Turret-related sounds
-│   ├── basic_turret_shoot.mp3
-│   └── sniper_turret_shoot.mp3
+├── towers/           # Tower-related sounds
+│   ├── basic_tower_shoot.mp3
+│   └── sniper_tower_shoot.mp3
 ├── projectiles/      # Bullet and projectile sounds
 │   ├── basic_bullet_impact.mp3
 │   └── sniper_bullet_impact.mp3
@@ -20,7 +20,7 @@ assets/audio/
 ## Adding New Sounds
 
 ### 1. Place the audio file in the appropriate folder
-- **Turrets**: `assets/audio/turrets/`
+- **Towers**: `assets/audio/towers/`
 - **Projectiles**: `assets/audio/projectiles/`
 - **UI**: `assets/audio/ui/`
 - **Enemies**: `assets/audio/enemies/`
@@ -129,8 +129,8 @@ The audio system uses a JSON configuration file (`data/audio/sound_config.json`)
 
 | Sound Key | File | Usage |
 |-----------|------|-------|
-| `basic_turret_shoot` | `turrets/basic_turret_shoot.mp3` | Basic turret firing |
-| `sniper_turret_shoot` | `turrets/sniper_turret_shoot.mp3` | Sniper turret firing |
+| `basic_tower_shoot` | `towers/basic_tower_shoot.mp3` | Basic tower firing |
+| `sniper_tower_shoot` | `towers/sniper_tower_shoot.mp3` | Sniper tower firing |
 | `basic_bullet_impact` | `projectiles/basic_bullet_impact.mp3` | Basic bullet hitting enemies |
 | `sniper_bullet_impact` | `projectiles/sniper_bullet_impact.mp3` | Sniper bullet hitting enemies |
 | `round_start` | `game/round_start.mp3` | When defend phase begins |

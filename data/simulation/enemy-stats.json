@@ -1,4 +1,45 @@
 {
+  "enemy_types_metadata": {
+    "registry": {
+      "BASIC_ENEMY": {
+        "config_key": "basic_enemy",
+        "display_name": "Basic Enemy",
+        "category": "basic",
+        "tier": 1,
+        "is_default": true
+      },
+      "FAST_ENEMY": {
+        "config_key": "fast_enemy",
+        "display_name": "Fast Enemy",
+        "category": "fast",
+        "tier": 1,
+        "is_default": false
+      },
+      "TANK_ENEMY": {
+        "config_key": "tank_enemy",
+        "display_name": "Tank Enemy",
+        "category": "tank",
+        "tier": 2,
+        "is_default": false
+      },
+      "ELITE_ENEMY": {
+        "config_key": "elite_enemy",
+        "display_name": "Elite Enemy",
+        "category": "elite",
+        "tier": 3,
+        "is_default": false
+      },
+      "BOSS_ENEMY": {
+        "config_key": "boss_enemy",
+        "display_name": "Boss Enemy",
+        "category": "boss",
+        "tier": 4,
+        "is_default": false
+      }
+    },
+    "categories": ["basic", "fast", "tank", "elite", "boss"],
+    "default_category": "basic"
+  },
   "default_stats": {
     "max_health": 0,
     "speed": 0.0,

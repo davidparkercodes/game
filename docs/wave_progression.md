@@ -62,22 +62,22 @@ Epic finale with multiple waves:
 ### Basic Enemy (`basic_enemy`)
 - **Stats:** 100 HP, 60 speed, 10 damage
 - **Role:** Standard threat, good for learning
-- **Counter:** Any turret works well
+- **Counter:** Any tower works well
 
 ### Fast Enemy (`fast_enemy`) 
 - **Stats:** 60 HP, 90 speed, 8 damage
-- **Role:** Pressure, flanking, overwhelming turrets
-- **Counter:** High fire rate turrets (rapid_turret)
+- **Role:** Pressure, flanking, overwhelming towers
+- **Counter:** High fire rate towers (rapid_tower)
 
 ### Tank Enemy (`tank_enemy`)
 - **Stats:** 200 HP, 30 speed, 15 damage  
 - **Role:** Damage sponge, forces sustained fire
-- **Counter:** High damage turrets (sniper_turret, heavy_turret)
+- **Counter:** High damage towers (sniper_tower, heavy_tower)
 
 ### Elite Enemy (`elite_enemy`)
 - **Stats:** 150 HP, 75 speed, 20 damage
 - **Role:** High value target, balanced threat
-- **Counter:** Focus fire, multiple turret types
+- **Counter:** Focus fire, multiple tower types
 
 ## Progression Difficulty
 
@@ -86,17 +86,17 @@ Each wave progressively:
 - Increases enemy count
 - Introduces new enemy types
 - Adds wave modifiers (health/speed multipliers)
-- Requires better turret positioning
+- Requires better tower positioning
 - Demands economic management
 
 ### Money Economy
-- **Early waves:** Lower rewards, affordable basic turrets
-- **Mid waves:** Medium rewards, can afford sniper turrets  
-- **Late waves:** High rewards, need diverse turret mix
+- **Early waves:** Lower rewards, affordable basic towers
+- **Mid waves:** Medium rewards, can afford sniper towers  
+- **Late waves:** High rewards, need diverse tower mix
 
 ### Strategic Evolution
-1. **Wave 1-2:** Learn basics, single turret type works
-2. **Wave 3-4:** Need turret diversity, positioning matters
+1. **Wave 1-2:** Learn basics, single tower type works
+2. **Wave 3-4:** Need tower diversity, positioning matters
 3. **Wave 5:** Full strategic depth, economic management critical
 
 ## Balancing Philosophy
@@ -118,22 +118,22 @@ Each wave progressively:
 - **Group start delays:** Create tactical timing challenges
 - **Spawn intervals:** Control pressure intensity
 
-## Recommended Turret Strategy
+## Recommended Tower Strategy
 
 ### Early Game (Waves 1-2)
-- Basic turrets for coverage
-- 1-2 sniper turrets for damage
+- Basic towers for coverage
+- 1-2 sniper towers for damage
 
 ### Mid Game (Waves 3-4)  
-- Mix of basic and sniper turrets
-- Consider rapid turrets for fast enemies
+- Mix of basic and sniper towers
+- Consider rapid towers for fast enemies
 - Strategic positioning crucial
 
 ### Late Game (Wave 5)
-- Diverse turret portfolio
-- Heavy turrets for tank enemies
-- Rapid turrets for fast swarms
-- Sniper turrets for elite targeting
+- Diverse tower portfolio
+- Heavy towers for tank enemies
+- Rapid towers for fast swarms
+- Sniper towers for elite targeting
 - Optimal placement and upgrades essential
 
-This progression ensures players experience the full depth of the turret defense mechanics while facing increasingly complex challenges that require strategic thinking and adaptation.
+This progression ensures players experience the full depth of the tower defense mechanics while facing increasingly complex challenges that require strategic thinking and adaptation.
