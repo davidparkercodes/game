@@ -21,7 +21,7 @@ public class GameSimRunner
         _random = new Random();
     }
 
-    public SimulationResult RunSimulation(SimulationConfig config)
+    public SimulationResult RunSimulation(SimulationConfig config, IProgress<SimulationProgress>? progress = null)
     {
         var stopwatch = Stopwatch.StartNew();
         
@@ -39,11 +39,17 @@ public class GameSimRunner
             var gameState = new GameState(config.StartingMoney, config.StartingLives);
             var waveResults = new List<WaveResult>();
 
+            // Report initial progress
+            progress?.Report(new SimulationProgress(0, gameState.Money, gameState.Lives));
+
             // Run simulation waves
             for (int wave = 1; wave <= config.MaxWaves && !gameState.IsGameOver; wave++)
             {
                 var waveResult = RunWave(gameState, wave, config);
                 waveResults.Add(waveResult);
+
+                // Report progress after each wave
+                progress?.Report(new SimulationProgress(wave, gameState.Money, gameState.Lives));
 
                 if (!waveResult.Completed)
                 {
@@ -94,9 +100,9 @@ public class GameSimRunner
         }
     }
 
-    public async Task<SimulationResult> RunSimulationAsync(SimulationConfig config)
+    public async Task<SimulationResult> RunSimulationAsync(SimulationConfig config, IProgress<SimulationProgress>? progress = null)
     {
-        return await Task.Run(() => RunSimulation(config));
+        return await Task.Run(() => RunSimulation(config, progress));
     }
 
     public List<SimulationResult> RunMultipleScenarios(List<SimulationConfig> scenarios)

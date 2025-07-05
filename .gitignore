@@ -16,8 +16,8 @@ Thumbs.db
 *.user
 
 # Build files
-/bin/
-/obj/
+[Bb]in/
+[Oo]bj/
 /.mono/
 
 # Debugging files
