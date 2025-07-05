@@ -2,12 +2,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Waves.Commands;
-using Game.Infrastructure.Enemies.Services;
+using Game.Domain.Enemies.Services;
 
 namespace Game.Application.Waves.Handlers;
 
 public class StartWaveCommandHandler : ICommandHandler<StartWaveCommand, StartWaveResult>
 {
+    private readonly IWaveService _waveService;
+    
+    public StartWaveCommandHandler(IWaveService waveService)
+    {
+        _waveService = waveService ?? throw new System.ArgumentNullException(nameof(waveService));
+    }
+    
     public Task<StartWaveResult> HandleAsync(StartWaveCommand command, CancellationToken cancellationToken = default)
     {
         if (command == null)
@@ -16,21 +23,14 @@ public class StartWaveCommandHandler : ICommandHandler<StartWaveCommand, StartWa
         if (command.WaveIndex < 0)
             return Task.FromResult(StartWaveResult.Failed("Wave index cannot be negative"));
 
-        var waveSpawnerService = WaveSpawnerService.Instance;
-        if (waveSpawnerService == null)
-            return Task.FromResult(StartWaveResult.Failed("WaveSpawnerService is not available"));
-
-        if (command.WaveIndex >= waveSpawnerService.GetTotalWaves())
-            return Task.FromResult(StartWaveResult.Failed($"Wave index {command.WaveIndex} is out of range. Total waves: {waveSpawnerService.GetTotalWaves()}"));
-
-        if (waveSpawnerService.IsSpawning)
-            return Task.FromResult(StartWaveResult.Failed($"Wave {waveSpawnerService.CurrentWaveIndex} is already active"));
+        if (_waveService.IsWaveActive())
+            return Task.FromResult(StartWaveResult.Failed($"Wave {_waveService.GetCurrentWaveNumber()} is already active"));
 
         try
         {
-            waveSpawnerService.StartWave(command.WaveIndex + 1);
+            _waveService.StartWave(command.WaveIndex + 1);
             var waveName = $"Wave {command.WaveIndex + 1}";
-            var totalEnemies = waveSpawnerService.TotalEnemiesInWave;
+            var totalEnemies = _waveService.GetRemainingEnemies();
 
             return Task.FromResult(StartWaveResult.Successful(command.WaveIndex, totalEnemies, waveName));
         }

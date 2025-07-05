@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using Godot;
 using Game.Domain.Enemies.Services;
 using Game.Domain.Enemies.ValueObjects;
+using Game.Domain.Levels.ValueObjects;
 using Game.Infrastructure.Waves.Models;
 using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Rounds.Services;
@@ -11,29 +13,22 @@ using Game.Infrastructure.Waves.Services;
 
 namespace Game.Infrastructure.Enemies.Services;
 
-public class WaveSpawnerService
+public class WaveSpawnerService : IWaveService
 {
-    public static WaveSpawnerService Instance { get; private set; } = null!;
-
     public bool IsSpawning { get; private set; } = false;
     public int CurrentWave { get; private set; } = 0;
     public int EnemiesSpawned { get; private set; } = 0;
     public int TotalEnemiesInWave { get; private set; } = 0;
 
-    private Godot.Timer _spawnTimer = null!;
+    private Godot.Timer? _spawnTimer;
     private WaveModel? _currentWave;
     private readonly IWaveConfigurationService _waveConfigurationService;
     private WaveConfiguration _loadedWaveSet;
     private List<WaveModel>? _waves;
 
-    private WaveSpawnerService()
+    public WaveSpawnerService(IWaveConfigurationService waveConfigurationService)
     {
-        _waveConfigurationService = new WaveConfigurationService();
-    }
-    
-    static WaveSpawnerService()
-    {
-        Instance = new WaveSpawnerService();
+        _waveConfigurationService = waveConfigurationService ?? throw new ArgumentNullException(nameof(waveConfigurationService));
     }
 
     public void Initialize()
@@ -81,40 +76,142 @@ public class WaveSpawnerService
 
     public void StartWave(int waveNumber)
     {
-        if (waveNumber <= 0)
+        try
         {
-            GD.PrintErr($"WaveSpawnerService: Cannot start wave: Invalid wave number {waveNumber}");
-            return;
-        }
+            if (waveNumber <= 0)
+            {
+                var errorMsg = $"WaveSpawnerService: Cannot start wave: Invalid wave number {waveNumber}";
+                GD.PrintErr(errorMsg);
+                throw new ArgumentException(errorMsg, nameof(waveNumber));
+            }
 
-        if (_waves == null || _waves.Count == 0)
+            if (_waves == null || _waves.Count == 0)
+            {
+                var errorMsg = $"WaveSpawnerService: No waves loaded, cannot start wave {waveNumber}";
+                GD.PrintErr(errorMsg);
+                throw new InvalidOperationException(errorMsg);
+            }
+
+            if (IsSpawning)
+            {
+                var errorMsg = $"WaveSpawnerService: Cannot start wave {waveNumber}: Wave {CurrentWave} is already active";
+                GD.PrintErr(errorMsg);
+                throw new InvalidOperationException(errorMsg);
+            }
+
+            var waveIndex = waveNumber - 1;
+            if (waveIndex >= _waves.Count)
+            {
+                var errorMsg = $"WaveSpawnerService: Wave number {waveNumber} exceeds available waves (max: {_waves.Count})";
+                GD.PrintErr(errorMsg);
+                throw new ArgumentOutOfRangeException(nameof(waveNumber), errorMsg);
+            }
+
+            _currentWave = CloneWaveModel(_waves[waveIndex]);
+            if (_currentWave == null)
+            {
+                var errorMsg = $"WaveSpawnerService: Failed to clone wave data for wave {waveNumber}";
+                GD.PrintErr(errorMsg);
+                throw new InvalidOperationException(errorMsg);
+            }
+            
+            CurrentWave = waveNumber;
+            IsSpawning = true;
+            EnemiesSpawned = 0;
+            TotalEnemiesInWave = CalculateTotalEnemies(_currentWave);
+
+            GD.Print($"WaveSpawnerService: Starting wave {CurrentWave} '{_currentWave.WaveName}' with {TotalEnemiesInWave} enemies");
+
+            SpawnNextGroup();
+        }
+        catch (Exception exception) when (!(exception is ArgumentException || exception is ArgumentOutOfRangeException || exception is InvalidOperationException))
         {
-            GD.PrintErr($"WaveSpawnerService: No waves loaded, cannot start wave {waveNumber}");
-            return;
+            var errorMsg = $"WaveSpawnerService: Unexpected error starting wave {waveNumber}: {exception.Message}";
+            GD.PrintErr(errorMsg);
+            
+            // Reset state on unexpected errors
+            Reset();
+            throw new InvalidOperationException(errorMsg, exception);
         }
-
-        var waveIndex = waveNumber - 1;
-        if (waveIndex >= _waves.Count)
-        {
-            GD.PrintErr($"WaveSpawnerService: Wave number {waveNumber} exceeds available waves (max: {_waves.Count})");
-            return;
-        }
-
-        _currentWave = CloneWaveModel(_waves[waveIndex]);
+    }
+    
+    public void StopCurrentWave()
+    {
+        StopWave();
+    }
+    
+    public bool IsWaveActive()
+    {
+        return IsSpawning;
+    }
+    
+    public int GetCurrentWaveNumber()
+    {
+        return CurrentWave;
+    }
+    
+    public int GetRemainingEnemies()
+    {
         if (_currentWave == null)
+            return 0;
+            
+        int remaining = 0;
+        foreach (var group in _currentWave.EnemyGroups)
         {
-            GD.PrintErr($"WaveSpawnerService: Failed to clone wave data for wave {waveNumber}");
-            return;
+            remaining += group.Count;
+        }
+        return remaining;
+    }
+    
+    public EnemyStats GetNextEnemyType()
+    {
+        if (_currentWave == null || _currentWave.EnemyGroups.Count == 0)
+        {
+            return EnemyStats.CreateDefault();
         }
         
-        CurrentWave = waveNumber;
-        IsSpawning = true;
-        EnemiesSpawned = 0;
-        TotalEnemiesInWave = CalculateTotalEnemies(_currentWave);
-
-        GD.Print($"WaveSpawnerService: Starting wave {CurrentWave} '{_currentWave.WaveName}' with {TotalEnemiesInWave} enemies");
-
-        SpawnNextGroup();
+        var nextGroup = _currentWave.EnemyGroups.FirstOrDefault(g => g.Count > 0);
+        if (nextGroup == null)
+        {
+            return EnemyStats.CreateDefault();
+        }
+        
+        return new EnemyStats(
+            maxHealth: (int)(100 * nextGroup.HealthMultiplier),
+            speed: 50 * nextGroup.SpeedMultiplier,
+            damage: 10,
+            rewardGold: nextGroup.MoneyReward,
+            rewardXp: 5,
+            description: $"Enemy of type {nextGroup.EnemyType}"
+        );
+    }
+    
+    public bool IsWaveComplete()
+    {
+        return !IsSpawning && CurrentWave > 0;
+    }
+    
+    public void LoadWaveConfiguration(LevelData levelConfiguration)
+    {
+        try
+        {
+            // Use level difficulty rating to determine wave set
+            var difficultyRating = levelConfiguration.DifficultyRating;
+            string difficulty = difficultyRating switch
+            {
+                < 1.0f => "easy",
+                > 2.0f => "hard",
+                _ => "default"
+            };
+            
+            LoadWaveSet(difficulty);
+            GD.Print($"WaveSpawnerService: Loaded wave set '{difficulty}' based on level difficulty rating {difficultyRating:F2}");
+        }
+        catch (Exception exception)
+        {
+            GD.PrintErr($"WaveSpawnerService: Failed to load wave configuration from level data: {exception.Message}");
+            LoadWaveConfiguration();
+        }
     }
 
     public void StopWave()
@@ -167,8 +264,11 @@ public class WaveSpawnerService
 
         if (IsSpawning && HasMoreEnemies())
         {
-            _spawnTimer.WaitTime = group.SpawnInterval;
-            _spawnTimer.Start();
+            if (_spawnTimer != null)
+            {
+                _spawnTimer.WaitTime = group.SpawnInterval;
+                _spawnTimer.Start();
+            }
         }
         else
         {
@@ -178,10 +278,17 @@ public class WaveSpawnerService
 
     private void SpawnEnemy(string enemyType)
     {
-        var spawnPosition = PathService.Instance?.GetSpawnPosition() ?? Vector2.Zero;
-        GD.Print($"Spawning {enemyType} at {spawnPosition}");
+        try
+        {
+            var spawnPosition = PathService.Instance?.GetSpawnPosition() ?? Vector2.Zero;
+            GD.Print($"Spawning {enemyType} at {spawnPosition}");
 
-        RoundService.Instance?.OnEnemySpawned();
+            RoundService.Instance?.OnEnemySpawned();
+        }
+        catch (Exception exception)
+        {
+            GD.PrintErr($"WaveSpawnerService: Error spawning enemy: {exception.Message}");
+        }
     }
 
     private void OnSpawnTimer()

@@ -14,4 +14,14 @@ public interface IWaveService
     EnemyStats GetNextEnemyType();
     bool IsWaveComplete();
     void LoadWaveConfiguration(LevelData levelConfiguration);
+    
+    // Additional wave management methods
+    void PauseWave();
+    void ResumeWave();
+    void Reset();
+    int GetTotalWaves();
+    bool LoadWaveSet(string difficulty);
+    string[] GetAvailableWaveSets();
+    string GetCurrentWaveSetName();
+    void Initialize();
 }
