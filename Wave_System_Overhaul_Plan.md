@@ -62,11 +62,11 @@ This plan addresses critical issues in the Wave system spanning Domain, Applicat
 - [✅] Ensure no files remain directly in `src/Infrastructure/Waves/`
 - [✅] Update all namespace references
 
-### [ ] 2.4 Update Method and Property Names
-- [ ] Review all method signatures for consistency
-- [ ] Update variable names and parameters
-- [ ] Ensure XML documentation uses consistent terminology
-- [ ] Update any remaining "Config" references to "Configuration"
+### [✅] 2.4 Update Method and Property Names
+- [✅] Review all method signatures for consistency
+- [✅] Update variable names and parameters
+- [✅] Ensure XML documentation uses consistent terminology
+- [✅] Update any remaining "Config" references to "Configuration"
 
 ---
 
@@ -178,12 +178,12 @@ This plan addresses critical issues in the Wave system spanning Domain, Applicat
 - [ ] Main.tscn can reference WaveConfigService without errors
 
 ### Phase 2 Success Criteria:
-- [ ] Consistent naming throughout all layers
-- [ ] No remaining "Config" vs "Configuration" inconsistencies  
-- [ ] Clean compilation with updated names
-- [ ] All Infrastructure files organized in proper subdirectories
-- [ ] No files directly in `src/Infrastructure/Waves/`
-- [ ] All references to `WaveModel` and `WaveSetModel` updated
+- [✅] Consistent naming throughout all layers
+- [✅] No remaining "Config" vs "Configuration" inconsistencies  
+- [✅] Clean compilation with updated names
+- [✅] All Infrastructure files organized in proper subdirectories
+- [✅] No files directly in `src/Infrastructure/Waves/`
+- [✅] All references to `WaveModel` and `WaveSetModel` updated
 
 ### Phase 3 Success Criteria:
 - [ ] All wave data loaded from JSON files in `data/waves/`

@@ -10,16 +10,16 @@ namespace Game.Infrastructure.Waves.Services;
 
 public class WaveConfigurationService : IWaveConfigurationService
 {
-    public WaveConfiguration LoadWaveSet(string configPath)
+    public WaveConfiguration LoadWaveSet(string configurationPath)
     {
-        if (string.IsNullOrEmpty(configPath) || !IsInGodotRuntime() || !Godot.FileAccess.FileExists(configPath))
+        if (string.IsNullOrEmpty(configurationPath) || !IsInGodotRuntime() || !Godot.FileAccess.FileExists(configurationPath))
         {
             return CreateDefaultWaveSet();
         }
 
         try
         {
-            var file = Godot.FileAccess.Open(configPath, Godot.FileAccess.ModeFlags.Read);
+            var file = Godot.FileAccess.Open(configurationPath, Godot.FileAccess.ModeFlags.Read);
             if (file == null)
             {
                 return CreateDefaultWaveSet();
@@ -119,12 +119,12 @@ public class WaveConfigurationService : IWaveConfigurationService
         return group;
     }
 
-    private WaveConfiguration ConvertToWaveConfiguration(WaveSetModel waveSetConfig)
+    private WaveConfiguration ConvertToWaveConfiguration(WaveSetModel waveSetConfiguration)
     {
-        var serializedData = JsonSerializer.Serialize(waveSetConfig);
+        var serializedData = JsonSerializer.Serialize(waveSetConfiguration);
         return new WaveConfiguration(
-            waveSetConfig.SetName ?? "Default Waves",
-            waveSetConfig.Waves?.Count ?? 0,
+            waveSetConfiguration.SetName ?? "Default Waves",
+            waveSetConfiguration.Waves?.Count ?? 0,
             serializedData
         );
     }

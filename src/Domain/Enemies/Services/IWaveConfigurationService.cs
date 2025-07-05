@@ -4,6 +4,6 @@ namespace Game.Domain.Enemies.Services;
 
 public interface IWaveConfigurationService
 {
-    WaveConfiguration LoadWaveSet(string configPath);
+    WaveConfiguration LoadWaveSet(string configurationPath);
     WaveConfiguration CreateDefaultWaveSet();
 }

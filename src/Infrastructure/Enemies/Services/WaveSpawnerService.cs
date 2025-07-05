@@ -16,7 +16,7 @@ public class WaveSpawnerService
     public int TotalEnemiesInWave { get; private set; } = 0;
 
     private Godot.Timer _spawnTimer = null!;
-    private WaveModel? _currentWaveConfiguration;
+    private WaveModel? _currentWave;
 
     static WaveSpawnerService()
     {
@@ -38,11 +38,11 @@ public class WaveSpawnerService
             return;
         }
 
-        _currentWaveConfiguration = CreateWaveConfiguration(waveNumber);
+        _currentWave = CreateWaveConfiguration(waveNumber);
         CurrentWave = waveNumber;
         IsSpawning = true;
         EnemiesSpawned = 0;
-        TotalEnemiesInWave = CalculateTotalEnemies(_currentWaveConfiguration);
+        TotalEnemiesInWave = CalculateTotalEnemies(_currentWave);
 
         GD.Print($"Starting wave {CurrentWave} with {TotalEnemiesInWave} enemies");
 
@@ -64,7 +64,7 @@ public class WaveSpawnerService
 
     public void ResumeWave()
     {
-        if (IsSpawning && _currentWaveConfiguration != null)
+        if (IsSpawning && _currentWave != null)
         {
             SpawnNextGroup();
             GD.Print($"Wave {CurrentWave} resumed");
@@ -73,10 +73,10 @@ public class WaveSpawnerService
 
     private void SpawnNextGroup()
     {
-        if (!IsSpawning || _currentWaveConfiguration == null)
+        if (!IsSpawning || _currentWave == null)
             return;
 
-        foreach (var group in _currentWaveConfiguration.EnemyGroups)
+        foreach (var group in _currentWave.EnemyGroups)
         {
             if (group.Count > 0)
             {
@@ -126,9 +126,9 @@ public class WaveSpawnerService
         IsSpawning = false;
         GD.Print($"Wave {CurrentWave} completed! Spawned {EnemiesSpawned} enemies");
 
-        if (_currentWaveConfiguration != null)
+        if (_currentWave != null)
         {
-            GameService.Instance?.AddMoney(_currentWaveConfiguration.BonusMoney);
+            GameService.Instance?.AddMoney(_currentWave.BonusMoney);
         }
     }
 
@@ -144,10 +144,10 @@ public class WaveSpawnerService
 
     private bool HasMoreEnemies()
     {
-        if (_currentWaveConfiguration == null)
+        if (_currentWave == null)
             return false;
 
-        foreach (var group in _currentWaveConfiguration.EnemyGroups)
+        foreach (var group in _currentWave.EnemyGroups)
         {
             if (group.Count > 0)
                 return true;
@@ -169,7 +169,7 @@ public class WaveSpawnerService
         CurrentWave = 0;
         EnemiesSpawned = 0;
         TotalEnemiesInWave = 0;
-        _currentWaveConfiguration = null;
+        _currentWave = null;
     }
 
     public int GetTotalWaves()

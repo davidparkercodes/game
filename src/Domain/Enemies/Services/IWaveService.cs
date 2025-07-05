@@ -13,5 +13,5 @@ public interface IWaveService
     float GetWaveProgress();
     EnemyStats GetNextEnemyType();
     bool IsWaveComplete();
-    void LoadWaveConfiguration(LevelData levelConfig);
+    void LoadWaveConfiguration(LevelData levelConfiguration);
 }
