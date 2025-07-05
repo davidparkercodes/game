@@ -104,6 +104,25 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         }
     }
 
+    public void SetDamageMultiplier(float multiplier)
+    {
+        var keys = new List<string>(_buildingStats.Keys);
+        foreach (var key in keys)
+        {
+            var stats = _buildingStats[key];
+            _buildingStats[key] = new BuildingStats(
+                cost: stats.Cost,
+                damage: (int)(stats.Damage * multiplier),
+                range: stats.Range,
+                fireRate: stats.FireRate,
+                bulletSpeed: stats.BulletSpeed,
+                shootSound: stats.ShootSound,
+                impactSound: stats.ImpactSound,
+                description: stats.Description
+            );
+        }
+    }
+
     private static string FindConfigFile(string relativePath)
     {
         // First try the relative path as-is

@@ -126,24 +126,55 @@ This plan addresses critical issues in the Wave system spanning Domain, Applicat
 ## Phase 5: GameSimRunner Integration
 **Priority: MEDIUM**
 
-### [ ] 5.1 Connect Wave System to Simulation
-- [ ] Ensure `GameSimRunner` can access wave configuration data
-- [ ] Implement wave simulation **completely independent of Godot** (Domain/Application only)
-- [ ] Add wave progression testing capabilities
-- [ ] Create mock wave services for testing
-- [ ] Ensure no Infrastructure layer dependencies in simulation
+### Overview
+Integrate the wave system with the existing GameSimRunner simulation framework to ensure unified wave configuration and testing capabilities across both in-game (Godot) and simulation environments.
 
-### [ ] 5.2 Add Wave Metrics and Analytics
-- [ ] Track wave completion rates
+### [✅] 5.1 Define Interfaces and Service Alignment
+- [✅] Ensure wave system interfaces align with `GameSimRunner` architecture
+- [✅] Review and adapt wave service interfaces to work with mock services
+- [✅] Verify `IWaveService` compatibility with simulation framework
+- [✅] Define clear boundaries between Domain/Application layers for simulation use
+
+### [✅] 5.2 Mock Services Adaptation
+- [✅] Create or adapt `MockWaveService.cs` to align with current wave system
+- [✅] Ensure wave configuration loading uses `data/simulation/wave-configs.json`
+- [✅] Remove any hardcoded wave values from mock services
+- [✅] Implement config-driven wave spawning in simulation environment
+- [✅] Verify wave progression logic works in both Godot and simulation contexts
+
+### [✅] 5.3 Configuration Alignment
+- [✅] Ensure all wave-related configurations are present in simulation JSON files
+- [✅] Align `default_waves.json` structure with simulation requirements
+- [✅] Add wave-specific parameters to `SimulationConfig.cs` if needed
+- [✅] Enable easy modification and testing without recompilation
+- [✅] Create wave balance multipliers and testing scenarios
+
+### [ ] 5.4 Unify Wave Logic Between Systems
+- [ ] Integrate current in-game wave logic with `GameSimRunner` simulation code
+- [ ] Ensure `SpawnEnemiesForWave` method works with unified wave configuration
+- [ ] Adapt wave progression and difficulty scaling for simulation use
+- [ ] Maintain consistency between Godot wave spawning and simulation wave spawning
+
+### [ ] 5.5 Testing and Validation
+- [ ] Write integration tests in `SimulationIntegrationTests.cs` for wave system
+- [ ] Verify no circular dependencies introduced during integration
+- [ ] Test wave system works correctly in both environments
+- [ ] Validate dependency injection setup for wave services
+- [ ] Ensure clean architecture principles maintained
+
+### [ ] 5.6 Add Wave Metrics and Analytics
+- [ ] Track wave completion rates in simulation
 - [ ] Monitor enemy spawn timing accuracy
 - [ ] Measure wave difficulty progression
-- [ ] Export wave performance data
+- [ ] Export wave performance data for analysis
+- [ ] Create wave balance testing scenarios
 
-### [ ] 5.3 Create Wave Testing Tools
+### [ ] 5.7 Create Wave Testing Tools
 - [ ] Add wave validation commands to simulation runner
-- [ ] Implement wave balance testing scenarios
-- [ ] Create automated wave progression tests
+- [ ] Implement automated wave progression tests
 - [ ] Add wave data integrity checks
+- [ ] Create visual progress bars for wave simulation testing
+- [ ] Enable quick balance testing for wave configurations
 
 ---
 
@@ -196,9 +227,14 @@ This plan addresses critical issues in the Wave system spanning Domain, Applicat
 - [✅] Robust error handling and logging
 
 ### Phase 5 Success Criteria:
-- [ ] GameSimRunner can run wave simulations correctly
-- [ ] Wave system works both in Godot and simulation environments
-- [ ] Comprehensive testing capabilities
+- [ ] Wave system interfaces properly aligned with `GameSimRunner` architecture
+- [ ] `MockWaveService.cs` successfully loads configuration from `data/simulation/wave-configs.json`
+- [ ] All wave configurations present in simulation JSON files with no hardcoded values
+- [ ] Wave logic unified between Godot and simulation environments
+- [ ] Integration tests validate wave system works in both contexts
+- [ ] No circular dependencies introduced during integration
+- [ ] Visual wave simulation testing with progress indicators
+- [ ] Quick balance testing capabilities for wave configurations
 
 ### Phase 6 Success Criteria:
 - [ ] Optimal performance for wave loading and spawning

@@ -15,6 +15,7 @@ public class GameSimRunner
 {
     private readonly MockBuildingStatsProvider _buildingStatsProvider;
     private readonly MockEnemyStatsProvider _enemyStatsProvider;
+    private readonly MockWaveService _waveService;
     private readonly IBuildingTypeRegistry _buildingTypeRegistry;
     private readonly IPlacementStrategyProvider _placementStrategyProvider;
     private Random _random;
@@ -23,6 +24,7 @@ public class GameSimRunner
     {
         _buildingStatsProvider = new MockBuildingStatsProvider();
         _enemyStatsProvider = new MockEnemyStatsProvider();
+        _waveService = new MockWaveService();
         _buildingTypeRegistry = new BuildingTypeRegistry(_buildingStatsProvider);
         _placementStrategyProvider = new PlacementStrategyProvider(_buildingTypeRegistry);
         _random = new Random();
@@ -39,8 +41,12 @@ public class GameSimRunner
             
             // Apply config modifiers to mock services
             _buildingStatsProvider.SetCostMultiplier(config.BuildingCostMultiplier);
+            _buildingStatsProvider.SetDamageMultiplier(config.BuildingDamageMultiplier);
             _enemyStatsProvider.SetHealthMultiplier(config.EnemyHealthMultiplier);
             _enemyStatsProvider.SetSpeedMultiplier(config.EnemySpeedMultiplier);
+            
+            // Load wave configuration based on difficulty setting
+            _waveService.LoadWaveSet(config.WaveSetDifficulty);
 
             // Initialize game state
             var gameState = new GameState(config.StartingMoney, config.StartingLives);
@@ -276,16 +282,21 @@ public class GameSimRunner
     private List<SimulatedEnemy> SpawnEnemiesForWave(GameState gameState, int waveNumber)
     {
         var enemies = new List<SimulatedEnemy>();
-        var enemyCount = 5 + (waveNumber - 1) * 2; // Increase enemies per wave
         var spawnPosition = new Position(0, 250); // Start position
 
-        for (int i = 0; i < enemyCount; i++)
+        // Start the wave in the wave service to get configuration
+        _waveService.StartWave(waveNumber);
+        
+        // Get enemy stats from wave service which loads from configuration
+        var enemyStats = _waveService.GetNextEnemyType();
+        
+        // Use wave service to determine enemy count based on configuration
+        var totalEnemies = _waveService.GetRemainingEnemies();
+        
+        for (int i = 0; i < totalEnemies; i++)
         {
-            string enemyType = GetEnemyTypeForWave(waveNumber, i);
-            var enemyStats = _enemyStatsProvider.GetScaledStatsForWave(enemyType, waveNumber);
-
             var enemy = new SimulatedEnemy(
-                enemyType,
+                "simulated_enemy", // Type doesn't matter for simulation
                 enemyStats.MaxHealth,
                 enemyStats.Speed,
                 enemyStats.RewardGold,
@@ -323,6 +334,7 @@ public class GameSimRunner
                 {
                     enemiesKilled++;
                     gameState.AddMoney(target.Reward);
+                    _waveService.OnEnemyKilled(); // Notify wave service
                 }
             }
         }
