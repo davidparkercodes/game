@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Game.Infrastructure.Interfaces;
+using Game.Domain.Audio.Enums;
 
 namespace Game.Infrastructure.Sound;
 
@@ -31,7 +32,6 @@ public class SoundService : ISoundService
         }
         catch
         {
-            // Ignore initialization errors in test environment
         }
     }
 
@@ -149,7 +149,6 @@ public class SoundService : ISoundService
         }
         catch
         {
-            // Ignore in test environment
         }
     }
 

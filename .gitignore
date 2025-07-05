@@ -42,3 +42,11 @@ Thumbs.db
 # Directories
 .vscode/
 .idea/
+
+# Test and coverage output
+TestResults/
+CoverageReport/
+coverage/
+coverage-*/
+*.coverage
+*.cobertura.xml

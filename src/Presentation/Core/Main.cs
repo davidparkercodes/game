@@ -2,6 +2,7 @@ using Godot;
 using Game.Infrastructure.DI;
 using Game.Application.Shared.Cqrs;
 using Game.Infrastructure.Sound;
+using Game.Presentation.Systems;
 
 namespace Game.Presentation.Core;
 
@@ -52,8 +53,6 @@ public partial class Main : Node2D
 
     private void InitializeBuildingSystem()
     {
-        // GroundLayer is an instance of Level01.tscn which contains a TileMapLayer
-        // The actual TileMapLayer is the root node of the Level01.tscn scene
         var groundLayerInstance = GetNode("GroundLayer");
         var groundLayer = groundLayerInstance as TileMapLayer;
         
@@ -67,11 +66,9 @@ public partial class Main : Node2D
             GD.PrintErr("❌ Failed to find GroundLayer TileMapLayer");
             GD.PrintErr($"❌ GroundLayer node type: {groundLayerInstance?.GetType().Name}");
             
-            // Try to find TileMapLayer as a child if it's not the direct node
             var tileMapLayer = groundLayerInstance?.GetNodeOrNull<TileMapLayer>(".");
             if (tileMapLayer == null && groundLayerInstance != null)
             {
-                // Search for any TileMapLayer child
                 foreach (Node child in groundLayerInstance.GetChildren())
                 {
                     if (child is TileMapLayer layer)

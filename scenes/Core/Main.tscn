@@ -1,21 +1,18 @@
-[gd_scene load_steps=18 format=4 uid="uid://wgthd0eexbcv"]
+[gd_scene load_steps=17 format=4 uid="uid://wgthd0eexbcv"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player/Player.tscn" id="2_nxtc6"]
 [ext_resource type="PackedScene" uid="uid://ddkixe5gb73sy" path="res://scenes/Turrets/BasicTurret.tscn" id="3_wp0k4"]
-[ext_resource type="PackedScene" path="res://scenes/Items/PunchingBag.tscn" id="4_jlsqs"]
-[ext_resource type="Script" uid="uid://b5sxdd5hwqrku" path="res://scripts/Items/LootablePickup.cs" id="4_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://db86u6pd501cl" path="res://scenes/Turrets/SniperTurret.tscn" id="4_wp0k4"]
-[ext_resource type="Script" uid="uid://d2rlpnoefjg8s" path="res://scripts/Inventory/Inventory.cs" id="5_lhr70"]
 [ext_resource type="PackedScene" uid="uid://3cpqs0fsd2cq" path="res://scenes/Levels/Level01.tscn" id="5_qmy6f"]
-[ext_resource type="PackedScene" path="res://scenes/Items/VendingMachinePickup.tscn" id="6_c01mt"]
-[ext_resource type="Script" uid="uid://d28wdl2bn0af2" path="res://scripts/GameManager/GameManager.cs" id="8_bjd11"]
+[ext_resource type="Script" uid="uid://b5sxdd5hwqrku" path="res://src/Domain/Items/Entities/LootablePickup.cs" id="6_q8u5g"]
+[ext_resource type="Script" uid="uid://d28wdl2bn0af2" path="res://src/Presentation/Core/Main.cs" id="8_bjd11"]
 [ext_resource type="PackedScene" path="res://scenes/UI/Hud.tscn" id="9_qmy6f"]
 [ext_resource type="PackedScene" path="res://scenes/Enemies/Enemy.tscn" id="10_lhr70"]
 [ext_resource type="Resource" uid="uid://db8smygtfvfsh" path="res://data/levels/level_01.tres" id="11_ft6cd"]
-[ext_resource type="Script" uid="uid://btltgcqd0jtul" path="res://scripts/Map/PathManager.cs" id="11_pathmanager"]
-[ext_resource type="Script" uid="uid://b11tq5gvh7h7k" path="res://scripts/Waves/WaveSpawner.cs" id="12_wavespawner"]
-[ext_resource type="Script" uid="uid://c83arw1pxq2xv" path="res://scripts/Systems/BuildingManager.cs" id="13_turretmanager"]
-[ext_resource type="Script" uid="uid://bw2b6hg2ouhmd" path="res://scripts/Systems/StatsManager.cs" id="14_statsmanager"]
+[ext_resource type="Script" uid="uid://btltgcqd0jtul" path="res://src/Domain/Enemies/Services/PathManager.cs" id="11_pathmanager"]
+[ext_resource type="Script" uid="uid://b11tq5gvh7h7k" path="res://src/Infrastructure/Waves/WaveConfigService.cs" id="12_wavespawner"]
+[ext_resource type="Script" uid="uid://c83arw1pxq2xv" path="res://src/Application/Buildings/BuildingManager.cs" id="13_turretmanager"]
+[ext_resource type="Script" uid="uid://bw2b6hg2ouhmd" path="res://src/Infrastructure/Stats/StatsService.cs" id="14_statsmanager"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cm0pq"]
 size = Vector2(58, 60)
@@ -98,12 +95,9 @@ script = ExtResource("13_turretmanager")
 
 [node name="Archive" type="Node" parent="."]
 
-[node name="VendingMachinePickup" parent="Archive" instance=ExtResource("6_c01mt")]
-visible = false
-
 [node name="TrashcanPickup" type="Area2D" parent="Archive"]
 visible = false
-script = ExtResource("4_q8u5g")
+script = ExtResource("6_q8u5g")
 ItemName = "Trash Sandwich"
 DialogText = "You found a sandwich in the trash!"
 
@@ -111,9 +105,3 @@ DialogText = "You found a sandwich in the trash!"
 position = Vector2(605, 479)
 shape = SubResource("RectangleShape2D_cm0pq")
 
-[node name="Inventory" type="Node" parent="Archive"]
-script = ExtResource("5_lhr70")
-
-[node name="PunchingBag" parent="Archive" instance=ExtResource("4_jlsqs")]
-visible = false
-position = Vector2(800, -40)

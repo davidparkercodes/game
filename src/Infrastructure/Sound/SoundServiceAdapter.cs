@@ -1,5 +1,6 @@
 using Godot;
 using Game.Infrastructure.Interfaces;
+using Game.Domain.Audio.Enums;
 
 namespace Game.Infrastructure.Sound;
 

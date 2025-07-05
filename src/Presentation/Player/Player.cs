@@ -1,4 +1,5 @@
 using Godot;
+using Game.Presentation.Buildings;
 
 namespace Game.Presentation.Player;
 
@@ -26,7 +27,6 @@ public partial class Player : CharacterBody2D
 	{
 		AddToGroup("player");
 		
-		// Ensure Speed has a valid value
 		if (Speed <= 0)
 			Speed = 200f;
 		
@@ -180,7 +180,7 @@ public partial class Player : CharacterBody2D
 		
 		if (buildingScene == null) return null;
 		
-		var tempBuilding = buildingScene.Instantiate<Building>();
+		var tempBuilding = buildingScene.Instantiate<Game.Presentation.Buildings.Building>();
 		tempBuilding.InitializeStats();
 		
 		var stats = new PlayerBuildingStats

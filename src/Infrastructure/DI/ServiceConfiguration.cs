@@ -25,17 +25,14 @@ public static class ServiceConfiguration
         if (serviceLocator == null)
             throw new System.ArgumentNullException(nameof(serviceLocator));
 
-        // Infrastructure services
         serviceLocator.RegisterFactory<IStatsService>(() => new StatsService());
         serviceLocator.RegisterFactory<ISoundService>(() => new SoundService());
         serviceLocator.RegisterFactory<IWaveConfigService>(() => new WaveConfigService());
         serviceLocator.RegisterFactory<IBuildingZoneService>(() => new BuildingZoneService());
         
-        // Mediator
         serviceLocator.RegisterFactory<IServiceProvider>(() => new ServiceLocatorAdapter(serviceLocator));
         serviceLocator.RegisterFactory<IMediator>(() => new Game.Application.Shared.Cqrs.Mediator(serviceLocator.Resolve<IServiceProvider>()));
         
-        // Command handlers
         serviceLocator.RegisterFactory<ICommandHandler<PlaceBuildingCommand, PlaceBuildingResult>>(() => 
             new PlaceBuildingCommandHandler(
                 serviceLocator.Resolve<IStatsService>(),
@@ -50,7 +47,6 @@ public static class ServiceConfiguration
         serviceLocator.RegisterFactory<ICommandHandler<StartWaveCommand, StartWaveResult>>(() => 
             new StartWaveCommandHandler());
         
-        // Query handlers
         serviceLocator.RegisterFactory<IQueryHandler<GetTurretStatsQuery, TurretStatsResponse>>(() => 
             new GetTurretStatsQueryHandler(serviceLocator.Resolve<IStatsService>()));
         
