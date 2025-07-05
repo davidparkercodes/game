@@ -21,19 +21,19 @@ This document outlines the step-by-step refactoring plan to transform our game c
 *Feature-based commands, queries, and handlers*
 
 ### 4.1 Setup Application Structure
-- [ ] Create `src/Application/Buildings/`
-- [ ] Create `src/Application/Game/`
-- [ ] Create `src/Application/Rounds/`
-- [ ] Create `src/Application/Waves/`
-- [ ] Create `src/Application/Queries/`
-- [ ] Create `tests/Application/`
+- [x] Create `src/Application/Buildings/`
+- [x] Create `src/Application/Game/`
+- [x] Create `src/Application/Rounds/`
+- [x] Create `src/Application/Waves/`
+- [x] Create `src/Application/Queries/`
+- [x] Create `tests/Application/`
 
 ### 4.2 Buildings Feature Application
-- [ ] Create `Application/Buildings/BuildingManager.cs`
-- [ ] Create `Application/Buildings/Commands/PlaceBuildingCommand.cs`
-- [ ] Create `Application/Buildings/Handlers/PlaceBuildingCommandHandler.cs`
-- [ ] Write comprehensive tests
-- [ ] **TEST CHECKPOINT**: Building commands working
+- [x] Create `Application/Buildings/BuildingManager.cs`
+- [x] Create `Application/Buildings/Commands/PlaceBuildingCommand.cs`
+- [x] Create `Application/Buildings/Handlers/PlaceBuildingCommandHandler.cs`
+- [x] Write comprehensive tests
+- [x] **TEST CHECKPOINT**: Building commands working
 
 ### 4.3 Game Management Application
 - [ ] Move & refactor `GameManager.cs` → `Application/Game/`

@@ -32,6 +32,11 @@ public class BuildingZoneValidator
         return true;
     }
 
+    public bool CanBuildAt(Godot.Vector2 position)
+    {
+        return CanPlaceBuilding(position.X, position.Y);
+    }
+
     public void AddBuilding(Game.Domain.Buildings.Entities.Building building)
     {
         if (building == null)
