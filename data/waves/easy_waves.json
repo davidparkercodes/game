@@ -1,0 +1,72 @@
+{
+  "setName": "Easy Campaign",
+  "description": "A gentle introduction for new players",
+  "waves": [
+    {
+      "waveNumber": 1,
+      "waveName": "First Steps",
+      "description": "Just a few basic enemies to get started",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 5.0,
+      "bonusMoney": 30,
+      "enemyGroups": [
+        {
+          "enemyType": "basic_enemy",
+          "count": 3,
+          "spawnInterval": 3.0,
+          "startDelay": 0.0,
+          "healthMultiplier": 0.8,
+          "speedMultiplier": 0.8,
+          "moneyReward": 3
+        }
+      ]
+    },
+    {
+      "waveNumber": 2,
+      "waveName": "Slow Advance",
+      "description": "A few more enemies, still manageable",
+      "preWaveDelay": 2.0,
+      "postWaveDelay": 5.0,
+      "bonusMoney": 40,
+      "enemyGroups": [
+        {
+          "enemyType": "basic_enemy",
+          "count": 5,
+          "spawnInterval": 2.5,
+          "startDelay": 0.0,
+          "healthMultiplier": 0.9,
+          "speedMultiplier": 0.9,
+          "moneyReward": 4
+        }
+      ]
+    },
+    {
+      "waveNumber": 3,
+      "waveName": "Learning Curve",
+      "description": "Introduction to multiple enemy types",
+      "preWaveDelay": 2.0,
+      "postWaveDelay": 5.0,
+      "bonusMoney": 50,
+      "enemyGroups": [
+        {
+          "enemyType": "basic_enemy",
+          "count": 4,
+          "spawnInterval": 2.0,
+          "startDelay": 0.0,
+          "healthMultiplier": 1.0,
+          "speedMultiplier": 1.0,
+          "moneyReward": 4
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 2,
+          "spawnInterval": 2.0,
+          "startDelay": 8.0,
+          "healthMultiplier": 0.8,
+          "speedMultiplier": 0.9,
+          "moneyReward": 6
+        }
+      ]
+    }
+  ]
+}
