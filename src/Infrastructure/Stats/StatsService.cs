@@ -11,8 +11,8 @@ namespace Game.Infrastructure.Stats;
 
 public class StatsService : IBuildingStatsProvider, IEnemyStatsProvider
 {
-    private EnemyStatsConfig _enemyStats;
-    private BuildingStatsConfig _buildingStats;
+    private EnemyStatsConfig _enemyStats = null!;
+    private BuildingStatsConfig _buildingStats = null!;
     
     private const string ENEMY_STATS_PATH = "res://data/stats/enemy_stats.json";
     private const string BUILDING_STATS_PATH = "res://data/stats/building_stats.json";
@@ -112,7 +112,7 @@ public class StatsService : IBuildingStatsProvider, IEnemyStatsProvider
                     ReadCommentHandling = JsonCommentHandling.Skip
                 };
                 
-                _enemyStats = JsonSerializer.Deserialize<EnemyStatsConfig>(jsonContent, options);
+                _enemyStats = JsonSerializer.Deserialize<EnemyStatsConfig>(jsonContent, options) ?? new EnemyStatsConfig();
             }
             else
             {
@@ -140,7 +140,7 @@ public class StatsService : IBuildingStatsProvider, IEnemyStatsProvider
                     ReadCommentHandling = JsonCommentHandling.Skip
                 };
                 
-                _buildingStats = JsonSerializer.Deserialize<BuildingStatsConfig>(jsonContent, options);
+                _buildingStats = JsonSerializer.Deserialize<BuildingStatsConfig>(jsonContent, options) ?? new BuildingStatsConfig();
             }
             else
             {

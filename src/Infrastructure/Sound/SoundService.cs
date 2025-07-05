@@ -13,8 +13,8 @@ public class SoundService : ISoundService
     private Dictionary<string, AudioStream> _sounds = new();
     private Dictionary<string, SoundConfigData> _soundConfigs = new();
     private List<AudioStreamPlayer> _sfxPlayers = new();
-    private AudioStreamPlayer _uiPlayer;
-    private AudioStreamPlayer _musicPlayer;
+    private AudioStreamPlayer _uiPlayer = null!;
+    private AudioStreamPlayer _musicPlayer = null!;
     
     private int MaxSimultaneousSFX = 10;
     private float MasterVolume = 0.6f;

@@ -4,13 +4,13 @@ namespace Game.Infrastructure.Game.Services;
 
 public class GameService
 {
-    public static GameService Instance { get; private set; }
+    public static GameService Instance { get; private set; } = null!;
 
     public int Money { get; private set; } = 500;
     public int Lives { get; private set; } = 20;
     public int Score { get; private set; } = 0;
     public bool IsGameActive { get; private set; } = false;
-    public object Hud { get; set; }
+    public object? Hud { get; set; }
 
     static GameService()
     {

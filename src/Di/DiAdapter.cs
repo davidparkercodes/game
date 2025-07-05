@@ -11,7 +11,7 @@ public class DiAdapter : IServiceProvider
         _diContainer = diContainer ?? throw new ArgumentNullException(nameof(diContainer));
     }
 
-    public object GetService(Type serviceType)
+    public object? GetService(Type serviceType)
     {
         try
         {

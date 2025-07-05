@@ -8,15 +8,15 @@ namespace Game.Infrastructure.Enemies.Services;
 
 public class WaveSpawnerService
 {
-    public static WaveSpawnerService Instance { get; private set; }
+    public static WaveSpawnerService Instance { get; private set; } = null!;
 
     public bool IsSpawning { get; private set; } = false;
     public int CurrentWave { get; private set; } = 0;
     public int EnemiesSpawned { get; private set; } = 0;
     public int TotalEnemiesInWave { get; private set; } = 0;
 
-    private Godot.Timer _spawnTimer;
-    private WaveConfigurationInternal _currentWaveConfiguration;
+    private Godot.Timer _spawnTimer = null!;
+    private WaveConfigurationInternal? _currentWaveConfiguration;
 
     static WaveSpawnerService()
     {
