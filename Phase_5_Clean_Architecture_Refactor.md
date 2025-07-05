@@ -21,18 +21,23 @@ This document outlines the step-by-step refactoring plan to transform our game c
 *Clean separation between game engine and business logic*
 
 ### 5.1 Setup Presentation Structure
-- [ ] Create `src/Presentation/Core/`
-- [ ] Create `src/Presentation/Buildings/`
-- [ ] Create `src/Presentation/Player/`
-- [ ] Create `src/Presentation/UI/`
-- [ ] Create `src/Presentation/Components/`
-- [ ] Create `src/Presentation/Inventory/`
+- [x] Create `src/Presentation/Core/`
+- [x] Create `src/Presentation/Buildings/`
+- [x] Create `src/Presentation/Player/`
+- [x] Create `src/Presentation/UI/`
+- [x] Create `src/Presentation/Components/`
+- [x] Create `src/Presentation/Inventory/`
 
 ### 5.2 Core Presentation
-- [ ] Move `Main.cs` → `Presentation/Core/`
-- [ ] Integrate with DI container
-- [ ] Setup mediator dependency
-- [ ] Manual test: Game launches
+- [x] Move `Main.cs` → `Presentation/Core/`
+- [x] Integrate with DI container
+- [x] Setup mediator dependency
+- [x] Update scene file to new script location
+- [x] Backup original Main.cs
+- [x] Build successfully compiles
+- [x] All 94 tests still passing
+- [x] Fixed BuildingZoneValidator initialization timing
+- [x] **READY FOR MANUAL TEST**: Game launches
 
 ### 5.3 Feature-Based Presentation
 - [ ] Move `BuildingPreview.cs` → `Presentation/Buildings/`

@@ -31,6 +31,9 @@ public partial class GameManager : Node
 		// Initialize game state
 		Money = StartingMoney;
 		Lives = StartingLives;
+		
+		// Initialize BuildingZoneValidator
+		CallDeferred(nameof(InitializeBuildingSystem));
 
 		// Get or create RoundManager
 		RoundManager = RoundManager.Instance;
@@ -212,5 +215,48 @@ public partial class GameManager : Node
 	{
 		GD.Print("🏆 All waves completed! Player wins!");
 		TriggerGameWon();
+	}
+	
+	private void InitializeBuildingSystem()
+	{
+		// Find the GroundLayer node which is an instance of Level01.tscn containing a TileMapLayer
+		var groundLayerInstance = GetNode("../GroundLayer");
+		var groundLayer = groundLayerInstance as TileMapLayer;
+		
+		if (groundLayer != null)
+		{
+			BuildingZoneValidator.Initialize(groundLayer);
+			GD.Print("🏗️ Building system initialized successfully");
+		}
+		else
+		{
+			GD.PrintErr("❌ Failed to find GroundLayer TileMapLayer");
+			GD.PrintErr($"❌ GroundLayer node type: {groundLayerInstance?.GetType().Name}");
+			
+			// Try to find TileMapLayer as a child if it's not the direct node
+			var tileMapLayer = groundLayerInstance?.GetNodeOrNull<TileMapLayer>(".");
+			if (tileMapLayer == null && groundLayerInstance != null)
+			{
+				// Search for any TileMapLayer child
+				foreach (Node child in groundLayerInstance.GetChildren())
+				{
+					if (child is TileMapLayer layer)
+					{
+						tileMapLayer = layer;
+						break;
+					}
+				}
+			}
+			
+			if (tileMapLayer != null)
+			{
+				BuildingZoneValidator.Initialize(tileMapLayer);
+				GD.Print("🏗️ Building system initialized successfully with child TileMapLayer");
+			}
+			else
+			{
+				GD.PrintErr("❌ Could not find any TileMapLayer in GroundLayer or its children");
+			}
+		}
 	}
 }

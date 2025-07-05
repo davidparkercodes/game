@@ -1,6 +1,5 @@
-[gd_scene load_steps=19 format=4 uid="uid://wgthd0eexbcv"]
+[gd_scene load_steps=18 format=4 uid="uid://wgthd0eexbcv"]
 
-[ext_resource type="Script" uid="uid://cj8x4bx2mnr6p" path="res://scripts/Core/Main.cs" id="1_c01mt"]
 [ext_resource type="PackedScene" path="res://scenes/Player/Player.tscn" id="2_nxtc6"]
 [ext_resource type="PackedScene" uid="uid://ddkixe5gb73sy" path="res://scenes/Turrets/BasicTurret.tscn" id="3_wp0k4"]
 [ext_resource type="PackedScene" path="res://scenes/Items/PunchingBag.tscn" id="4_jlsqs"]
@@ -22,7 +21,6 @@
 size = Vector2(58, 60)
 
 [node name="Main" type="Node2D"]
-script = ExtResource("1_c01mt")
 
 [node name="Player" parent="." instance=ExtResource("2_nxtc6")]
 z_index = 2
