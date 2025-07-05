@@ -296,27 +296,11 @@ public class GameSimRunner
 
     private string GetEnemyTypeForWave(int waveNumber, int enemyIndex)
     {
-        // Progressive enemy type introduction using config-driven categories
-        var enemyCategory = waveNumber switch
-        {
-            >= 8 when enemyIndex == 0 => "boss",
-            >= 6 when enemyIndex % 4 == 0 => "elite",
-            >= 4 when enemyIndex % 3 == 0 => "tank",
-            >= 2 when enemyIndex % 2 == 0 => "fast",
-            _ => "basic"
-        };
-
-        var enemyType = _enemyStatsProvider.EnemyTypeRegistry.GetByCategory(enemyCategory).FirstOrDefault()?.ConfigKey;
+        // Use EnemyTypeRegistry's built-in wave progression logic
+        var enemyType = _enemyStatsProvider.EnemyTypeRegistry.GetEnemyTypeForWaveProgression(waveNumber, enemyIndex);
         
-        // Fallback to default enemy type if category not found
-        if (string.IsNullOrEmpty(enemyType))
-        {
-            var defaultType = _enemyStatsProvider.EnemyTypeRegistry.GetDefaultType() ?? 
-                             _enemyStatsProvider.EnemyTypeRegistry.GetBasicType();
-            enemyType = defaultType?.ConfigKey ?? "basic_enemy";
-        }
-
-        return enemyType;
+        // Return config key, with fallback to hardcoded string as last resort
+        return enemyType?.ConfigKey ?? "basic_enemy";
     }
 
     private int SimulateCombatTick(GameState gameState, List<SimulatedEnemy> enemies)

@@ -79,6 +79,34 @@ public class BuildingTypeRegistry : IBuildingTypeRegistry
         return _typesByCategory.Keys;
     }
 
+    public IEnumerable<BuildingType> GetAllByTier(int tier)
+    {
+        // Since building types don't currently have tier support, filter by cost as a proxy
+        // This could be enhanced later when building tiers are added to metadata
+        var tierThresholds = new Dictionary<int, (int min, int max)>
+        {
+            { 1, (0, 50) },     // Starter buildings
+            { 2, (51, 150) },   // Intermediate buildings  
+            { 3, (151, 300) },  // Advanced buildings
+            { 4, (301, int.MaxValue) } // High-end buildings
+        };
+        
+        if (!tierThresholds.ContainsKey(tier))
+        {
+            return Enumerable.Empty<BuildingType>();
+        }
+        
+        var (minCost, maxCost) = tierThresholds[tier];
+        
+        return _typesByConfigKey.Values
+            .Select(buildingType => new { 
+                Type = buildingType, 
+                Stats = _buildingStatsProvider.GetBuildingStats(buildingType.ConfigKey) 
+            })
+            .Where(x => x.Stats.Cost >= minCost && x.Stats.Cost <= maxCost)
+            .Select(x => x.Type);
+    }
+
     private void LoadTypesFromConfig()
     {
         try

@@ -14,4 +14,5 @@ public interface IBuildingTypeRegistry
     bool IsValidInternalId(string internalId);
     IEnumerable<BuildingType> GetAllTypes();
     IEnumerable<string> GetAllCategories();
+    IEnumerable<BuildingType> GetAllByTier(int tier);
 }

@@ -16,4 +16,7 @@ public interface IEnemyTypeRegistry
     IEnumerable<EnemyType> GetAllTypes();
     IEnumerable<string> GetAllCategories();
     IEnumerable<int> GetAllTiers();
+    IEnumerable<EnemyType> GetEnemiesForWave(int waveNumber);
+    EnemyType? GetEnemyTypeForWaveProgression(int waveNumber, int enemyIndex);
+    bool IsEnemyAvailableForWave(string configKey, int waveNumber);
 }

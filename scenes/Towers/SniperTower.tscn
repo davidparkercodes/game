@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://db86u6pd501cl"]
 
-[ext_resource type="Script" path="res://src/Presentation/Buildings/SniperTower.cs" id="1_ih2c0"]
+[ext_resource type="Script" uid="uid://bxoa3b2ij3stb" path="res://src/Presentation/Buildings/SniperTower.cs" id="1_ih2c0"]
 [ext_resource type="PackedScene" path="res://scenes/Projectiles/Bullet.tscn" id="2_jfomq"]
-[ext_resource type="Texture2D" uid="uid://8y8jt8dxd382" path="res://assets/sprites/basic_colors_tilesheet_16x16.png" id="3_bpmw8"]
+[ext_resource type="Texture2D" uid="uid://4lncw5fj4845" path="res://assets/sprites/basic_shapes_vaporwave_tilesheet_16x16.png" id="3_jsprh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_76wwe"]
 size = Vector2(16, 16)
@@ -19,9 +19,9 @@ Range = null
 FireRate = null
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("3_bpmw8")
+texture = ExtResource("3_jsprh")
 region_enabled = true
-region_rect = Rect2(32, 16, 16, 16)
+region_rect = Rect2(32, 64, 16, 16)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_76wwe")

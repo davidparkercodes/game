@@ -83,6 +83,77 @@ public class EnemyTypeRegistry : IEnemyTypeRegistry
         return _typesByTier.Keys.OrderBy(x => x);
     }
 
+    public IEnumerable<EnemyType> GetEnemiesForWave(int waveNumber)
+    {
+        // Get enemies that are available for this wave based on tier progression
+        var availableEnemies = new List<EnemyType>();
+        
+        // Tier 1 enemies (basic, fast) available from wave 1
+        if (waveNumber >= 1)
+        {
+            availableEnemies.AddRange(GetByTier(1));
+        }
+        
+        // Tier 2 enemies (tank) available from wave 4
+        if (waveNumber >= 4)
+        {
+            availableEnemies.AddRange(GetByTier(2));
+        }
+        
+        // Tier 3 enemies (elite) available from wave 6
+        if (waveNumber >= 6)
+        {
+            availableEnemies.AddRange(GetByTier(3));
+        }
+        
+        // Tier 4 enemies (boss) available from wave 8
+        if (waveNumber >= 8)
+        {
+            availableEnemies.AddRange(GetByTier(4));
+        }
+        
+        return availableEnemies;
+    }
+    
+    public EnemyType? GetEnemyTypeForWaveProgression(int waveNumber, int enemyIndex)
+    {
+        // Progressive enemy type introduction using tier-based logic
+        var enemyCategory = waveNumber switch
+        {
+            >= 8 when enemyIndex == 0 => "boss",
+            >= 6 when enemyIndex % 4 == 0 => "elite",
+            >= 4 when enemyIndex % 3 == 0 => "tank",
+            >= 2 when enemyIndex % 2 == 0 => "fast",
+            _ => "basic"
+        };
+
+        var enemyType = GetByCategory(enemyCategory).FirstOrDefault();
+        
+        // Fallback to default enemy type if category not found
+        if (enemyType == null)
+        {
+            enemyType = GetDefaultType() ?? GetBasicType();
+        }
+
+        return enemyType;
+    }
+    
+    public bool IsEnemyAvailableForWave(string configKey, int waveNumber)
+    {
+        var enemyType = GetByConfigKey(configKey);
+        if (enemyType == null) return false;
+        
+        // Check tier-based availability
+        return enemyType.Tier switch
+        {
+            1 => waveNumber >= 1,  // Basic/Fast enemies
+            2 => waveNumber >= 4,  // Tank enemies
+            3 => waveNumber >= 6,  // Elite enemies
+            4 => waveNumber >= 8,  // Boss enemies
+            _ => false
+        };
+    }
+
     private void LoadTypesFromConfig()
     {
         try

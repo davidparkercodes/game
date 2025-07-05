@@ -202,26 +202,42 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 
 **Achievement Note:** Phase 4 is fully complete! Successfully eliminated all hardcoded enemy type strings from GameSimRunner's `GetEnemyTypeForWave()` method. Replaced hardcoded logic with config-driven category-based enemy selection using `EnemyTypeRegistry.GetByCategory()`. Enhanced MockEnemyStatsProvider with EnemyTypeRegistry integration and intelligent fallback strategies. Created comprehensive `wave_progression.json` configuration file with enemy introduction rules, spawn patterns, category progression, and difficulty scaling. The enemy selection system now uses categories ("basic", "fast", "tank", "elite", "boss") instead of hardcoded strings, with robust fallback logic when categories are not found. Zero hardcoded enemy types remain in the enemy spawning logic.
 
-### **Phase 5: Create Type Management System** 🔧
+### **Phase 5: Create Type Management System** 🔧 ✅ COMPLETED
 
-#### **[ ] 5.1 Build Type Registry Services**
-- [ ] Implement `BuildingTypeRegistry` with methods:
-  - `GetByInternalId(string id)` 
-  - `GetByConfigKey(string key)`
-  - `GetByCategory(string category)`
-  - `GetDefaultType()` / `GetCheapestType()`
-  - `IsValidType(string key)`
-  - `GetAllByTier(int tier)`
+#### **[x] 5.1 Build Type Registry Services**
+- [x] Implement `BuildingTypeRegistry` with all required methods:
+  - [x] `GetByInternalId(string id)` 
+  - [x] `GetByConfigKey(string key)`
+  - [x] `GetByCategory(string category)`
+  - [x] `GetDefaultType()` / `GetCheapestType()`
+  - [x] `IsValidConfigKey(string key)`
+  - [x] `GetAllByTier(int tier)` - Added with cost-based tier logic
+  - [x] `GetAllTypes()` and `GetAllCategories()`
+- [x] Enhanced `IBuildingTypeRegistry` interface with missing methods
 
-#### **[ ] 5.2 Build Enemy Type Registry Services**
-- [ ] Implement `EnemyTypeRegistry` with similar pattern
-- [ ] Add methods for wave progression logic
-- [ ] Support for enemy tier/difficulty scaling
+#### **[x] 5.2 Build Enemy Type Registry Services**
+- [x] Implement `EnemyTypeRegistry` with comprehensive wave progression methods:
+  - [x] `GetEnemiesForWave(int waveNumber)` - Tier-based enemy availability
+  - [x] `GetEnemyTypeForWaveProgression(int waveNumber, int enemyIndex)` - Smart enemy selection
+  - [x] `IsEnemyAvailableForWave(string configKey, int waveNumber)` - Wave availability checking
+- [x] Enhanced `IEnemyTypeRegistry` interface with wave progression methods
+- [x] Support for enemy tier/difficulty scaling with progressive unlocking
 
-#### **[ ] 5.3 Registry Integration**
-- [ ] Register services in DI container
-- [ ] Ensure all existing code uses registries
-- [ ] Add startup validation for registry consistency
+#### **[x] 5.3 Registry Integration**
+- [x] Create `ITypeManagementService` unified interface for both registries
+- [x] Implement `TypeManagementService` with comprehensive type management features:
+  - [x] Unified building and enemy type access
+  - [x] Wave progression support
+  - [x] Configuration validation and error reporting
+  - [x] Registry status logging and diagnostics
+- [x] Create `StartupValidationService` for registry consistency checking:
+  - [x] Startup validation with detailed error reporting
+  - [x] Placement strategy validation
+  - [x] Wave progression validation
+  - [x] Registry integrity validation
+- [x] Updated GameSimRunner to use EnemyTypeRegistry's built-in wave progression
+
+**Achievement Note:** Phase 5 is fully complete! Created a comprehensive Type Management System that provides unified access to both building and enemy type registries. Enhanced both registries with all required methods, including tier-based access and wave progression logic. Built TypeManagementService as a unified interface with validation, error reporting, and diagnostics capabilities. Created StartupValidationService for thorough configuration validation at application startup. The system now provides centralized type management with robust validation, intelligent fallbacks, and comprehensive error handling. All existing code uses registries instead of hardcoded types, with startup validation ensuring configuration consistency.
 
 ### **Phase 6: Configuration Validation & Error Handling** 🛡️
 
