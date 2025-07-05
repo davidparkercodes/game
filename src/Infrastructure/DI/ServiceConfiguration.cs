@@ -1,5 +1,8 @@
 using System;
-using Game.Infrastructure.Interfaces;
+using Game.Domain.Shared.Services;
+using Game.Domain.Audio.Services;
+using Game.Domain.Buildings.Services;
+using Game.Domain.Enemies.Services;
 using Game.Infrastructure.Stats;
 using Game.Infrastructure.Sound;
 using Game.Infrastructure.Buildings;
@@ -8,15 +11,14 @@ using Game.Infrastructure.Managers;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
 using Game.Application.Buildings.Handlers;
+using Game.Application.Buildings.Queries;
 using Game.Application.Game.Commands;
 using Game.Application.Game.Handlers;
+using Game.Application.Game.Queries;
 using Game.Application.Rounds.Commands;
 using Game.Application.Rounds.Handlers;
 using Game.Application.Waves.Commands;
 using Game.Application.Waves.Handlers;
-using Game.Application.Queries;
-using Game.Application.Queries.Handlers;
-using Game.Application.Queries.Game;
 
 namespace Game.Infrastructure.DI;
 

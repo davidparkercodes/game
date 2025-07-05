@@ -6,7 +6,8 @@ using Moq;
 using Godot;
 using Game.Application.Buildings.Commands;
 using Game.Application.Buildings.Handlers;
-using Game.Infrastructure.Interfaces;
+using Game.Domain.Shared.Services;
+using Game.Domain.Buildings.Services;
 using Game.Domain.Buildings.ValueObjects;
 
 namespace Game.Tests.Application.Buildings.Handlers;

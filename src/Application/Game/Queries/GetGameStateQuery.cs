@@ -1,6 +1,6 @@
 using Game.Application.Shared.Cqrs;
 
-namespace Game.Application.Queries.Game;
+namespace Game.Application.Game.Queries;
 
 public class GetGameStateQuery : IQuery<GameStateResponse>
 {

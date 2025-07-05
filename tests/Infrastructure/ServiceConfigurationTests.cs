@@ -2,7 +2,7 @@ using System;
 using Xunit;
 using FluentAssertions;
 using Game.Infrastructure.DI;
-using Game.Infrastructure.Interfaces;
+using Game.Domain.Shared.Services;
 
 namespace Game.Tests.Infrastructure;
 

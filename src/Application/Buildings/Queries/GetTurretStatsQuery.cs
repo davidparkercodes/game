@@ -1,6 +1,6 @@
 using Game.Application.Shared.Cqrs;
 
-namespace Game.Application.Queries;
+namespace Game.Application.Buildings.Queries;
 
 public class GetTurretStatsQuery : IQuery<TurretStatsResponse>
 {

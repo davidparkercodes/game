@@ -1,4 +1,4 @@
-using Game.Infrastructure.Interfaces;
+using Game.Domain.Shared.Services;
 using Game.Domain.Enemies.ValueObjects;
 using Game.Domain.Buildings.ValueObjects;
 using Game.Infrastructure.Managers;
@@ -14,24 +14,50 @@ public class StatsServiceAdapter : IStatsService
         _statsManager = statsManager ?? throw new System.ArgumentNullException(nameof(statsManager));
     }
 
-    public EnemyStatsData GetEnemyStats(string enemyType)
+    public EnemyStats GetEnemyStats(string enemyType)
     {
-        return _statsManager.GetEnemyStats(enemyType);
+        var data = _statsManager.GetEnemyStats(enemyType);
+        return ConvertToEnemyStats(data);
     }
 
-    public EnemyStatsData GetDefaultEnemyStats()
+    public EnemyStats GetDefaultEnemyStats()
     {
-        return _statsManager.GetDefaultEnemyStats();
+        var data = _statsManager.GetDefaultEnemyStats();
+        return ConvertToEnemyStats(data);
     }
 
-    public BuildingStatsData GetBuildingStats(string buildingType)
+    public BuildingStats GetBuildingStats(string buildingType)
     {
-        return _statsManager.GetBuildingStats(buildingType);
+        var data = _statsManager.GetBuildingStats(buildingType);
+        return ConvertToBuildingStats(data);
     }
 
-    public BuildingStatsData GetDefaultBuildingStats()
+    public BuildingStats GetDefaultBuildingStats()
     {
-        return _statsManager.GetDefaultBuildingStats();
+        var data = _statsManager.GetDefaultBuildingStats();
+        return ConvertToBuildingStats(data);
+    }
+
+    private EnemyStats ConvertToEnemyStats(EnemyStatsData data)
+    {
+        return new EnemyStats(
+            health: data.health,
+            speed: data.speed,
+            damage: data.damage,
+            reward: data.reward
+        );
+    }
+
+    private BuildingStats ConvertToBuildingStats(BuildingStatsData data)
+    {
+        return new BuildingStats(
+            cost: data.cost,
+            damage: data.damage,
+            range: data.range,
+            fireRate: data.fire_rate,
+            bulletSpeed: data.bullet_speed,
+            description: data.description
+        );
     }
 
     public bool HasEnemyType(string enemyType)

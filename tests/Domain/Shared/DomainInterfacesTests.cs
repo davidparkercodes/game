@@ -2,7 +2,8 @@ using System;
 using Xunit;
 using FluentAssertions;
 using Moq;
-using Game.Domain.Shared.Interfaces;
+using Game.Domain.Buildings.Services;
+using Game.Domain.Enemies.Services;
 using Game.Domain.Buildings.ValueObjects;
 
 namespace Game.Tests.Domain.Shared;
@@ -10,20 +11,20 @@ namespace Game.Tests.Domain.Shared;
 public class DomainInterfacesTests
 {
     [Fact]
-    public void IStatsProvider_ShouldBeImplementable()
+    public void IBuildingStatsProvider_ShouldBeImplementable()
     {
-        var mockStatsProvider = new Mock<IStatsProvider>();
+        var mockBuildingStatsProvider = new Mock<IBuildingStatsProvider>();
         var buildingStats = BuildingStats.CreateDefault();
         
-        mockStatsProvider
+        mockBuildingStatsProvider
             .Setup(sp => sp.GetBuildingStats("BasicTurret"))
             .Returns(buildingStats);
         
-        mockStatsProvider
+        mockBuildingStatsProvider
             .Setup(sp => sp.HasBuildingStats("BasicTurret"))
             .Returns(true);
 
-        var statsProvider = mockStatsProvider.Object;
+        var statsProvider = mockBuildingStatsProvider.Object;
         
         statsProvider.Should().NotBeNull();
         statsProvider.HasBuildingStats("BasicTurret").Should().BeTrue();
@@ -32,22 +33,20 @@ public class DomainInterfacesTests
     }
 
     [Fact]
-    public void ISoundService_ShouldBeImplementable()
+    public void IEnemyStatsProvider_ShouldBeImplementable()
     {
-        var mockSoundService = new Mock<ISoundService>();
+        var mockEnemyStatsProvider = new Mock<IEnemyStatsProvider>();
         
-        mockSoundService
-            .Setup(ss => ss.IsSoundPlaying("test_sound"))
-            .Returns(false);
+        mockEnemyStatsProvider
+            .Setup(sp => sp.HasEnemyStats("BasicEnemy"))
+            .Returns(true);
 
-        var soundService = mockSoundService.Object;
+        var statsProvider = mockEnemyStatsProvider.Object;
         
-        soundService.Should().NotBeNull();
-        soundService.IsSoundPlaying("test_sound").Should().BeFalse();
-        
-        Action playSound = () => soundService.PlaySound("test_sound");
-        playSound.Should().NotThrow();
+        statsProvider.Should().NotBeNull();
+        statsProvider.HasEnemyStats("BasicEnemy").Should().BeTrue();
     }
+
 
     [Fact]
     public void IBuildingService_ShouldBeImplementable()

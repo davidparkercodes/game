@@ -1,7 +1,7 @@
 using Game.Domain.Enemies.ValueObjects;
 using Game.Domain.Levels.ValueObjects;
 
-namespace Game.Domain.Shared.Interfaces;
+namespace Game.Domain.Enemies.Services;
 
 public interface IWaveService
 {

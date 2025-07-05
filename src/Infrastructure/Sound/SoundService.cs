@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using Game.Infrastructure.Interfaces;
+using Game.Domain.Audio.Services;
 using Game.Domain.Audio.Enums;
 using Game.Domain.Audio.ValueObjects;
+using Game.Domain.Shared.ValueObjects;
 
 namespace Game.Infrastructure.Sound;
 
@@ -72,7 +73,7 @@ public class SoundService : ISoundService
         player.Play();
     }
 
-    public void PlaySoundAtPosition(string soundKey, Vector2 position, Vector2 listenerPosition, float maxDistance = 500.0f)
+    public void PlaySoundAtPosition(string soundKey, Position position, Position listenerPosition, float maxDistance = 500.0f)
     {
         float distance = position.DistanceTo(listenerPosition);
         if (distance > maxDistance) return;
@@ -81,6 +82,18 @@ public class SoundService : ISoundService
         float volumeDb = Mathf.LinearToDb(volumeMultiplier);
         
         PlaySound(soundKey, SoundCategory.SFX, volumeDb);
+    }
+
+    public void PlaySound(SoundRequest request)
+    {
+        if (request.IsPositional)
+        {
+            PlaySoundAtPosition(request.SoundKey, request.Position!.Value, request.ListenerPosition!.Value, request.MaxDistance);
+        }
+        else
+        {
+            PlaySound(request.SoundKey, request.Category, request.VolumeDb);
+        }
     }
 
     public void SetMasterVolume(float volume)

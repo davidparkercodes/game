@@ -1,6 +1,6 @@
 using System;
 using System.Text.Json;
-using Game.Infrastructure.Interfaces;
+using Game.Domain.Shared.Services;
 using Game.Domain.Enemies.ValueObjects;
 using Game.Domain.Buildings.ValueObjects;
 using Game.Infrastructure.Configuration;
@@ -20,7 +20,32 @@ public class StatsService : IStatsService
         LoadConfigurations();
     }
 
-    public EnemyStatsData GetEnemyStats(string enemyType)
+    public EnemyStats GetEnemyStats(string enemyType)
+    {
+        var data = GetEnemyStatsData(enemyType);
+        return ConvertToEnemyStats(data);
+    }
+
+    public EnemyStats GetDefaultEnemyStats()
+    {
+        var data = _enemyStats?.default_stats ?? new EnemyStatsData();
+        return ConvertToEnemyStats(data);
+    }
+
+    public BuildingStats GetBuildingStats(string buildingType)
+    {
+        var data = GetBuildingStatsData(buildingType);
+        return ConvertToBuildingStats(data);
+    }
+
+    public BuildingStats GetDefaultBuildingStats()
+    {
+        var data = _buildingStats?.default_stats ?? new BuildingStatsData();
+        return ConvertToBuildingStats(data);
+    }
+
+    // Legacy methods for backward compatibility
+    private EnemyStatsData GetEnemyStatsData(string enemyType)
     {
         if (_enemyStats?.enemy_types?.ContainsKey(enemyType) == true)
         {
@@ -30,12 +55,7 @@ public class StatsService : IStatsService
         return _enemyStats?.default_stats ?? new EnemyStatsData();
     }
 
-    public EnemyStatsData GetDefaultEnemyStats()
-    {
-        return _enemyStats?.default_stats ?? new EnemyStatsData();
-    }
-
-    public BuildingStatsData GetBuildingStats(string buildingType)
+    private BuildingStatsData GetBuildingStatsData(string buildingType)
     {
         if (_buildingStats?.building_types?.ContainsKey(buildingType) == true)
         {
@@ -45,9 +65,26 @@ public class StatsService : IStatsService
         return _buildingStats?.default_stats ?? new BuildingStatsData();
     }
 
-    public BuildingStatsData GetDefaultBuildingStats()
+    private EnemyStats ConvertToEnemyStats(EnemyStatsData data)
     {
-        return _buildingStats?.default_stats ?? new BuildingStatsData();
+        return new EnemyStats(
+            health: data.health,
+            speed: data.speed,
+            damage: data.damage,
+            reward: data.reward
+        );
+    }
+
+    private BuildingStats ConvertToBuildingStats(BuildingStatsData data)
+    {
+        return new BuildingStats(
+            cost: data.cost,
+            damage: data.damage,
+            range: data.range,
+            fireRate: data.fire_rate,
+            bulletSpeed: data.bullet_speed,
+            description: data.description
+        );
     }
 
     public bool HasEnemyType(string enemyType)

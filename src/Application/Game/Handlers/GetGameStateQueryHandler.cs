@@ -1,10 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
-using Game.Application.Queries.Game;
+using Game.Application.Game.Queries;
 using Game.Infrastructure.Managers;
 
-namespace Game.Application.Queries.Handlers;
+namespace Game.Application.Game.Handlers;
 
 public class GetGameStateQueryHandler : IQueryHandler<GetGameStateQuery, GameStateResponse>
 {

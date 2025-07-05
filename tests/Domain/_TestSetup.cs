@@ -21,15 +21,22 @@ public class TestSetupTests
         var domainPath = System.IO.Path.Combine(srcPath, "Domain");
         var applicationPath = System.IO.Path.Combine(srcPath, "Application");
         
-        var domainSharedPath = System.IO.Path.Combine(domainPath, "Shared", "Interfaces");
-        var domainValueObjectsPath = System.IO.Path.Combine(domainPath, "ValueObjects");
+        // Feature-centric domain structure
+        var domainBuildingsServicesPath = System.IO.Path.Combine(domainPath, "Buildings", "Services");
+        var domainEnemiesServicesPath = System.IO.Path.Combine(domainPath, "Enemies", "Services");
         var applicationSharedPath = System.IO.Path.Combine(applicationPath, "Shared", "Cqrs");
+        
+        // Feature-centric application structure
+        var applicationBuildingsPath = System.IO.Path.Combine(applicationPath, "Buildings");
+        var applicationGamePath = System.IO.Path.Combine(applicationPath, "Game");
 
         System.IO.Directory.Exists(srcPath).Should().BeTrue($"src directory should exist at: {srcPath}");
         System.IO.Directory.Exists(domainPath).Should().BeTrue($"Domain directory should exist at: {domainPath}");
         System.IO.Directory.Exists(applicationPath).Should().BeTrue($"Application directory should exist at: {applicationPath}");
-        System.IO.Directory.Exists(domainSharedPath).Should().BeTrue($"Domain/Shared/Interfaces directory should exist at: {domainSharedPath}");
-        System.IO.Directory.Exists(domainValueObjectsPath).Should().BeTrue($"Domain/ValueObjects directory should exist at: {domainValueObjectsPath}");
+        System.IO.Directory.Exists(domainBuildingsServicesPath).Should().BeTrue($"Domain/Buildings/Services directory should exist at: {domainBuildingsServicesPath}");
+        System.IO.Directory.Exists(domainEnemiesServicesPath).Should().BeTrue($"Domain/Enemies/Services directory should exist at: {domainEnemiesServicesPath}");
         System.IO.Directory.Exists(applicationSharedPath).Should().BeTrue($"Application/Shared/Cqrs directory should exist at: {applicationSharedPath}");
+        System.IO.Directory.Exists(applicationBuildingsPath).Should().BeTrue($"Application/Buildings directory should exist at: {applicationBuildingsPath}");
+        System.IO.Directory.Exists(applicationGamePath).Should().BeTrue($"Application/Game directory should exist at: {applicationGamePath}");
     }
 }

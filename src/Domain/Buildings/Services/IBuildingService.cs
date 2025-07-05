@@ -1,6 +1,6 @@
 using Game.Domain.Buildings.ValueObjects;
 
-namespace Game.Domain.Shared.Interfaces;
+namespace Game.Domain.Buildings.Services;
 
 public interface IBuildingService
 {

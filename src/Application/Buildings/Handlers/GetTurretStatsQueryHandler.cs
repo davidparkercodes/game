@@ -1,10 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
-using Game.Application.Queries;
-using Game.Infrastructure.Interfaces;
+using Game.Application.Buildings.Queries;
+using Game.Domain.Shared.Services;
 
-namespace Game.Application.Queries.Handlers;
+namespace Game.Application.Buildings.Handlers;
 
 public class GetTurretStatsQueryHandler : IQueryHandler<GetTurretStatsQuery, TurretStatsResponse>
 {

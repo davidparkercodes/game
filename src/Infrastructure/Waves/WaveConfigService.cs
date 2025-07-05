@@ -1,23 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Godot;
-using Game.Infrastructure.Interfaces;
+using Game.Domain.Enemies.Services;
+using Game.Domain.Enemies.ValueObjects;
 using Game.Infrastructure.Configuration;
 
 namespace Game.Infrastructure.Waves;
 
 public class WaveConfigService : IWaveConfigService
 {
-    public WaveSetConfig LoadWaveSet(string jsonPath)
+    public WaveConfiguration LoadWaveSet(string configPath)
     {
-        if (string.IsNullOrEmpty(jsonPath) || !IsInGodotRuntime() || !FileAccess.FileExists(jsonPath))
+        if (string.IsNullOrEmpty(configPath) || !IsInGodotRuntime() || !FileAccess.FileExists(configPath))
         {
             return CreateDefaultWaveSet();
         }
 
         try
         {
-            var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
+            var file = FileAccess.Open(configPath, FileAccess.ModeFlags.Read);
             if (file == null)
             {
                 return CreateDefaultWaveSet();
@@ -35,7 +37,7 @@ public class WaveConfigService : IWaveConfigService
 
             var jsonData = json.Data.AsGodotDictionary();
             var waveSet = ParseWaveSetFromJson(jsonData);
-            return waveSet;
+            return ConvertToWaveConfiguration(waveSet);
         }
         catch (Exception)
         {
@@ -55,7 +57,12 @@ public class WaveConfigService : IWaveConfigService
         }
     }
 
-    public WaveSetConfig CreateDefaultWaveSet()
+    public WaveConfiguration CreateDefaultWaveSet()
+    {
+        return new WaveConfiguration("Default Waves", 10, "{\"waves\": []}");
+    }
+
+    private WaveSetConfig CreateDefaultWaveSetInternal()
     {
         var waveSet = new WaveSetConfig();
         waveSet.SetName = "Default Waves";
@@ -139,5 +146,15 @@ public class WaveConfigService : IWaveConfigService
         group.SpeedMultiplier = groupData.GetValueOrDefault("speedMultiplier", 1.0f).AsSingle();
         group.MoneyReward = groupData.GetValueOrDefault("moneyReward", 10).AsInt32();
         return group;
+    }
+
+    private WaveConfiguration ConvertToWaveConfiguration(WaveSetConfig waveSetConfig)
+    {
+        var serializedData = JsonSerializer.Serialize(waveSetConfig);
+        return new WaveConfiguration(
+            waveSetConfig.SetName ?? "Default Waves",
+            waveSetConfig.Waves?.Count ?? 0,
+            serializedData
+        );
     }
 }

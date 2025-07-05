@@ -2,8 +2,10 @@ using System.Threading.Tasks;
 using Godot;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
-using Game.Infrastructure.Interfaces;
+using Game.Domain.Shared.Services;
+using Game.Domain.Buildings.Services;
 using Game.Domain.Buildings.ValueObjects;
+using Game.Domain.Shared.ValueObjects;
 using Game.Infrastructure.Managers;
 using Game.Presentation.Buildings;
 
@@ -33,7 +35,8 @@ public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand,
         if (buildingStats.cost == 0 && command.BuildingType != "basic_tower")
             return Task.FromResult(PlaceBuildingResult.Failed($"Unknown building type: {command.BuildingType}"));
 
-        if (!_zoneService.CanBuildAt(command.Position))
+        var domainPosition = new Position(command.Position.X, command.Position.Y);
+        if (!_zoneService.CanBuildAt(domainPosition))
             return Task.FromResult(PlaceBuildingResult.Failed("Cannot build at this location - invalid zone"));
 
         if (!HasEnoughMoney(buildingStats.cost))
