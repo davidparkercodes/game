@@ -9,7 +9,6 @@
 [ext_resource type="PackedScene" uid="uid://dtrqffq12t5q4" path="res://scenes/Enemies/Enemy.tscn" id="10_lhr70"]
 [ext_resource type="Resource" uid="uid://db8smygtfvfsh" path="res://data/levels/level_01.tres" id="11_ft6cd"]
 [ext_resource type="Script" uid="uid://y712veadk31o" path="res://src/Domain/Enemies/Services/PathManager.cs" id="11_pathmanager"]
-[ext_resource type="Script" uid="uid://dwr0pemnibg8y" path="res://src/Infrastructure/Waves/WaveConfigService.cs" id="12_wavespawner"]
 [ext_resource type="Script" uid="uid://criulo1jbp6r8" path="res://src/Application/Buildings/BuildingManager.cs" id="13_towermanager"]
 [ext_resource type="Script" uid="uid://b2yewe0o5ji6p" path="res://src/Infrastructure/Stats/StatsService.cs" id="14_statsmanager"]
 
@@ -82,7 +81,6 @@ script = ExtResource("11_pathmanager")
 CurrentLevel = ExtResource("11_ft6cd")
 
 [node name="WaveSpawner" type="Node2D" parent="."]
-script = ExtResource("12_wavespawner")
 BasicEnemyScene = ExtResource("10_lhr70")
 
 [node name="StatsManager" type="Node" parent="."]

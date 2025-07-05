@@ -7,6 +7,7 @@ using Game.Infrastructure.Sound;
 using Game.Infrastructure.Buildings.Services;
 using Game.Infrastructure.Stats.Services;
 using Game.Infrastructure.Audio.Services;
+using Game.Infrastructure.Waves;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
 using Game.Application.Buildings.Handlers;
@@ -16,6 +17,8 @@ using Game.Application.Game.Handlers;
 using Game.Application.Game.Queries;
 using Game.Application.Rounds.Commands;
 using Game.Application.Rounds.Handlers;
+using Game.Application.Waves.Commands;
+using Game.Application.Waves.Handlers;
 using Game.Application.Buildings.Services;
 using Game.Application.Enemies.Services;
 using Game.Application.Shared.Services;
@@ -33,7 +36,7 @@ public static class DiConfiguration
         diContainer.RegisterFactory<IBuildingStatsProvider>(() => new StatsService());
         diContainer.RegisterFactory<IEnemyStatsProvider>(() => new StatsService());
         diContainer.RegisterFactory<ISoundService>(() => new SoundService());
-        // diContainer.RegisterFactory<IWaveConfigService>(() => new WaveConfigService()); // Temporarily disabled
+        diContainer.RegisterFactory<IWaveConfigService>(() => new WaveConfigService());
         diContainer.RegisterFactory<IBuildingZoneService>(() => new BuildingZoneService());
         
         // Register Type Registries (need special handling since they depend on stats providers)
@@ -76,8 +79,8 @@ public static class DiConfiguration
         diContainer.RegisterFactory<ICommandHandler<StartRoundCommand, StartRoundResult>>(() => 
             new StartRoundCommandHandler());
         
-        // diContainer.RegisterFactory<ICommandHandler<StartWaveCommand, StartWaveResult>>(() => 
-        //     new StartWaveCommandHandler()); // Temporarily disabled
+        diContainer.RegisterFactory<ICommandHandler<StartWaveCommand, StartWaveResult>>(() => 
+            new StartWaveCommandHandler());
         
         diContainer.RegisterFactory<IQueryHandler<GetTowerStatsQuery, TowerStatsResponse>>(() => 
             new GetTowerStatsQueryHandler(

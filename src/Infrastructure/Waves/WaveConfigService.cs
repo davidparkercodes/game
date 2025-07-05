@@ -61,35 +61,6 @@ public class WaveConfigService : IWaveConfigService
         return new WaveConfiguration("Default Waves", 10, "{\"waves\": []}");
     }
 
-    private WaveSetConfigurationInternal CreateDefaultWaveSetInternal()
-    {
-        var waveSet = new WaveSetConfigurationInternal();
-        waveSet.SetName = "Default Waves";
-        waveSet.Description = "Auto-generated default wave progression";
-
-        for (int i = 1; i <= 10; i++)
-        {
-            var wave = new WaveConfigurationInternal();
-            wave.WaveNumber = i;
-            wave.WaveName = $"Wave {i}";
-            wave.BonusMoney = 25 + (i * 5);
-            wave.Description = $"Standard wave {i} with {5 + i * 2} enemies";
-
-            var enemyGroup = new EnemySpawnGroup();
-            enemyGroup.EnemyType = "Basic";
-            enemyGroup.Count = 5 + (i * 2);
-            enemyGroup.SpawnInterval = Mathf.Max(0.5f, 2.0f - (i * 0.1f));
-            enemyGroup.HealthMultiplier = 1.0f + (i * 0.15f);
-            enemyGroup.SpeedMultiplier = 1.0f + (i * 0.05f);
-            enemyGroup.MoneyReward = 10 + (i * 2);
-
-            wave.EnemyGroups.Add(enemyGroup);
-            waveSet.Waves.Add(wave);
-        }
-
-        return waveSet;
-    }
-
     private static WaveSetConfigurationInternal ParseWaveSetFromJson(Godot.Collections.Dictionary jsonData)
     {
         var waveSet = new WaveSetConfigurationInternal();
