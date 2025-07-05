@@ -1,8 +1,9 @@
 using System.CommandLine;
-using GameSimRunner.Standalone.ValueObjects;
+using Game.Application.Simulation;
+using Game.Application.Simulation.ValueObjects;
 using Spectre.Console;
 
-namespace GameSimRunner.Standalone;
+namespace GameSimRunner;
 
 public class Program
 {
@@ -12,7 +13,7 @@ public class Program
 
         var scenarioOption = new Option<string>(
             "--scenario",
-            "Run a predefined scenario (default, balance-testing)"
+            "Run a predefined scenario (e.g., default, balance-testing)"
         );
 
         var verboseOption = new Option<bool>(
@@ -54,7 +55,7 @@ public class Program
         AnsiConsole.WriteLine();
 
         var config = GetConfig(scenario);
-        var runner = new GameSimRunner();
+        var runner = new Game.Application.Simulation.GameSimRunner();
         
         if (outputLevel >= OutputLevel.Normal)
         {
@@ -90,7 +91,7 @@ public class Program
         AnsiConsole.WriteLine();
     }
 
-    private static async Task<SimulationResult> RunWithProgressBar(GameSimRunner runner, SimulationConfig config, OutputLevel outputLevel)
+    private static async Task<SimulationResult> RunWithProgressBar(Game.Application.Simulation.GameSimRunner runner, SimulationConfig config, OutputLevel outputLevel)
     {
         return await AnsiConsole.Progress()
             .StartAsync(async ctx =>

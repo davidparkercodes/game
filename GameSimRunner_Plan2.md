@@ -20,8 +20,8 @@ Fix the Clean Architecture violations by removing Godot dependencies from Domain
 - [x] Verify clean separation: Domain → Application → Infrastructure
 
 ### 1. Integrate Real GameSimRunner
-- [ ] Import the clean `GameSimRunner` logic from `src/Application/Simulation/GameSimRunner.cs` into the standalone console app.
-- [ ] Ensure that the real logic is executed for both scenario and balance-testing modes.
+- [x] Import the clean `GameSimRunner` logic from `src/Application/Simulation/GameSimRunner.cs` into the standalone console app.
+- [x] Ensure that the real logic is executed for both scenario and balance-testing modes.
 
 ### 2. Update Console App
 - [ ] Modify `GameSimRunner.Standalone` to integrate with the real `GameSimRunner`.
