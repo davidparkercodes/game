@@ -2,6 +2,7 @@ using Godot;
 using Game.Domain.Enemies.Services;
 using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Rounds.Services;
+using Game.Infrastructure.Audio.Services;
 using Game.Presentation.UI;
 
 namespace Game.Infrastructure.Waves.Services;
@@ -80,6 +81,9 @@ public class WaveManager
 
             // Update wave display
             UpdateWaveDisplay();
+
+            // Play round start sound
+            PlayRoundStartSound();
 
             GD.Print($"🌊 Started wave {_currentWaveNumber}");
         }
@@ -246,5 +250,18 @@ public class WaveManager
         // GameService would need a method for this
 
         UpdateWaveButtonState();
+    }
+    
+    private void PlayRoundStartSound()
+    {
+        if (SoundManagerService.Instance != null)
+        {
+            SoundManagerService.Instance.PlaySound("round_start");
+            GD.Print("🔊 Playing round start sound");
+        }
+        else
+        {
+            GD.PrintErr("⚠️ SoundManagerService not available for round start sound");
+        }
     }
 }

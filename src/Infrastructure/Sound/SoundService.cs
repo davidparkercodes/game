@@ -51,14 +51,18 @@ public class SoundService : ISoundService
 
     public void PlaySound(string soundKey, SoundCategory category = SoundCategory.SFX, float volumeDb = 0.0f)
     {
+        GD.Print($"🎵 SoundService.PlaySound called: {soundKey}");
+        
         if (!_sounds.ContainsKey(soundKey))
         {
+            GD.PrintErr($"❌ Sound not found in loaded sounds: {soundKey}. Available sounds: {string.Join(", ", _sounds.Keys)}");
             return;
         }
         
         AudioStreamPlayer player = GetPlayerForCategory(category);
         if (player == null)
         {
+            GD.PrintErr($"❌ No audio player available for category: {category}");
             return;
         }
         
@@ -68,8 +72,13 @@ public class SoundService : ISoundService
             individualSoundVolume = _soundConfigs[soundKey].Volume;
         }
         
+        float finalVolume = volumeDb + individualSoundVolume + GetCategoryVolumeDb(category);
+        
         player.Stream = _sounds[soundKey];
-        player.VolumeDb = volumeDb + individualSoundVolume + GetCategoryVolumeDb(category);
+        player.VolumeDb = finalVolume;
+        
+        GD.Print($"🎵 Playing {soundKey} on {player.Name} at volume {finalVolume}dB (inTree: {player.IsInsideTree()})");
+        
         player.Play();
     }
 
@@ -135,15 +144,33 @@ public class SoundService : ISoundService
 
     private void InitializeAudioPlayers()
     {
-        for (int i = 0; i < MaxSimultaneousSFX; i++)
+        // Get the current scene to add audio players to
+        var currentScene = Engine.GetMainLoop();
+        if (currentScene is SceneTree sceneTree && sceneTree.CurrentScene != null)
         {
-            var player = new AudioStreamPlayer();
-            _sfxPlayers.Add(player);
+            for (int i = 0; i < MaxSimultaneousSFX; i++)
+            {
+                var player = new AudioStreamPlayer();
+                player.Name = $"SFXPlayer{i}";
+                _sfxPlayers.Add(player);
+                sceneTree.CurrentScene.AddChild(player);
+            }
+            
+            _uiPlayer = new AudioStreamPlayer();
+            _uiPlayer.Name = "UIPlayer";
+            sceneTree.CurrentScene.AddChild(_uiPlayer);
+            
+            _musicPlayer = new AudioStreamPlayer();
+            _musicPlayer.Name = "MusicPlayer";
+            _musicPlayer.Autoplay = false;
+            sceneTree.CurrentScene.AddChild(_musicPlayer);
+            
+            GD.Print($"🎵 Added {MaxSimultaneousSFX + 2} audio players to scene tree");
         }
-        
-        _uiPlayer = new AudioStreamPlayer();
-        _musicPlayer = new AudioStreamPlayer();
-        _musicPlayer.Autoplay = false;
+        else
+        {
+            GD.PrintErr("❌ Cannot add audio players - no current scene available");
+        }
     }
 
     private void LoadSounds()

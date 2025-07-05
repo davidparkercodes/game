@@ -13,8 +13,7 @@ public readonly struct SoundConfigData
     {
         if (string.IsNullOrWhiteSpace(soundKey))
             throw new ArgumentException("Sound key cannot be empty", nameof(soundKey));
-        if (volume < 0.0f)
-            throw new ArgumentException("Volume cannot be negative", nameof(volume));
+        // Note: Volume can be negative (dB values), so no validation needed
 
         SoundKey = soundKey;
         Volume = volume;

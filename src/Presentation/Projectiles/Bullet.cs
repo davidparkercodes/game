@@ -46,7 +46,12 @@ public partial class Bullet : Area2D
 
 			if (SoundManagerService.Instance != null)
 			{
+				GD.Print($"💥 Bullet impact sound: {_impactSoundKey}");
 				SoundManagerService.Instance.PlaySound(_impactSoundKey);
+			}
+			else
+			{
+				GD.PrintErr("⚠️ SoundManagerService not available for bullet impact");
 			}
 
 			QueueFree();

@@ -306,7 +306,12 @@ public partial class Building : StaticBody2D
 	{
 		if (SoundManagerService.Instance != null)
 		{
+			GD.Print($"{LogPrefix} {Name} playing shoot sound: {_shootSoundKey}");
 			SoundManagerService.Instance.PlaySound(_shootSoundKey);
+		}
+		else
+		{
+			GD.PrintErr($"{LogPrefix} {Name} SoundManagerService not available for shoot sound");
 		}
 	}
 	
