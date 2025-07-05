@@ -15,18 +15,21 @@
 
 #### [x] **Error 1.1: StatsService.cs Missing Class** ✅ RESOLVED
 - **File**: `src/Infrastructure/Stats/StatsService.cs`
-- **Status**: File exists with correct `public class StatsService` definition
-- **Resolution**: Clean rebuild resolved C# metadata issues
+- **Root Cause**: Regular C# class attached to Node in `Main.tscn` (line 86)
+- **Resolution**: Removed script attachment from `StatsManager` node in scene
+- **Fix**: Classes not designed as Nodes shouldn't be attached to scene nodes
 
 #### [x] **Error 1.2: BuildingManager.cs Missing Class** ✅ RESOLVED
 - **File**: `src/Application/Buildings/BuildingManager.cs`
-- **Status**: File exists with correct `public class BuildingManager` definition  
-- **Resolution**: Clean rebuild resolved C# metadata issues
+- **Root Cause**: Regular C# class attached to Node in `Main.tscn` (line 89)
+- **Resolution**: Removed script attachment from `BuildingManager` node in scene
+- **Fix**: Service classes should be instantiated in code, not attached to nodes
 
 #### [x] **Error 1.3: LootablePickup.cs Missing Class** ✅ RESOLVED
 - **File**: `src/Domain/Items/Entities/LootablePickup.cs`
-- **Status**: File exists with correct `public class LootablePickup` definition
-- **Resolution**: Clean rebuild resolved C# metadata issues
+- **Root Cause**: Regular C# class attached to Area2D in `Main.tscn` (line 95)
+- **Resolution**: Removed script attachment from `TrashcanPickup` node in scene
+- **Fix**: Domain entities shouldn't be directly attached as Node scripts
 
 ### **Error Category 2: Node Path Issues**
 
