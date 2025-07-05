@@ -6,6 +6,7 @@ using System.Text.Json;
 using Game.Domain.Enemies.Services;
 using Game.Domain.Enemies.ValueObjects;
 using Game.Application.Enemies.Configuration;
+using Game.Application.Enemies.Services;
 
 namespace Game.Application.Simulation.Services;
 
@@ -16,12 +17,15 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
     private float _healthMultiplier = 1.0f;
     private float _speedMultiplier = 1.0f;
     private const string DEFAULT_CONFIG_PATH = "data/simulation/enemy-stats.json";
+    
+    public IEnemyTypeRegistry EnemyTypeRegistry { get; private set; }
 
     public MockEnemyStatsProvider(string configPath = null)
     {
         var actualConfigPath = FindConfigFile(configPath ?? DEFAULT_CONFIG_PATH);
         _config = LoadEnemyStatsConfig(actualConfigPath);
         _enemyStats = ConvertToEnemyStats(_config.enemy_types);
+        EnemyTypeRegistry = new EnemyTypeRegistry();
     }
 
     public EnemyStats GetEnemyStats(string enemyType)
@@ -39,10 +43,11 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
             );
         }
 
-        // Return default stats for unknown enemy types (fallback to basic_enemy if available)
-        if (_enemyStats.ContainsKey("basic_enemy"))
+        // Return default stats for unknown enemy types using EnemyTypeRegistry
+        var defaultType = EnemyTypeRegistry.GetDefaultType() ?? EnemyTypeRegistry.GetBasicType();
+        if (defaultType != null && _enemyStats.ContainsKey(defaultType.ConfigKey))
         {
-            var defaultStats = _enemyStats["basic_enemy"];
+            var defaultStats = _enemyStats[defaultType.ConfigKey];
             return new EnemyStats(
                 maxHealth: (int)(defaultStats.MaxHealth * _healthMultiplier),
                 speed: defaultStats.Speed * _speedMultiplier,
@@ -92,19 +97,23 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
 
     public EnemyStats GetScaledStatsForWave(string enemyType, int waveNumber)
     {
-        // Get base stats from config or fallback
+        // Get base stats from config or fallback using EnemyTypeRegistry
         EnemyStats baseStats;
         if (_enemyStats.TryGetValue(enemyType, out var stats))
         {
             baseStats = stats;
         }
-        else if (_enemyStats.ContainsKey("basic_enemy"))
-        {
-            baseStats = _enemyStats["basic_enemy"];
-        }
         else
         {
-            baseStats = _enemyStats.Values.First();
+            var defaultType = EnemyTypeRegistry.GetDefaultType() ?? EnemyTypeRegistry.GetBasicType();
+            if (defaultType != null && _enemyStats.ContainsKey(defaultType.ConfigKey))
+            {
+                baseStats = _enemyStats[defaultType.ConfigKey];
+            }
+            else
+            {
+                baseStats = _enemyStats.Values.First();
+            }
         }
         
         // Use config-driven scaling values (for now use hardcoded values since we removed WaveScaling)

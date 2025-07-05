@@ -142,25 +142,28 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 
 **Achievement Note:** Phase 3 is fully complete! Successfully eliminated all hardcoded placement strategies from GameSimRunner. Created comprehensive placement strategy system with `placement_strategies.json` config file, `IPlacementStrategyProvider` interface, and `PlacementStrategyProvider` implementation. Updated both `PlaceInitialBuildings()` and `PlaceAdditionalBuildings()` methods to use config-driven category-based building selection with intelligent fallbacks. The placement system now supports configurable positions, cost thresholds, wave-specific upgrades, and multiple fallback strategies. Zero hardcoded building types remain in placement logic.
 
-### **Phase 4: Replace Hardcoded Enemy Logic** 👹
+### **Phase 4: Replace Hardcoded Enemy Logic** 👹 ✅ COMPLETED
 
-#### **[ ] 4.1 Fix Enemy Type Selection in GameSimRunner**
-- [ ] Replace hardcoded enemy types in `GetEnemyTypeForWave()`:
-  - [ ] Remove `"boss_enemy"` hardcode
-  - [ ] Remove `"elite_enemy"` hardcode  
-  - [ ] Remove `"tank_enemy"` hardcode
-  - [ ] Remove `"fast_enemy"` hardcode
-  - [ ] Remove `"basic_enemy"` hardcode
-- [ ] Use `EnemyTypeRegistry.GetByTier()` or `EnemyTypeRegistry.GetByCategory()`
-- [ ] Create wave progression rules based on enemy categories
+#### **[x] 4.1 Fix Enemy Type Selection in GameSimRunner**
+- [x] Replace hardcoded enemy types in `GetEnemyTypeForWave()`:
+  - [x] Remove `"boss_enemy"` hardcode
+  - [x] Remove `"elite_enemy"` hardcode  
+  - [x] Remove `"tank_enemy"` hardcode
+  - [x] Remove `"fast_enemy"` hardcode
+  - [x] Remove `"basic_enemy"` hardcode
+- [x] Use `EnemyTypeRegistry.GetByCategory()` for category-based enemy selection
+- [x] Create wave progression rules based on enemy categories
+- [x] Add comprehensive fallback logic using `GetDefaultType()` and `GetBasicType()`
 
-#### **[ ] 4.2 Fix MockEnemyStatsProvider**
-- [ ] Replace hardcoded enemy type references
-- [ ] Use `EnemyTypeRegistry` for all enemy type lookups
-- [ ] Remove hardcoded fallback enemy types
+#### **[x] 4.2 Fix MockEnemyStatsProvider**
+- [x] Replace hardcoded enemy type references with EnemyTypeRegistry calls
+- [x] Add `EnemyTypeRegistry` property to MockEnemyStatsProvider
+- [x] Use `EnemyTypeRegistry` for all enemy type lookups and fallbacks
+- [x] Remove hardcoded `"basic_enemy"` fallback logic
+- [x] Implement intelligent fallback strategy using registry methods
 
-#### **[ ] 4.3 Create Enemy Wave Configuration**
-- [ ] Add `wave_progression.json` config file:
+#### **[x] 4.3 Create Enemy Wave Configuration**
+- [x] Add `wave_progression.json` config file with comprehensive wave rules:
 ```json
 {
   "wave_rules": {
@@ -174,11 +177,30 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
     "spawn_patterns": {
       "boss_waves": [8, 16, 24],
       "elite_frequency": 4,
-      "tank_frequency": 3
+      "tank_frequency": 3,
+      "fast_frequency": 2
+    },
+    "category_progression": {
+      "basic": { "min_wave": 1, "spawn_probability": 0.6 },
+      "fast": { "min_wave": 2, "spawn_probability": 0.3 },
+      "tank": { "min_wave": 4, "spawn_probability": 0.2 },
+      "elite": { "min_wave": 6, "spawn_probability": 0.1 },
+      "boss": { "min_wave": 8, "spawn_probability": 0.05 }
+    }
+  },
+  "scaling": {
+    "enemy_count_per_wave": { "base": 5, "increment_per_wave": 2 },
+    "difficulty_scaling": {
+      "health_multiplier_per_wave": 0.15,
+      "speed_multiplier_per_wave": 0.05,
+      "damage_increment_per_wave": 0.33,
+      "reward_multiplier_per_wave": 0.1
     }
   }
 }
 ```
+
+**Achievement Note:** Phase 4 is fully complete! Successfully eliminated all hardcoded enemy type strings from GameSimRunner's `GetEnemyTypeForWave()` method. Replaced hardcoded logic with config-driven category-based enemy selection using `EnemyTypeRegistry.GetByCategory()`. Enhanced MockEnemyStatsProvider with EnemyTypeRegistry integration and intelligent fallback strategies. Created comprehensive `wave_progression.json` configuration file with enemy introduction rules, spawn patterns, category progression, and difficulty scaling. The enemy selection system now uses categories ("basic", "fast", "tank", "elite", "boss") instead of hardcoded strings, with robust fallback logic when categories are not found. Zero hardcoded enemy types remain in the enemy spawning logic.
 
 ### **Phase 5: Create Type Management System** 🔧
 
