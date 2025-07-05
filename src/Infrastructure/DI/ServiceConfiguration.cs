@@ -1,5 +1,4 @@
 using System;
-using Game.Domain.Shared.Services;
 using Game.Domain.Audio.Services;
 using Game.Domain.Buildings.Services;
 using Game.Domain.Enemies.Services;
@@ -29,7 +28,8 @@ public static class ServiceConfiguration
         if (serviceLocator == null)
             throw new System.ArgumentNullException(nameof(serviceLocator));
 
-        serviceLocator.RegisterFactory<IStatsService>(() => new StatsService());
+        serviceLocator.RegisterFactory<IBuildingStatsProvider>(() => new StatsService());
+        serviceLocator.RegisterFactory<IEnemyStatsProvider>(() => new StatsService());
         serviceLocator.RegisterFactory<ISoundService>(() => new SoundService());
         serviceLocator.RegisterFactory<IWaveConfigService>(() => new WaveConfigService());
         serviceLocator.RegisterFactory<IBuildingZoneService>(() => new BuildingZoneService());
@@ -39,7 +39,7 @@ public static class ServiceConfiguration
         
         serviceLocator.RegisterFactory<ICommandHandler<PlaceBuildingCommand, PlaceBuildingResult>>(() => 
             new PlaceBuildingCommandHandler(
-                serviceLocator.Resolve<IStatsService>(),
+                serviceLocator.Resolve<IBuildingStatsProvider>(),
                 serviceLocator.Resolve<IBuildingZoneService>()));
         
         serviceLocator.RegisterFactory<ICommandHandler<SpendMoneyCommand, SpendMoneyResult>>(() => 
@@ -52,7 +52,7 @@ public static class ServiceConfiguration
             new StartWaveCommandHandler());
         
         serviceLocator.RegisterFactory<IQueryHandler<GetTurretStatsQuery, TurretStatsResponse>>(() => 
-            new GetTurretStatsQueryHandler(serviceLocator.Resolve<IStatsService>()));
+            new GetTurretStatsQueryHandler(serviceLocator.Resolve<IBuildingStatsProvider>()));
         
         serviceLocator.RegisterFactory<IQueryHandler<GetGameStateQuery, GameStateResponse>>(() => 
             new GetGameStateQueryHandler());
@@ -66,7 +66,9 @@ public static class ServiceConfiguration
         var statsManager = StatsManager.Instance;
         if (statsManager != null)
         {
-            serviceLocator.RegisterSingleton<IStatsService>(new StatsServiceAdapter(statsManager));
+            var statsAdapter = new StatsServiceAdapter(statsManager);
+            serviceLocator.RegisterSingleton<IBuildingStatsProvider>(statsAdapter);
+            serviceLocator.RegisterSingleton<IEnemyStatsProvider>(statsAdapter);
         }
 
         var soundManager = SoundManager.Instance;

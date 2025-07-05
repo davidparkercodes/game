@@ -2,17 +2,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Queries;
-using Game.Domain.Shared.Services;
+using Game.Domain.Buildings.Services;
 
 namespace Game.Application.Buildings.Handlers;
 
 public class GetTurretStatsQueryHandler : IQueryHandler<GetTurretStatsQuery, TurretStatsResponse>
 {
-    private readonly IStatsService _statsService;
+    private readonly IBuildingStatsProvider _buildingStatsProvider;
 
-    public GetTurretStatsQueryHandler(IStatsService statsService)
+    public GetTurretStatsQueryHandler(IBuildingStatsProvider buildingStatsProvider)
     {
-        _statsService = statsService ?? throw new System.ArgumentNullException(nameof(statsService));
+        _buildingStatsProvider = buildingStatsProvider ?? throw new System.ArgumentNullException(nameof(buildingStatsProvider));
     }
 
     public Task<TurretStatsResponse> HandleAsync(GetTurretStatsQuery query, CancellationToken cancellationToken = default)
@@ -23,7 +23,7 @@ public class GetTurretStatsQueryHandler : IQueryHandler<GetTurretStatsQuery, Tur
         if (string.IsNullOrEmpty(query.TurretType))
             return Task.FromResult(TurretStatsResponse.NotFound(""));
 
-        var buildingStats = _statsService.GetBuildingStats(query.TurretType);
+        var buildingStats = _buildingStatsProvider.GetBuildingStats(query.TurretType);
         if (buildingStats.cost == 0 && query.TurretType != "basic_tower")
             return Task.FromResult(TurretStatsResponse.NotFound(query.TurretType));
 

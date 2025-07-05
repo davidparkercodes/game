@@ -1,13 +1,14 @@
 using System;
 using System.Text.Json;
-using Game.Domain.Shared.Services;
+using Game.Domain.Buildings.Services;
+using Game.Domain.Enemies.Services;
 using Game.Domain.Enemies.ValueObjects;
 using Game.Domain.Buildings.ValueObjects;
 using Game.Infrastructure.Configuration;
 
 namespace Game.Infrastructure.Stats;
 
-public class StatsService : IStatsService
+public class StatsService : IBuildingStatsProvider, IEnemyStatsProvider
 {
     private EnemyStatsConfig _enemyStats;
     private BuildingStatsConfig _buildingStats;
@@ -26,21 +27,9 @@ public class StatsService : IStatsService
         return ConvertToEnemyStats(data);
     }
 
-    public EnemyStats GetDefaultEnemyStats()
-    {
-        var data = _enemyStats?.default_stats ?? new EnemyStatsData();
-        return ConvertToEnemyStats(data);
-    }
-
     public BuildingStats GetBuildingStats(string buildingType)
     {
         var data = GetBuildingStatsData(buildingType);
-        return ConvertToBuildingStats(data);
-    }
-
-    public BuildingStats GetDefaultBuildingStats()
-    {
-        var data = _buildingStats?.default_stats ?? new BuildingStatsData();
         return ConvertToBuildingStats(data);
     }
 
@@ -87,19 +76,14 @@ public class StatsService : IStatsService
         );
     }
 
-    public bool HasEnemyType(string enemyType)
+    public bool HasEnemyStats(string enemyType)
     {
         return _enemyStats?.enemy_types?.ContainsKey(enemyType) == true;
     }
 
-    public bool HasBuildingType(string buildingType)
+    public bool HasBuildingStats(string buildingType)
     {
         return _buildingStats?.building_types?.ContainsKey(buildingType) == true;
-    }
-
-    public void ReloadConfigurations()
-    {
-        LoadConfigurations();
     }
 
     private void LoadConfigurations()

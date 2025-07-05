@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Godot;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
-using Game.Domain.Shared.Services;
 using Game.Domain.Buildings.Services;
 using Game.Domain.Buildings.ValueObjects;
 using Game.Domain.Shared.ValueObjects;
@@ -13,13 +12,13 @@ namespace Game.Application.Buildings.Handlers;
 
 public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand, PlaceBuildingResult>
 {
-    private readonly IStatsService _statsService;
+    private readonly IBuildingStatsProvider _buildingStatsProvider;
     private readonly IBuildingZoneService _zoneService;
     private static int _nextBuildingId = 1;
 
-    public PlaceBuildingCommandHandler(IStatsService statsService, IBuildingZoneService zoneService)
+    public PlaceBuildingCommandHandler(IBuildingStatsProvider buildingStatsProvider, IBuildingZoneService zoneService)
     {
-        _statsService = statsService ?? throw new System.ArgumentNullException(nameof(statsService));
+        _buildingStatsProvider = buildingStatsProvider ?? throw new System.ArgumentNullException(nameof(buildingStatsProvider));
         _zoneService = zoneService ?? throw new System.ArgumentNullException(nameof(zoneService));
     }
 
@@ -31,7 +30,7 @@ public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand,
         if (string.IsNullOrEmpty(command.BuildingType))
             return Task.FromResult(PlaceBuildingResult.Failed("Building type cannot be empty"));
 
-        var buildingStats = _statsService.GetBuildingStats(command.BuildingType);
+        var buildingStats = _buildingStatsProvider.GetBuildingStats(command.BuildingType);
         if (buildingStats.cost == 0 && command.BuildingType != "basic_tower")
             return Task.FromResult(PlaceBuildingResult.Failed($"Unknown building type: {command.BuildingType}"));
 
