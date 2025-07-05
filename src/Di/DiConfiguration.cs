@@ -7,7 +7,7 @@ using Game.Infrastructure.Sound;
 using Game.Infrastructure.Buildings.Services;
 using Game.Infrastructure.Stats.Services;
 using Game.Infrastructure.Audio.Services;
-using Game.Infrastructure.Waves;
+using Game.Infrastructure.Waves.Services;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
 using Game.Application.Buildings.Handlers;
@@ -36,7 +36,7 @@ public static class DiConfiguration
         diContainer.RegisterFactory<IBuildingStatsProvider>(() => new StatsService());
         diContainer.RegisterFactory<IEnemyStatsProvider>(() => new StatsService());
         diContainer.RegisterFactory<ISoundService>(() => new SoundService());
-        diContainer.RegisterFactory<IWaveConfigService>(() => new WaveConfigService());
+        diContainer.RegisterFactory<IWaveConfigurationService>(() => new WaveConfigurationService());
         diContainer.RegisterFactory<IBuildingZoneService>(() => new BuildingZoneService());
         
         // Register Type Registries (need special handling since they depend on stats providers)

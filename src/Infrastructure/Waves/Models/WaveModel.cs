@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Game.Infrastructure.Waves;
+namespace Game.Infrastructure.Waves.Models;
 
-internal class WaveConfigurationInternal
+internal class WaveModel
 {
     public int WaveNumber { get; set; }
     public string WaveName { get; set; } = string.Empty;

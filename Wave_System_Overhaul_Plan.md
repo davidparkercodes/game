@@ -40,27 +40,27 @@ This plan addresses critical issues in the Wave system spanning Domain, Applicat
 ## Phase 2: Establish Naming Consistency 
 **Priority: HIGH**
 
-### [ ] 2.1 Standardize on "Configuration" (Drop "Config")
-- [ ] Rename `IWaveConfigService` → `IWaveConfigurationService`
-- [ ] Rename `WaveConfigService` → `WaveConfigurationService`  
-- [ ] Update all references in commands, handlers, and DI
-- [ ] Update file names and ensure class names match
+### [✅] 2.1 Standardize on "Configuration" (Drop "Config")
+- [✅] Rename `IWaveConfigService` → `IWaveConfigurationService`
+- [✅] Rename `WaveConfigService` → `WaveConfigurationService`  
+- [✅] Update all references in commands, handlers, and DI
+- [✅] Update file names and ensure class names match
 
-### [ ] 2.2 Restructure Infrastructure Files and Classes
-- [ ] Create `src/Infrastructure/Waves/Models/` directory
-- [ ] Move `WaveConfigurationInternal.cs` → `src/Infrastructure/Waves/Models/WaveModel.cs`
-- [ ] Move `WaveSetConfigurationInternal.cs` → `src/Infrastructure/Waves/Models/WaveSetModel.cs`
-- [ ] Move `EnemySpawnGroup.cs` → `src/Infrastructure/Waves/Models/EnemySpawnGroup.cs`
-- [ ] Rename class `WaveConfigurationInternal` → `WaveModel`
-- [ ] Rename class `WaveSetConfigurationInternal` → `WaveSetModel`
-- [ ] Keep `WaveConfiguration` (Domain value object) unchanged
-- [ ] Update all references throughout the codebase
+### [✅] 2.2 Restructure Infrastructure Files and Classes
+- [✅] Create `src/Infrastructure/Waves/Models/` directory
+- [✅] Move `WaveConfigurationInternal.cs` → `src/Infrastructure/Waves/Models/WaveModel.cs`
+- [✅] Move `WaveSetConfigurationInternal.cs` → `src/Infrastructure/Waves/Models/WaveSetModel.cs`
+- [✅] Move `EnemySpawnGroup.cs` → `src/Infrastructure/Waves/Models/EnemySpawnGroup.cs`
+- [✅] Rename class `WaveConfigurationInternal` → `WaveModel`
+- [✅] Rename class `WaveSetConfigurationInternal` → `WaveSetModel`
+- [✅] Keep `WaveConfiguration` (Domain value object) unchanged
+- [✅] Update all references throughout the codebase
 
-### [ ] 2.3 Organize Wave Infrastructure Services
-- [ ] Move `WaveConfigService.cs` → `src/Infrastructure/Waves/Services/WaveConfigurationService.cs`
-- [ ] Keep `WaveSpawnerService.cs` in `src/Infrastructure/Enemies/Services/` (enemy-focused)
-- [ ] Ensure no files remain directly in `src/Infrastructure/Waves/`
-- [ ] Update all namespace references
+### [✅] 2.3 Organize Wave Infrastructure Services
+- [✅] Move `WaveConfigService.cs` → `src/Infrastructure/Waves/Services/WaveConfigurationService.cs`
+- [✅] Keep `WaveSpawnerService.cs` in `src/Infrastructure/Enemies/Services/` (enemy-focused)
+- [✅] Ensure no files remain directly in `src/Infrastructure/Waves/`
+- [✅] Update all namespace references
 
 ### [ ] 2.4 Update Method and Property Names
 - [ ] Review all method signatures for consistency

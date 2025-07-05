@@ -1,6 +1,6 @@
 using System;
 using Godot;
-using Game.Infrastructure.Waves;
+using Game.Infrastructure.Waves.Models;
 using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Rounds.Services;
 
@@ -16,7 +16,7 @@ public class WaveSpawnerService
     public int TotalEnemiesInWave { get; private set; } = 0;
 
     private Godot.Timer _spawnTimer = null!;
-    private WaveConfigurationInternal? _currentWaveConfiguration;
+    private WaveModel? _currentWaveConfiguration;
 
     static WaveSpawnerService()
     {
@@ -132,7 +132,7 @@ public class WaveSpawnerService
         }
     }
 
-    private int CalculateTotalEnemies(WaveConfigurationInternal waveConfiguration)
+    private int CalculateTotalEnemies(WaveModel waveConfiguration)
     {
         int total = 0;
         foreach (var group in waveConfiguration.EnemyGroups)
@@ -179,9 +179,9 @@ public class WaveSpawnerService
 
     public int CurrentWaveIndex => CurrentWave;
 
-    private WaveConfigurationInternal CreateWaveConfiguration(int waveNumber)
+    private WaveModel CreateWaveConfiguration(int waveNumber)
     {
-        var waveConfiguration = new WaveConfigurationInternal
+        var waveConfiguration = new WaveModel
         {
             WaveNumber = waveNumber,
             WaveName = $"Wave {waveNumber}",

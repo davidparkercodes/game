@@ -1,4 +1,4 @@
-namespace Game.Infrastructure.Waves;
+namespace Game.Infrastructure.Waves.Models;
 
 internal class EnemySpawnGroup
 {
