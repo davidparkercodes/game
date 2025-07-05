@@ -202,7 +202,7 @@ public class GameSimRunner
 
         // Get buildings from the specified category
         var categoryBuildings = _buildingTypeRegistry.GetByCategory(buildingCategory).ToList();
-        var initialBuildingType = categoryBuildings.FirstOrDefault()?.ConfigKey;
+        var initialBuildingType = categoryBuildings.Any() ? categoryBuildings.First().ConfigKey : null;
         
         // Use fallback strategy if no category buildings found
         if (string.IsNullOrEmpty(initialBuildingType))
@@ -234,7 +234,7 @@ public class GameSimRunner
         {
             // Get buildings from the specified upgrade category
             var categoryBuildings = _buildingTypeRegistry.GetByCategory(upgradeBuildingCategory).ToList();
-            var upgradeBuildingType = categoryBuildings.FirstOrDefault()?.ConfigKey;
+            var upgradeBuildingType = categoryBuildings.Any() ? categoryBuildings.First().ConfigKey : null;
             
             // Use fallback if no category buildings found
             if (string.IsNullOrEmpty(upgradeBuildingType))
@@ -242,7 +242,10 @@ public class GameSimRunner
                 upgradeBuildingType = _placementStrategyProvider.GetFallbackBuildingType();
             }
             
-            TryPlaceBuilding(gameState, upgradeBuildingType, upgradeBuildingPosition);
+            if (upgradeBuildingPosition != null)
+            {
+                TryPlaceBuilding(gameState, upgradeBuildingType, upgradeBuildingPosition.Value);
+            }
         }
     }
 
@@ -300,7 +303,7 @@ public class GameSimRunner
         var enemyType = _enemyStatsProvider.EnemyTypeRegistry.GetEnemyTypeForWaveProgression(waveNumber, enemyIndex);
         
         // Return config key, with fallback to hardcoded string as last resort
-        return enemyType?.ConfigKey ?? "basic_enemy";
+        return enemyType.HasValue ? enemyType.Value.ConfigKey : "basic_enemy";
     }
 
     private int SimulateCombatTick(GameState gameState, List<SimulatedEnemy> enemies)
@@ -326,9 +329,9 @@ public class GameSimRunner
         return enemiesKilled;
     }
 
-    private SimulatedEnemy FindTargetInRange(SimulatedBuilding building, List<SimulatedEnemy> enemies)
+    private SimulatedEnemy? FindTargetInRange(SimulatedBuilding building, List<SimulatedEnemy> enemies)
     {
-        SimulatedEnemy closestEnemy = null;
+        SimulatedEnemy? closestEnemy = null;
         float closestDistance = float.MaxValue;
 
         foreach (var enemy in enemies)

@@ -103,13 +103,13 @@ public class StartupValidationService
         var defaultBuilding = _typeManagementService.GetDefaultBuilding();
         var cheapestBuilding = _typeManagementService.GetCheapestBuilding();
         
-        if (defaultBuilding != null)
+        if (defaultBuilding.HasValue)
         {
-            Console.WriteLine($"  ✅ Default building fallback: {defaultBuilding.DisplayName}");
+            Console.WriteLine($"  ✅ Default building fallback: {defaultBuilding.Value.DisplayName}");
         }
-        else if (cheapestBuilding != null)
+        else if (cheapestBuilding.HasValue)
         {
-            Console.WriteLine($"  ⚠️  Using cheapest building fallback: {cheapestBuilding.DisplayName}");
+            Console.WriteLine($"  ⚠️  Using cheapest building fallback: {cheapestBuilding.Value.DisplayName}");
         }
         else
         {
@@ -157,13 +157,13 @@ public class StartupValidationService
         var defaultEnemy = _typeManagementService.GetDefaultEnemy();
         var basicEnemy = _typeManagementService.GetBasicEnemy();
         
-        if (defaultEnemy != null)
+        if (defaultEnemy.HasValue)
         {
-            Console.WriteLine($"  ✅ Default enemy fallback: {defaultEnemy.DisplayName}");
+            Console.WriteLine($"  ✅ Default enemy fallback: {defaultEnemy.Value.DisplayName}");
         }
-        else if (basicEnemy != null)
+        else if (basicEnemy.HasValue)
         {
-            Console.WriteLine($"  ⚠️  Using basic enemy fallback: {basicEnemy.DisplayName}");
+            Console.WriteLine($"  ⚠️  Using basic enemy fallback: {basicEnemy.Value.DisplayName}");
         }
         else
         {

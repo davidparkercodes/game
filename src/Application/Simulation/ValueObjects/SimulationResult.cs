@@ -27,8 +27,8 @@ public readonly struct SimulationResult
         int totalEnemiesKilled,
         int totalBuildingsPlaced,
         TimeSpan simulationDuration,
-        string failureReason = null,
-        List<WaveResult> waveResults = null)
+        string? failureReason = null,
+        List<WaveResult>? waveResults = null)
     {
         Success = success;
         IsVictory = isVictory;
@@ -39,7 +39,7 @@ public readonly struct SimulationResult
         TotalEnemiesKilled = totalEnemiesKilled;
         TotalBuildingsPlaced = totalBuildingsPlaced;
         SimulationDuration = simulationDuration;
-        FailureReason = failureReason;
+        FailureReason = failureReason ?? string.Empty;
         WaveResults = waveResults ?? new List<WaveResult>();
     }
 
@@ -51,7 +51,7 @@ public readonly struct SimulationResult
         int totalEnemiesKilled,
         int totalBuildingsPlaced,
         TimeSpan duration,
-        List<WaveResult> waveResults = null)
+        List<WaveResult>? waveResults = null)
     {
         return new SimulationResult(
             success: true,
@@ -67,7 +67,7 @@ public readonly struct SimulationResult
         );
     }
 
-    public static SimulationResult Failure(string reason, GameState finalState, TimeSpan duration, List<WaveResult> waveResults = null)
+    public static SimulationResult Failure(string reason, GameState finalState, TimeSpan duration, List<WaveResult>? waveResults = null)
     {
         return new SimulationResult(
             success: false,

@@ -1,19 +1,22 @@
 # **Plan: Remove All Hardcoded Building/Enemy Type References**
 
 ## **Problem Analysis**
+
 The codebase contains numerous hardcoded building and enemy type strings that violate configuration-driven design principles. This makes it impossible to change building/enemy names without code changes and creates tight coupling between game logic and specific type names.
 
 ### **Current Hardcoded References Found:**
 
 #### **Building Types:**
+
 - `basic_tower` - Found in 4 files
-- `sniper_tower` - Found in GameSimRunner.cs 
+- `sniper_tower` - Found in GameSimRunner.cs
 - `rapid_tower` - Found in GameSimRunner.cs
 - `heavy_tower` - Found in config files (referenced)
 
 #### **Enemy Types:**
+
 - `basic_enemy` - Found in GameSimRunner.cs, MockEnemyStatsProvider.cs
-- `fast_enemy` - Found in GameSimRunner.cs, MockEnemyStatsProvider.cs  
+- `fast_enemy` - Found in GameSimRunner.cs, MockEnemyStatsProvider.cs
 - `tank_enemy` - Found in GameSimRunner.cs, MockEnemyStatsProvider.cs
 - `elite_enemy` - Found in GameSimRunner.cs, MockEnemyStatsProvider.cs
 - `boss_enemy` - Found in GameSimRunner.cs, MockEnemyStatsProvider.cs
@@ -21,6 +24,7 @@ The codebase contains numerous hardcoded building and enemy type strings that vi
 ---
 
 ## **Solution Approach**
+
 Instead of changing the actual names, we'll create a **Type Registry System** that allows easy management of all building/enemy types with flexible naming and config-driven discovery.
 
 ---
@@ -30,6 +34,7 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 ### **Phase 1: Create Type Registry Foundation** 🏗️ ✅ COMPLETED
 
 #### **[x] 1.1 Create Building Type Registry**
+
 - [x] Create `BuildingType` value object/enum with:
   - Internal ID (for code reference)
   - Display name (configurable)
@@ -39,27 +44,40 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 - [x] Support for aliases/alternate names
 
 #### **[x] 1.2 Create Enemy Type Registry**
+
 - [x] Create `EnemyType` value object/enum with same pattern
 - [x] Create `EnemyTypeRegistry` service
 - [x] Load enemy types from config file metadata
 - [x] Support for enemy tier/category system
 
 #### **[x] 1.3 Config Schema Enhancement**
+
 - [x] Add `building_types_metadata` section to building-stats.json:
+
 ```json
 {
   "building_types_metadata": {
     "registry": {
-      "BASIC_TOWER": { "config_key": "basic_tower", "display_name": "Basic Tower", "category": "starter" },
-      "SNIPER_TOWER": { "config_key": "sniper_tower", "display_name": "Sniper Tower", "category": "precision" }
+      "BASIC_TOWER": {
+        "config_key": "basic_tower",
+        "display_name": "Basic Tower",
+        "category": "starter"
+      },
+      "SNIPER_TOWER": {
+        "config_key": "sniper_tower",
+        "display_name": "Sniper Tower",
+        "category": "precision"
+      }
     },
     "categories": ["starter", "precision", "rapid", "heavy"]
   }
 }
 ```
+
 - [x] Add similar `enemy_types_metadata` to enemy-stats.json
 
 #### **[x] 1.4 Architectural Cleanup (CRITICAL)** ✅ COMPLETED
+
 - [x] Move configuration classes from Infrastructure to Application layer (feature-centric)
 - [x] Move `BuildingTypeMetadata.cs` to `src/Application/Buildings/Configuration/`
 - [x] Move `EnemyTypeMetadata.cs` to `src/Application/Enemies/Configuration/`
@@ -73,6 +91,7 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 **Achievement Note:** Type Registry Foundation is fully complete with proper architecture! Created BuildingType and EnemyType value objects, registry services, enhanced config schema with metadata, performed architectural cleanup to move configs to feature-centric Application layer organization, and verified the system works perfectly with the existing GameSimRunner. All types are now managed through config-driven registries with flexible categorization and clean architecture.
 
 #### **[x] 1.5 Terminology Cleanup - Replace "Turret" with "Tower"** ✅ COMPLETED
+
 - [x] Find all occurrences of 'turret'/'Turret'/'TURRET' in codebase
 - [x] Replace class names: `GetTurretStatsQuery` → `GetTowerStatsQuery`
 - [x] Replace handler names: `GetTurretStatsQueryHandler` → `GetTowerStatsQueryHandler`
@@ -87,8 +106,9 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 **Achievement Note:** Terminology cleanup is complete! Successfully renamed all classes, files, properties, and references from "turret" to "tower" across Domain, Application, and Infrastructure layers. The codebase now uses consistent "tower" terminology throughout, including `GetTowerStatsQuery`, `GetTowerStatsQueryHandler`, `TowerStatsResponse`, `BasicTower`, `SniperTower`, and all related properties. System builds and runs perfectly after the terminology standardization.
 
 #### **[x] 1.75 Complete Turret Reference Cleanup** ✅ COMPLETED
+
 - [x] Update `project.godot` - replace turret references
-- [x] Update `README.md` - replace turret references  
+- [x] Update `README.md` - replace turret references
 - [x] Update `sound_config.json` - replace turret sound names
 - [x] Update `data/simulation/building-stats.json` - replace turret references in descriptions (already correct)
 - [x] Update `stats_system.md` - replace turret references
@@ -106,16 +126,19 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 ### **Phase 2: Replace Hardcoded Validation Logic** ✅ COMPLETED
 
 #### **[x] 2.1 Fix GetTowerStatsQueryHandler**
+
 - [x] Remove hardcoded `"basic_tower"` exception
 - [x] Use `BuildingTypeRegistry.IsValidConfigKey(query.TowerType)`
 - [x] Use config-driven validation instead of cost checks
 
-#### **[x] 2.2 Fix PlaceBuildingCommandHandler** 
+#### **[x] 2.2 Fix PlaceBuildingCommandHandler**
+
 - [x] Remove hardcoded `"basic_tower"` exception
 - [x] Use consistent `BuildingTypeRegistry` validation
 - [x] Ensure all building type references go through registry
 
 #### **[x] 2.3 Fix MockBuildingStatsProvider**
+
 - [x] Remove hardcoded `"basic_tower"` fallback logic
 - [x] Use `BuildingTypeRegistry.GetDefaultType()` for fallbacks
 - [x] Use `BuildingTypeRegistry.GetCheapestType()` as alternative fallback
@@ -125,6 +148,7 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 ### **Phase 3: Replace Hardcoded Placement Strategy** 🎯 ✅ COMPLETED
 
 #### **[x] 3.1 Make GameSimRunner Placement Config-Driven**
+
 - [x] Replace hardcoded `"basic_tower"` in `PlaceInitialBuildings()`
 - [x] Replace hardcoded `"sniper_tower"` in `PlaceAdditionalBuildings()`
 - [x] Replace hardcoded `"rapid_tower"` in `PlaceAdditionalBuildings()`
@@ -133,6 +157,7 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 - [x] Use `BuildingTypeRegistry.GetByCategory("rapid")` for rapid-fire towers
 
 #### **[x] 3.2 Create Placement Strategy Configuration**
+
 - [x] Add `placement_strategies.json` config file with comprehensive strategy definitions
 - [x] Create `IPlacementStrategyProvider` interface with methods for all placement scenarios
 - [x] Implement `PlacementStrategyProvider` with config-driven placement logic
@@ -145,9 +170,10 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 ### **Phase 4: Replace Hardcoded Enemy Logic** 👹 ✅ COMPLETED
 
 #### **[x] 4.1 Fix Enemy Type Selection in GameSimRunner**
+
 - [x] Replace hardcoded enemy types in `GetEnemyTypeForWave()`:
   - [x] Remove `"boss_enemy"` hardcode
-  - [x] Remove `"elite_enemy"` hardcode  
+  - [x] Remove `"elite_enemy"` hardcode
   - [x] Remove `"tank_enemy"` hardcode
   - [x] Remove `"fast_enemy"` hardcode
   - [x] Remove `"basic_enemy"` hardcode
@@ -156,6 +182,7 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 - [x] Add comprehensive fallback logic using `GetDefaultType()` and `GetBasicType()`
 
 #### **[x] 4.2 Fix MockEnemyStatsProvider**
+
 - [x] Replace hardcoded enemy type references with EnemyTypeRegistry calls
 - [x] Add `EnemyTypeRegistry` property to MockEnemyStatsProvider
 - [x] Use `EnemyTypeRegistry` for all enemy type lookups and fallbacks
@@ -163,13 +190,15 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 - [x] Implement intelligent fallback strategy using registry methods
 
 #### **[x] 4.3 Create Enemy Wave Configuration**
+
 - [x] Add `wave_progression.json` config file with comprehensive wave rules:
+
 ```json
 {
   "wave_rules": {
     "enemy_introduction": {
       "wave_1": ["basic"],
-      "wave_2": ["basic", "fast"], 
+      "wave_2": ["basic", "fast"],
       "wave_4": ["basic", "fast", "tank"],
       "wave_6": ["basic", "fast", "tank", "elite"],
       "wave_8": ["boss"]
@@ -205,8 +234,9 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 ### **Phase 5: Create Type Management System** 🔧 ✅ COMPLETED
 
 #### **[x] 5.1 Build Type Registry Services**
+
 - [x] Implement `BuildingTypeRegistry` with all required methods:
-  - [x] `GetByInternalId(string id)` 
+  - [x] `GetByInternalId(string id)`
   - [x] `GetByConfigKey(string key)`
   - [x] `GetByCategory(string category)`
   - [x] `GetDefaultType()` / `GetCheapestType()`
@@ -216,6 +246,7 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 - [x] Enhanced `IBuildingTypeRegistry` interface with missing methods
 
 #### **[x] 5.2 Build Enemy Type Registry Services**
+
 - [x] Implement `EnemyTypeRegistry` with comprehensive wave progression methods:
   - [x] `GetEnemiesForWave(int waveNumber)` - Tier-based enemy availability
   - [x] `GetEnemyTypeForWaveProgression(int waveNumber, int enemyIndex)` - Smart enemy selection
@@ -224,6 +255,7 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 - [x] Support for enemy tier/difficulty scaling with progressive unlocking
 
 #### **[x] 5.3 Registry Integration**
+
 - [x] Create `ITypeManagementService` unified interface for both registries
 - [x] Implement `TypeManagementService` with comprehensive type management features:
   - [x] Unified building and enemy type access
@@ -239,38 +271,43 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 
 **Achievement Note:** Phase 5 is fully complete! Created a comprehensive Type Management System that provides unified access to both building and enemy type registries. Enhanced both registries with all required methods, including tier-based access and wave progression logic. Built TypeManagementService as a unified interface with validation, error reporting, and diagnostics capabilities. Created StartupValidationService for thorough configuration validation at application startup. The system now provides centralized type management with robust validation, intelligent fallbacks, and comprehensive error handling. All existing code uses registries instead of hardcoded types, with startup validation ensuring configuration consistency.
 
-### **Phase 6: Configuration Validation & Error Handling** 🛡️
+### **Phase 6: Configuration Validation & Error Handling** 🛡️ ✅ COMPLETED
 
-#### **[ ] 6.1 Startup Validation**
-- [ ] Validate all building types in config exist in registry
-- [ ] Validate all enemy types in config exist in registry  
-- [ ] Validate placement strategies reference valid building categories
-- [ ] Validate wave progression references valid enemy categories
+#### **[x] 6.1 Startup Validation**
+- [x] Validate all building types in config exist in registry
+- [x] Validate all enemy types in config exist in registry  
+- [x] Validate placement strategies reference valid building categories
+- [x] Validate wave progression references valid enemy categories
 
-#### **[ ] 6.2 Runtime Error Handling**
-- [ ] Graceful fallbacks when types are missing
-- [ ] Clear error messages for invalid type references
-- [ ] Logging for type registry mismatches
+#### **[x] 6.2 Runtime Error Handling**
+- [x] Graceful fallbacks when types are missing
+- [x] Clear error messages for invalid type references
+- [x] Logging for type registry mismatches
 
-#### **[ ] 6.3 Development Tools**
-- [ ] Add debug command to list all registered building types
-- [ ] Add debug command to list all registered enemy types
-- [ ] Add validation tool for config consistency
+#### **[x] 6.3 Development Tools**
+- [x] Add debug command to list all registered building types
+- [x] Add debug command to list all registered enemy types
+- [x] Add validation tool for config consistency
 
-### **Phase 7: Testing & Documentation** 📋
+**Achievement Note:** Phase 6 is fully complete! Successfully implemented comprehensive configuration validation and error handling system. Created StartupValidationService that validates all type registries, placement strategies, and wave progression rules at application startup. Enhanced MockBuildingStatsProvider and MockEnemyStatsProvider with intelligent fallback strategies using registry methods. Built comprehensive DebugCommands system with tools to list all registered types, validate configuration consistency, and inspect wave progression. Integrated startup validation into both Godot game and GameSimRunner tool with clear error reporting and graceful degradation. Added runtime error handling with clear messages for invalid type references and robust logging for type registry mismatches. The system now provides bulletproof configuration validation with developer-friendly debugging tools.
+
+### **Phase 7: Testing & Documentation** 📋 **\_ MAYBE DO NOW \_\_\_**
 
 #### **[ ] 7.1 Unit Tests**
+
 - [ ] Test BuildingTypeRegistry with various config scenarios
 - [ ] Test EnemyTypeRegistry with various config scenarios
 - [ ] Test placement strategies with different building sets
 - [ ] Test wave progression with different enemy sets
 
 #### **[ ] 7.2 Integration Tests**
+
 - [ ] Test full simulation with custom building names
 - [ ] Test simulation with missing building types
 - [ ] Test simulation with custom enemy progression
 
 #### **[ ] 7.3 Documentation**
+
 - [ ] Document how to add new building types
 - [ ] Document how to add new enemy types
 - [ ] Document placement strategy configuration
@@ -281,18 +318,21 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 ## **Benefits After Implementation**
 
 ### **For Development:**
+
 - [ ] **Zero Hardcoded Type Names** - All types managed through registries
 - [ ] **Easy Name Changes** - Change display names without code changes
 - [ ] **Safe Refactoring** - Find/replace operations work on internal IDs
 - [ ] **Type Safety** - Enum-like behavior with string flexibility
 
 ### **For Game Design:**
+
 - [ ] **Easy Type Addition** - Add new building/enemy types via config
 - [ ] **Flexible Categorization** - Group types for game logic (starter, advanced, etc.)
 - [ ] **Configurable Progression** - Change wave/placement logic via config files
 - [ ] **A/B Testing** - Test different type names and progressions
 
 ### **For Maintenance:**
+
 - [ ] **Config Validation** - Catch type reference errors at startup
 - [ ] **Clear Error Messages** - Know exactly which types are missing/invalid
 - [ ] **Debug Tools** - Inspect type registries during development
@@ -302,12 +342,14 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 ## **Migration Strategy**
 
 ### **[ ] Option A: Internal ID Approach** (Recommended)
+
 - Keep existing names like "basic_tower" as internal IDs
 - Add display names and categories via config
 - Code references internal IDs, UI shows display names
 - Easy migration, backward compatible
 
 ### **[ ] Option B: Full String Replacement**
+
 - Create enums for all building/enemy types
 - Global find/replace hardcoded strings with enum values
 - Config maps enum values to display names
@@ -316,8 +358,9 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 ---
 
 ## **Implementation Timeline**
+
 - **Phase 1-2**: Foundation & Validation (2-3 hours)
-- **Phase 3**: Building Placement (2 hours)  
+- **Phase 3**: Building Placement (2 hours)
 - **Phase 4**: Enemy Logic (2 hours)
 - **Phase 5**: Registry Services (3 hours)
 - **Phase 6**: Validation & Error Handling (1-2 hours)
@@ -328,6 +371,7 @@ Instead of changing the actual names, we'll create a **Type Registry System** th
 ---
 
 ## **Success Criteria**
+
 - [ ] No hardcoded building/enemy type strings in application code
 - [ ] All type references go through type registries
 - [ ] Easy to add new types via config files only

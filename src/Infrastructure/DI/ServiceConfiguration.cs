@@ -16,6 +16,9 @@ using Game.Application.Game.Queries;
 using Game.Application.Rounds.Commands;
 using Game.Application.Rounds.Handlers;
 using Game.Application.Buildings.Services;
+using Game.Application.Enemies.Services;
+using Game.Application.Shared.Services;
+using Game.Domain.Shared.Services;
 
 namespace Game.Infrastructure.DI;
 
@@ -32,13 +35,32 @@ public static class ServiceConfiguration
         // serviceLocator.RegisterFactory<IWaveConfigService>(() => new WaveConfigService()); // Temporarily disabled
         serviceLocator.RegisterFactory<IBuildingZoneService>(() => new BuildingZoneService());
         
-        // Register BuildingTypeRegistry (needs special handling since it depends on IBuildingStatsProvider)
-        // We'll create a temporary MockBuildingStatsProvider for the registry, then replace the main one
+        // Register Type Registries (need special handling since they depend on stats providers)
         serviceLocator.RegisterFactory<IBuildingTypeRegistry>(() => 
         {
             var tempStatsProvider = new Game.Application.Simulation.Services.MockBuildingStatsProvider();
             return new BuildingTypeRegistry(tempStatsProvider);
         });
+        
+        serviceLocator.RegisterFactory<IEnemyTypeRegistry>(() => 
+        {
+            var tempStatsProvider = new Game.Application.Simulation.Services.MockEnemyStatsProvider();
+            return new EnemyTypeRegistry(tempStatsProvider);
+        });
+        
+        // Register TypeManagementService (unified interface)
+        serviceLocator.RegisterFactory<ITypeManagementService>(() => 
+            new TypeManagementService(
+                serviceLocator.Resolve<IBuildingTypeRegistry>(),
+                serviceLocator.Resolve<IEnemyTypeRegistry>()));
+        
+        // Register StartupValidationService
+        serviceLocator.RegisterFactory<StartupValidationService>(() => 
+            new StartupValidationService(serviceLocator.Resolve<ITypeManagementService>()));
+        
+        // Register DebugCommands
+        serviceLocator.RegisterFactory<DebugCommands>(() => 
+            new DebugCommands(serviceLocator.Resolve<ITypeManagementService>()));
         
         serviceLocator.RegisterFactory<IServiceProvider>(() => new ServiceLocatorAdapter(serviceLocator));
         serviceLocator.RegisterFactory<IMediator>(() => new Game.Application.Shared.Cqrs.Mediator(serviceLocator.Resolve<IServiceProvider>()));

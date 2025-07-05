@@ -62,7 +62,7 @@ public readonly struct BuildingStats
         return $"BuildingStats(Cost:{Cost}, Damage:{Damage}, Range:{Range:F1}, FireRate:{FireRate:F2}, DPS:{DamagePerSecond:F1})";
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is BuildingStats other && Equals(other);
     }

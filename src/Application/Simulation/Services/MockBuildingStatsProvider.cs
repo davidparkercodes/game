@@ -23,7 +23,7 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         Console.WriteLine($"DEBUG: Loading building stats from: {actualConfigPath}");
         _config = LoadBuildingStatsConfig(actualConfigPath);
         Console.WriteLine($"DEBUG: Loaded config with {_config.building_types?.Count ?? 0} building types");
-        _buildingStats = ConvertToBuildingStats(_config.building_types);
+        _buildingStats = ConvertToBuildingStats(_config.building_types ?? new Dictionary<string, BuildingStatsData>());
         Console.WriteLine($"DEBUG: Converted to {_buildingStats.Count} building stats");
         foreach (var key in _buildingStats.Keys)
         {
@@ -43,14 +43,14 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         {
             // First try to get the default type from registry
             var defaultType = _buildingTypeRegistry.GetDefaultType();
-            if (defaultType != null && _buildingStats.ContainsKey(defaultType.Value.ConfigKey))
+            if (defaultType.HasValue && _buildingStats.ContainsKey(defaultType.Value.ConfigKey))
             {
                 return _buildingStats[defaultType.Value.ConfigKey];
             }
             
             // If no default, try to get the cheapest type as fallback
             var cheapestType = _buildingTypeRegistry.GetCheapestType();
-            if (cheapestType != null && _buildingStats.ContainsKey(cheapestType.Value.ConfigKey))
+            if (cheapestType.HasValue && _buildingStats.ContainsKey(cheapestType.Value.ConfigKey))
             {
                 return _buildingStats[cheapestType.Value.ConfigKey];
             }

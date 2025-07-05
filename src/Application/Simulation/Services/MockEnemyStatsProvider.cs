@@ -20,7 +20,7 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
     
     public IEnemyTypeRegistry EnemyTypeRegistry { get; private set; }
 
-    public MockEnemyStatsProvider(string configPath = null)
+    public MockEnemyStatsProvider(string? configPath = null)
     {
         var actualConfigPath = FindConfigFile(configPath ?? DEFAULT_CONFIG_PATH);
         _config = LoadEnemyStatsConfig(actualConfigPath);
@@ -45,7 +45,7 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
 
         // Return default stats for unknown enemy types using EnemyTypeRegistry
         var defaultType = EnemyTypeRegistry.GetDefaultType() ?? EnemyTypeRegistry.GetBasicType();
-        if (defaultType != null && _enemyStats.ContainsKey(defaultType.Value.ConfigKey))
+        if (defaultType.HasValue && _enemyStats.ContainsKey(defaultType.Value.ConfigKey))
         {
             var defaultStats = _enemyStats[defaultType.Value.ConfigKey];
             return new EnemyStats(
@@ -106,7 +106,7 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
         else
         {
             var defaultType = EnemyTypeRegistry.GetDefaultType() ?? EnemyTypeRegistry.GetBasicType();
-            if (defaultType != null && _enemyStats.ContainsKey(defaultType.Value.ConfigKey))
+            if (defaultType.HasValue && _enemyStats.ContainsKey(defaultType.Value.ConfigKey))
             {
                 baseStats = _enemyStats[defaultType.Value.ConfigKey];
             }

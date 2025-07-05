@@ -5,7 +5,7 @@ namespace Game.Infrastructure.DI;
 
 public class ServiceLocator
 {
-    private static ServiceLocator _instance;
+    private static ServiceLocator? _instance;
     private readonly Dictionary<Type, object> _services = new();
     private readonly Dictionary<Type, Func<object>> _serviceFactories = new();
 
@@ -33,7 +33,7 @@ public class ServiceLocator
         if (factory == null)
             throw new ArgumentNullException(nameof(factory));
             
-        _serviceFactories[typeof(TInterface)] = () => factory();
+        _serviceFactories[typeof(TInterface)] = () => factory()!;
     }
 
     public T Resolve<T>()

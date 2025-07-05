@@ -23,7 +23,7 @@ public readonly struct Position
         return $"({X:F1}, {Y:F1})";
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is Position other && Equals(other);
     }

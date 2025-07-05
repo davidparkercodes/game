@@ -42,7 +42,7 @@ public readonly struct EnemyStatsData
         return $"EnemyStats(HP:{max_health}, Speed:{speed:F1}, Damage:{damage}, Gold:{reward_gold}, XP:{reward_xp})";
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is EnemyStatsData other && Equals(other);
     }

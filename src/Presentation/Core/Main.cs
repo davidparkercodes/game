@@ -19,7 +19,6 @@ public partial class Main : Node
 		InitializeDependencyContainer();
 		InitializeInfrastructure();
 		InitializeUI();
-		
 		// Defer building system initialization to ensure GroundLayer is ready
 		CallDeferred(nameof(InitializeBuildingSystem));
 	}
@@ -34,6 +33,9 @@ public partial class Main : Node
 		_mediator = _serviceLocator.Resolve<IMediator>();
 		
 		GD.Print("🔧 DI Container initialized with mediator");
+
+		// Perform startup validation
+		PerformStartupValidation();
 	}
 
 	private void InitializeInfrastructure()
@@ -117,6 +119,19 @@ public partial class Main : Node
 			var label = new Label();
 			label.Text = $"{item.Key}: {item.Value}";
 			_inventoryList.AddChild(label);
+		}
+	}
+
+	private void PerformStartupValidation()
+	{
+		var validationService = _serviceLocator.Resolve<StartupValidationService>();
+		if (validationService != null)
+		{
+			bool isValid = validationService.ValidateOnStartup();
+			if (!isValid)
+			{
+				GD.PrintErr("⚠️  Startup validation detected issues with configuration. Check logs for detailed errors.");
+			}
 		}
 	}
 
