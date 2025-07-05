@@ -5,17 +5,17 @@ namespace Game.Presentation.UI;
 
 public partial class Hud : CanvasLayer
 {
-	[Export] public Label MoneyLabel;
-	[Export] public Label LivesLabel;
-	[Export] public Label WaveLabel;
-	[Export] public Button SkipButton;
+	[Export] public Label? MoneyLabel;
+	[Export] public Label? LivesLabel;
+	[Export] public Label? WaveLabel;
+	[Export] public Button? SkipButton;
 	
-	[Export] public Panel TowerStatsPanel;
-	[Export] public Label TowerNameLabel;
-	[Export] public Label CostLabel;
-	[Export] public Label DamageLabel;
-	[Export] public Label RangeLabel;
-	[Export] public Label FireRateLabel;
+	[Export] public Panel? TowerStatsPanel;
+	[Export] public Label? TowerNameLabel;
+	[Export] public Label? CostLabel;
+	[Export] public Label? DamageLabel;
+	[Export] public Label? RangeLabel;
+	[Export] public Label? FireRateLabel;
 
 	public override void _Ready()
 	{

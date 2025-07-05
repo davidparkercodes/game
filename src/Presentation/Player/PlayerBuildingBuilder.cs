@@ -9,7 +9,7 @@ namespace Game.Presentation.Player;
 public class PlayerBuildingBuilder
 {
 	private readonly Player _player;
-	private BuildingPreview _currentPreview;
+	private BuildingPreview? _currentPreview;
 	private bool _isInBuildMode = false;
 	
 	public bool IsInBuildMode => _isInBuildMode;
@@ -74,7 +74,7 @@ public class PlayerBuildingBuilder
 		if (_currentPreview != null)
 		{
 			_currentPreview.QueueFree();
-			_currentPreview = null;
+			_currentPreview = null!;
 		}
 		
 		_player.ClearPlayerSelectionState();
@@ -122,7 +122,7 @@ public class PlayerBuildingBuilder
 			return;
 		}
 
-		var building = _currentPreview.BuildingScene.Instantiate<Building>();
+	var building = _currentPreview.BuildingScene!.Instantiate<Building>();
 		building.GlobalPosition = _currentPreview.GetPlacementPosition();
 		_player.GetTree().Root.AddChild(building);
 

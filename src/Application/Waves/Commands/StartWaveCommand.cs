@@ -17,12 +17,12 @@ public class StartWaveCommand : ICommand<StartWaveResult>
 public class StartWaveResult
 {
     public bool Success { get; }
-    public string ErrorMessage { get; }
+    public string? ErrorMessage { get; }
     public int WaveIndex { get; }
     public int TotalEnemies { get; }
-    public string WaveName { get; }
+    public string? WaveName { get; }
 
-    public StartWaveResult(bool success, int waveIndex = 0, int totalEnemies = 0, string waveName = null, string errorMessage = null)
+    public StartWaveResult(bool success, int waveIndex = 0, int totalEnemies = 0, string? waveName = null, string? errorMessage = null)
     {
         Success = success;
         WaveIndex = waveIndex;

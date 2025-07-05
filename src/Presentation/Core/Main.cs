@@ -11,10 +11,10 @@ namespace Game.Presentation.Core;
 
 public partial class Main : Node
 {
-	private Panel _inventoryPanel;
-	private VBoxContainer _inventoryList;
-	private DiContainer _diContainer;
-	private IMediator _mediator;
+	private Panel _inventoryPanel = null!;
+	private VBoxContainer _inventoryList = null!;
+	private DiContainer _diContainer = null!;
+	private IMediator _mediator = null!;
 
 	public override void _Ready()
 	{

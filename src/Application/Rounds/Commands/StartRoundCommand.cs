@@ -17,11 +17,11 @@ public class StartRoundCommand : ICommand<StartRoundResult>
 public class StartRoundResult
 {
     public bool Success { get; }
-    public string ErrorMessage { get; }
+    public string? ErrorMessage { get; }
     public int RoundNumber { get; }
-    public string Phase { get; }
+    public string? Phase { get; }
 
-    public StartRoundResult(bool success, int roundNumber = 0, string phase = null, string errorMessage = null)
+    public StartRoundResult(bool success, int roundNumber = 0, string? phase = null, string? errorMessage = null)
     {
         Success = success;
         RoundNumber = roundNumber;

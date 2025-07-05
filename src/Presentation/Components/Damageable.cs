@@ -4,7 +4,7 @@ namespace Game.Presentation.Components;
 
 public partial class Damageable : Node2D
 {
-	[Export] public StatsComponent Stats;
+	[Export] public StatsComponent Stats = null!;
 
 	public void ApplyDamage(int amount)
 	{

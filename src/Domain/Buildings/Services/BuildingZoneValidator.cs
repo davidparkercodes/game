@@ -19,7 +19,7 @@ public class BuildingZoneValidator
         _blockedZones = new HashSet<(float X, float Y)>();
     }
 
-    public bool CanPlaceBuilding(float x, float y, string buildingType = null)
+    public bool CanPlaceBuilding(float x, float y, string? buildingType = null)
     {
         if (IsInBlockedZone(x, y))
             return false;
@@ -91,7 +91,7 @@ public class BuildingZoneValidator
             building.CalculateDistance(x, y) <= radius);
     }
 
-    public Game.Domain.Buildings.Entities.Building GetClosestBuilding(float x, float y)
+    public Game.Domain.Buildings.Entities.Building? GetClosestBuilding(float x, float y)
     {
         return _existingBuildings.OrderBy(building => 
             building.CalculateDistance(x, y)).FirstOrDefault();

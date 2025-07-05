@@ -108,7 +108,7 @@ namespace Game.Domain.Levels.ValueObjects
 			return $"Level({LevelName}, Points:{PathPoints.Count}, Money:{InitialMoney}, Lives:{InitialLives}, Difficulty:{DifficultyRating:F2})";
 		}
 
-		public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 		{
 			return obj is LevelData other && Equals(other);
 		}
@@ -164,7 +164,7 @@ namespace Game.Domain.Levels.ValueObjects
 			return $"({X:F1}, {Y:F1})";
 		}
 
-		public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 		{
 			return obj is PathPoint other && Equals(other);
 		}

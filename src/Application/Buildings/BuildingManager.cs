@@ -16,7 +16,7 @@ public class BuildingManager
         _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
     }
 
-    public static BuildingManager Instance { get; private set; }
+    public static BuildingManager? Instance { get; private set; }
 
     public static void Initialize()
     {

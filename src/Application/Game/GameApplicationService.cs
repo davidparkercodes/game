@@ -18,7 +18,7 @@ public class GameApplicationService
         _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
     }
 
-    public static GameApplicationService Instance { get; private set; }
+    public static GameApplicationService? Instance { get; private set; }
 
     public static void Initialize()
     {
@@ -29,7 +29,7 @@ public class GameApplicationService
         Instance = new GameApplicationService(mediator);
     }
 
-    public async Task<SpendMoneyResult> SpendMoneyAsync(int amount, string reason = null)
+    public async Task<SpendMoneyResult> SpendMoneyAsync(int amount, string? reason = null)
     {
         var command = new SpendMoneyCommand(amount, reason);
         return await _mediator.SendAsync<SpendMoneyResult>(command);
@@ -47,7 +47,7 @@ public class GameApplicationService
         return await _mediator.SendAsync<StartRoundResult>(command);
     }
 
-    public async Task<SpendMoneyResult> TrySpendMoney(int amount, string reason = null)
+    public async Task<SpendMoneyResult> TrySpendMoney(int amount, string? reason = null)
     {
         try
         {

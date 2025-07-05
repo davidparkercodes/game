@@ -5,11 +5,11 @@ namespace Game.Presentation.Buildings;
 
 public partial class BuildingPreview : Node2D
 {
-	[Export] public PackedScene BuildingScene;
+	[Export] public PackedScene? BuildingScene;
 	[Export] public Color ValidColor = new Color(0.2f, 0.8f, 0.2f, 0.6f);
 	[Export] public Color InvalidColor = new Color(0.8f, 0.2f, 0.2f, 0.6f);
 	
-	private Building _previewBuilding;
+	private Building? _previewBuilding;
 	private bool _isValidPlacement = true;
 	private Vector2 _mousePosition;
 	private bool _isFlashing = false;

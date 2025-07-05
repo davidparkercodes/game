@@ -15,13 +15,13 @@ public partial class Player : CharacterBody2D
 {
 	[Export] public float Speed = 200f;
 
-	[Export] public PackedScene BasicTowerScene;
-	[Export] public PackedScene SniperTowerScene;
+	[Export] public PackedScene? BasicTowerScene;
+	[Export] public PackedScene? SniperTowerScene;
 
-	public PackedScene CurrentBuildingScene { get; private set; } = null;
+	public PackedScene? CurrentBuildingScene { get; private set; } = null;
 
-	private PlayerMovement _movement;
-	private PlayerBuildingBuilder _buildingBuilder;
+	private PlayerMovement _movement = null!;
+	private PlayerBuildingBuilder _buildingBuilder = null!;
 
 	public override void _Ready()
 	{
@@ -30,7 +30,7 @@ public partial class Player : CharacterBody2D
 		if (Speed <= 0)
 			Speed = 200f;
 		
-		CurrentBuildingScene = null;
+		CurrentBuildingScene = null!;
 		UpdateSelectedBuildingDisplay("None");
 
 		_movement = new PlayerMovement(this);
@@ -108,19 +108,19 @@ public partial class Player : CharacterBody2D
 			case "Basic":
 				CurrentBuildingScene = BasicTowerScene;
 				UpdateSelectedBuildingDisplay("Basic");
-				_buildingBuilder.StartBuildMode(BasicTowerScene);
+				_buildingBuilder.StartBuildMode(BasicTowerScene!);
 				break;
 			case "Sniper":
 				CurrentBuildingScene = SniperTowerScene;
 				UpdateSelectedBuildingDisplay("Sniper");
-				_buildingBuilder.StartBuildMode(SniperTowerScene);
+				_buildingBuilder.StartBuildMode(SniperTowerScene!);
 				break;
 		}
 	}
 	
 	public void ClearBuildingSelection()
 	{
-		CurrentBuildingScene = null;
+		CurrentBuildingScene = null!;
 		UpdateSelectedBuildingDisplay("None");
 		HideBuildingStats();
 		_buildingBuilder.CancelBuildMode();
@@ -133,7 +133,7 @@ public partial class Player : CharacterBody2D
 		
 		_buildingBuilder?.CancelBuildMode();
 		
-		CurrentBuildingScene = null;
+		CurrentBuildingScene = null!;
 		HideBuildingStats();
 		
 		GD.Print($"🔧 CancelBuildMode finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")}");
@@ -143,7 +143,7 @@ public partial class Player : CharacterBody2D
 	{
 		GD.Print($"🧹 ClearPlayerSelectionState called. CurrentBuildingScene before: {(CurrentBuildingScene == null ? "null" : CurrentBuildingScene.ResourcePath.GetFile().GetBaseName())}");
 		
-		CurrentBuildingScene = null;
+		CurrentBuildingScene = null!;
 		HideBuildingStats();
 		
 		GD.Print($"🧹 ClearPlayerSelectionState finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")}");
@@ -169,9 +169,9 @@ public partial class Player : CharacterBody2D
 		}
 	}
 	
-	private PlayerBuildingStats GetBuildingStats(string buildingName)
+	private PlayerBuildingStats? GetBuildingStats(string buildingName)
 	{
-		PackedScene buildingScene = buildingName switch
+		PackedScene? buildingScene = buildingName switch
 		{
 			"Basic" => BasicTowerScene,
 			"Sniper" => SniperTowerScene,

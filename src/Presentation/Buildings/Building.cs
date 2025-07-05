@@ -9,13 +9,13 @@ public partial class Building : StaticBody2D
 	[Export] public int Damage { get; set; } = 10;
 	[Export] public float Range { get; set; } = 150.0f;
 	[Export] public float FireRate { get; set; } = 1.0f;
-	[Export] public PackedScene BulletScene;
+	[Export] public PackedScene? BulletScene;
 
-	protected Godot.Timer _fireTimer;
-	protected Area2D _rangeArea;
-	protected CollisionShape2D _rangeCollision;
+	protected Godot.Timer _fireTimer = null!;
+	protected Area2D _rangeArea = null!;
+	protected CollisionShape2D _rangeCollision = null!;
 	protected bool _showingRange = false;
-	private Line2D _rangeCircle;
+	private Line2D _rangeCircle = null!;
 
 	public override void _Ready()
 	{

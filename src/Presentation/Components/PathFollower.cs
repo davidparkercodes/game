@@ -11,10 +11,10 @@ public partial class PathFollower : Node
 	[Signal] public delegate void PathCompletedEventHandler();
 	[Signal] public delegate void PathProgressChangedEventHandler(float progress);
 	
-	private Node2D _body;
+	private Node2D _body = null!;
 	private float _pathProgress = 0.0f;
 	private bool _isFollowingPath = false;
-	private PathService _pathService;
+	private PathService _pathService = null!;
 
 	public float PathProgress 
 	{ 

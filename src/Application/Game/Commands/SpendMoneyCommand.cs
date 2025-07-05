@@ -7,7 +7,7 @@ public class SpendMoneyCommand : ICommand<SpendMoneyResult>
     public int Amount { get; }
     public string Reason { get; }
 
-    public SpendMoneyCommand(int amount, string reason = null)
+    public SpendMoneyCommand(int amount, string? reason = null)
     {
         Amount = amount;
         Reason = reason ?? "Unknown";
@@ -17,10 +17,10 @@ public class SpendMoneyCommand : ICommand<SpendMoneyResult>
 public class SpendMoneyResult
 {
     public bool Success { get; }
-    public string ErrorMessage { get; }
+    public string? ErrorMessage { get; }
     public int RemainingMoney { get; }
 
-    public SpendMoneyResult(bool success, int remainingMoney, string errorMessage = null)
+    public SpendMoneyResult(bool success, int remainingMoney, string? errorMessage = null)
     {
         Success = success;
         RemainingMoney = remainingMoney;

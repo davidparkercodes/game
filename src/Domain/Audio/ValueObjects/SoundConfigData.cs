@@ -27,7 +27,7 @@ public readonly struct SoundConfigData
         return $"SoundConfig({SoundKey}, Volume:{Volume:F2}, Loop:{Loop})";
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is SoundConfigData other && Equals(other);
     }

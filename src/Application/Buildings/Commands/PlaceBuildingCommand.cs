@@ -20,11 +20,11 @@ public class PlaceBuildingCommand : ICommand<PlaceBuildingResult>
 public class PlaceBuildingResult
 {
     public bool Success { get; }
-    public string ErrorMessage { get; }
+    public string? ErrorMessage { get; }
     public int BuildingId { get; }
     public int CostPaid { get; }
 
-    public PlaceBuildingResult(bool success, string errorMessage = null, int buildingId = 0, int costPaid = 0)
+    public PlaceBuildingResult(bool success, string? errorMessage = null, int buildingId = 0, int costPaid = 0)
     {
         Success = success;
         ErrorMessage = errorMessage;

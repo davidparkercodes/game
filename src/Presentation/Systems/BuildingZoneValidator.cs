@@ -4,7 +4,7 @@ namespace Game.Presentation.Systems;
 
 public static class BuildingZoneValidator
 {
-    private static TileMapLayer _groundLayer;
+    private static TileMapLayer? _groundLayer;
     
     public static void Initialize(TileMapLayer groundLayer)
     {

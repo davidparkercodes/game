@@ -9,7 +9,7 @@ namespace Game.Domain.Enemies.Services
 {
 	public partial class PathManager : Node2D
 	{
-		[Export] public LevelDataResource CurrentLevel { get; set; }
+	[Export] public LevelDataResource? CurrentLevel { get; set; }
 		private readonly List<OrderedPathPoint> _pathPoints;
 		private readonly float _pathTolerance;
 
@@ -59,7 +59,7 @@ namespace Game.Domain.Enemies.Services
         }
     }
 
-    public OrderedPathPoint GetNextPathPoint(Game.Domain.Enemies.Entities.Enemy enemy)
+    public OrderedPathPoint? GetNextPathPoint(Game.Domain.Enemies.Entities.Enemy enemy)
     {
         if (enemy == null)
             throw new ArgumentNullException(nameof(enemy));
@@ -75,7 +75,7 @@ namespace Game.Domain.Enemies.Services
         return _pathPoints.FirstOrDefault(p => p.Order == nextIndex);
     }
 
-    public OrderedPathPoint GetCurrentPathPoint(Game.Domain.Enemies.Entities.Enemy enemy)
+    public OrderedPathPoint? GetCurrentPathPoint(Game.Domain.Enemies.Entities.Enemy enemy)
     {
         if (enemy == null)
             throw new ArgumentNullException(nameof(enemy));
@@ -189,7 +189,7 @@ public class OrderedPathPoint
         return $"OrderedPathPoint(X:{X:F1}, Y:{Y:F1}, Order:{Order})";
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is OrderedPathPoint other && 
                Math.Abs(X - other.X) < 0.001f && 
