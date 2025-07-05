@@ -12,10 +12,13 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
 {
     private readonly Dictionary<string, BuildingStats> _buildingStats;
     private readonly BuildingStatsConfig _config;
+    private readonly IBuildingTypeRegistry? _buildingTypeRegistry;
     private const string DEFAULT_CONFIG_PATH = "data/simulation/building-stats.json";
 
-    public MockBuildingStatsProvider(string configPath = null)
+    public MockBuildingStatsProvider(IBuildingTypeRegistry? buildingTypeRegistry = null, string? configPath = null)
     {
+        _buildingTypeRegistry = buildingTypeRegistry; // Allow null for backward compatibility
+        
         var actualConfigPath = FindConfigFile(configPath ?? DEFAULT_CONFIG_PATH);
         Console.WriteLine($"DEBUG: Loading building stats from: {actualConfigPath}");
         _config = LoadBuildingStatsConfig(actualConfigPath);
@@ -35,13 +38,34 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
             return stats;
         }
 
-        // Return default stats for unknown building types (fallback to basic_tower if available)
-        if (_buildingStats.ContainsKey("basic_tower"))
+        // Use BuildingTypeRegistry for intelligent fallbacks (if available)
+        if (_buildingTypeRegistry != null)
         {
-            return _buildingStats["basic_tower"];
+            // First try to get the default type from registry
+            var defaultType = _buildingTypeRegistry.GetDefaultType();
+            if (defaultType != null && _buildingStats.ContainsKey(defaultType.ConfigKey))
+            {
+                return _buildingStats[defaultType.ConfigKey];
+            }
+            
+            // If no default, try to get the cheapest type as fallback
+            var cheapestType = _buildingTypeRegistry.GetCheapestType();
+            if (cheapestType != null && _buildingStats.ContainsKey(cheapestType.ConfigKey))
+            {
+                return _buildingStats[cheapestType.ConfigKey];
+            }
+        }
+        else
+        {
+            // Fallback when no registry is available (backward compatibility)
+            // Return default stats for unknown building types (fallback to basic_tower if available)
+            if (_buildingStats.ContainsKey("basic_tower"))
+            {
+                return _buildingStats["basic_tower"];
+            }
         }
         
-        // If no basic_tower, return the first available building type
+        // If registry methods fail, return any available building type
         foreach (var availableStats in _buildingStats.Values)
         {
             return availableStats;

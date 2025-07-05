@@ -11,12 +11,14 @@ public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand,
 {
     private readonly IBuildingStatsProvider _buildingStatsProvider;
     private readonly IBuildingZoneService _zoneService;
+    private readonly IBuildingTypeRegistry _buildingTypeRegistry;
     private static int _nextBuildingId = 1;
 
-    public PlaceBuildingCommandHandler(IBuildingStatsProvider buildingStatsProvider, IBuildingZoneService zoneService)
+    public PlaceBuildingCommandHandler(IBuildingStatsProvider buildingStatsProvider, IBuildingZoneService zoneService, IBuildingTypeRegistry buildingTypeRegistry)
     {
         _buildingStatsProvider = buildingStatsProvider ?? throw new System.ArgumentNullException(nameof(buildingStatsProvider));
         _zoneService = zoneService ?? throw new System.ArgumentNullException(nameof(zoneService));
+        _buildingTypeRegistry = buildingTypeRegistry ?? throw new System.ArgumentNullException(nameof(buildingTypeRegistry));
     }
 
     public Task<PlaceBuildingResult> HandleAsync(PlaceBuildingCommand command, System.Threading.CancellationToken cancellationToken = default)
@@ -27,9 +29,11 @@ public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand,
         if (string.IsNullOrEmpty(command.BuildingType))
             return Task.FromResult(PlaceBuildingResult.Failed("Building type cannot be empty"));
 
-        var buildingStats = _buildingStatsProvider.GetBuildingStats(command.BuildingType);
-        if (buildingStats.Cost == 0 && command.BuildingType != "basic_tower")
+        // Use BuildingTypeRegistry for validation
+        if (!_buildingTypeRegistry.IsValidConfigKey(command.BuildingType))
             return Task.FromResult(PlaceBuildingResult.Failed($"Unknown building type: {command.BuildingType}"));
+
+        var buildingStats = _buildingStatsProvider.GetBuildingStats(command.BuildingType);
 
         if (!_zoneService.CanBuildAt(command.Position))
             return Task.FromResult(PlaceBuildingResult.Failed("Cannot build at this location - invalid zone"));

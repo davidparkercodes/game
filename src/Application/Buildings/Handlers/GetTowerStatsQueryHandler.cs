@@ -9,10 +9,12 @@ namespace Game.Application.Buildings.Handlers;
 public class GetTowerStatsQueryHandler : IQueryHandler<GetTowerStatsQuery, TowerStatsResponse>
 {
     private readonly IBuildingStatsProvider _buildingStatsProvider;
+    private readonly IBuildingTypeRegistry _buildingTypeRegistry;
 
-    public GetTowerStatsQueryHandler(IBuildingStatsProvider buildingStatsProvider)
+    public GetTowerStatsQueryHandler(IBuildingStatsProvider buildingStatsProvider, IBuildingTypeRegistry buildingTypeRegistry)
     {
         _buildingStatsProvider = buildingStatsProvider ?? throw new System.ArgumentNullException(nameof(buildingStatsProvider));
+        _buildingTypeRegistry = buildingTypeRegistry ?? throw new System.ArgumentNullException(nameof(buildingTypeRegistry));
     }
 
     public Task<TowerStatsResponse> HandleAsync(GetTowerStatsQuery query, CancellationToken cancellationToken = default)
@@ -23,9 +25,11 @@ public class GetTowerStatsQueryHandler : IQueryHandler<GetTowerStatsQuery, Tower
         if (string.IsNullOrEmpty(query.TowerType))
             return Task.FromResult(TowerStatsResponse.NotFound(""));
 
-        var buildingStats = _buildingStatsProvider.GetBuildingStats(query.TowerType);
-        if (buildingStats.Cost == 0 && query.TowerType != "basic_tower")
+        // Use BuildingTypeRegistry for config-driven validation instead of hardcoded checks
+        if (!_buildingTypeRegistry.IsValidConfigKey(query.TowerType))
             return Task.FromResult(TowerStatsResponse.NotFound(query.TowerType));
+
+        var buildingStats = _buildingStatsProvider.GetBuildingStats(query.TowerType);
 
         var response = new TowerStatsResponse(
             query.TowerType,

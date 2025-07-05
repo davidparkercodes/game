@@ -18,6 +18,7 @@ using Game.Application.Rounds.Commands;
 using Game.Application.Rounds.Handlers;
 using Game.Application.Waves.Commands;
 using Game.Application.Waves.Handlers;
+using Game.Application.Buildings.Services;
 
 namespace Game.Infrastructure.DI;
 
@@ -34,13 +35,22 @@ public static class ServiceConfiguration
         serviceLocator.RegisterFactory<IWaveConfigService>(() => new WaveConfigService());
         serviceLocator.RegisterFactory<IBuildingZoneService>(() => new BuildingZoneService());
         
+        // Register BuildingTypeRegistry (needs special handling since it depends on IBuildingStatsProvider)
+        // We'll create a temporary MockBuildingStatsProvider for the registry, then replace the main one
+        serviceLocator.RegisterFactory<IBuildingTypeRegistry>(() => 
+        {
+            var tempStatsProvider = new Game.Application.Simulation.Services.MockBuildingStatsProvider();
+            return new BuildingTypeRegistry(tempStatsProvider);
+        });
+        
         serviceLocator.RegisterFactory<IServiceProvider>(() => new ServiceLocatorAdapter(serviceLocator));
         serviceLocator.RegisterFactory<IMediator>(() => new Game.Application.Shared.Cqrs.Mediator(serviceLocator.Resolve<IServiceProvider>()));
         
         serviceLocator.RegisterFactory<ICommandHandler<PlaceBuildingCommand, PlaceBuildingResult>>(() => 
             new PlaceBuildingCommandHandler(
                 serviceLocator.Resolve<IBuildingStatsProvider>(),
-                serviceLocator.Resolve<IBuildingZoneService>()));
+                serviceLocator.Resolve<IBuildingZoneService>(),
+                serviceLocator.Resolve<IBuildingTypeRegistry>()));
         
         serviceLocator.RegisterFactory<ICommandHandler<SpendMoneyCommand, SpendMoneyResult>>(() => 
             new SpendMoneyCommandHandler());
@@ -52,7 +62,9 @@ public static class ServiceConfiguration
             new StartWaveCommandHandler());
         
         serviceLocator.RegisterFactory<IQueryHandler<GetTowerStatsQuery, TowerStatsResponse>>(() => 
-            new GetTowerStatsQueryHandler(serviceLocator.Resolve<IBuildingStatsProvider>()));
+            new GetTowerStatsQueryHandler(
+                serviceLocator.Resolve<IBuildingStatsProvider>(),
+                serviceLocator.Resolve<IBuildingTypeRegistry>()));
         
         serviceLocator.RegisterFactory<IQueryHandler<GetGameStateQuery, GameStateResponse>>(() => 
             new GetGameStateQueryHandler());

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Game.Application.Simulation.ValueObjects;
 using Game.Application.Simulation.Services;
 using Game.Domain.Shared.ValueObjects;
+using Game.Domain.Buildings.Services;
 
 namespace Game.Application.Simulation;
 
@@ -12,12 +14,16 @@ public class GameSimRunner
 {
     private readonly MockBuildingStatsProvider _buildingStatsProvider;
     private readonly MockEnemyStatsProvider _enemyStatsProvider;
+    private readonly IBuildingTypeRegistry _buildingTypeRegistry;
+    private readonly IPlacementStrategyProvider _placementStrategyProvider;
     private Random _random;
 
     public GameSimRunner()
     {
         _buildingStatsProvider = new MockBuildingStatsProvider();
         _enemyStatsProvider = new MockEnemyStatsProvider();
+        _buildingTypeRegistry = new Game.Application.Buildings.Services.BuildingTypeRegistry(_buildingStatsProvider);
+        _placementStrategyProvider = new PlacementStrategyProvider(_buildingTypeRegistry);
         _random = new Random();
     }
 
@@ -189,34 +195,54 @@ public class GameSimRunner
 
     private void PlaceInitialBuildings(GameState gameState, int waveNumber)
     {
-        // Simple strategy: Place 2 basic towers at strategic positions
-        var positions = new[]
+        // Fully config-driven strategy using PlacementStrategyProvider
+        var positions = _placementStrategyProvider.GetInitialBuildingPositions();
+        var buildingCategory = _placementStrategyProvider.GetInitialBuildingCategory();
+        var maxCost = _placementStrategyProvider.GetMaxCostPerBuilding();
+
+        // Get buildings from the specified category
+        var categoryBuildings = _buildingTypeRegistry.GetByCategory(buildingCategory).ToList();
+        var initialBuildingType = categoryBuildings.FirstOrDefault()?.ConfigKey;
+        
+        // Use fallback strategy if no category buildings found
+        if (string.IsNullOrEmpty(initialBuildingType))
         {
-            new Position(200, 200),
-            new Position(400, 200)
-        };
+            initialBuildingType = _placementStrategyProvider.GetFallbackBuildingType();
+        }
 
         foreach (var position in positions)
         {
-            if (TryPlaceBuilding(gameState, "basic_tower", position))
+            // Check cost constraint from strategy
+            var stats = _buildingStatsProvider.GetBuildingStats(initialBuildingType);
+            if (stats.Cost <= maxCost)
             {
-                // Building placed successfully
+                if (TryPlaceBuilding(gameState, initialBuildingType, position))
+                {
+                    // Building placed successfully
+                }
             }
         }
     }
 
     private void PlaceAdditionalBuildings(GameState gameState, int waveNumber)
     {
-        // Adaptive strategy: upgrade or place new buildings based on money
-        if (gameState.Money >= 100 && waveNumber >= 3)
+        // Fully config-driven strategy using PlacementStrategyProvider
+        var upgradeBuildingCategory = _placementStrategyProvider.GetUpgradeBuildingCategory(waveNumber, gameState.Money);
+        var upgradeBuildingPosition = _placementStrategyProvider.GetUpgradeBuildingPosition(waveNumber);
+        
+        if (!string.IsNullOrEmpty(upgradeBuildingCategory) && upgradeBuildingPosition != null)
         {
-            // Try to place a sniper tower
-            TryPlaceBuilding(gameState, "sniper_tower", new Position(300, 150));
-        }
-        else if (gameState.Money >= 75 && waveNumber >= 2)
-        {
-            // Try to place a rapid tower
-            TryPlaceBuilding(gameState, "rapid_tower", new Position(250, 250));
+            // Get buildings from the specified upgrade category
+            var categoryBuildings = _buildingTypeRegistry.GetByCategory(upgradeBuildingCategory).ToList();
+            var upgradeBuildingType = categoryBuildings.FirstOrDefault()?.ConfigKey;
+            
+            // Use fallback if no category buildings found
+            if (string.IsNullOrEmpty(upgradeBuildingType))
+            {
+                upgradeBuildingType = _placementStrategyProvider.GetFallbackBuildingType();
+            }
+            
+            TryPlaceBuilding(gameState, upgradeBuildingType, upgradeBuildingPosition);
         }
     }
 
