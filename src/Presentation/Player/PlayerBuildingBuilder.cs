@@ -1,4 +1,7 @@
 using Godot;
+using Game.Presentation.Buildings;
+
+namespace Game.Presentation.Player;
 
 public class PlayerBuildingBuilder
 {
@@ -19,16 +22,12 @@ public class PlayerBuildingBuilder
 		{
 			if (mouse.ButtonIndex == MouseButton.Left && _isInBuildMode)
 			{
-				// Left click to place building
 				BuildBuilding();
-				// Mark the event as handled to prevent it from reaching buildings
 				_player.GetViewport().SetInputAsHandled();
 			}
 			else if (mouse.ButtonIndex == MouseButton.Right && _isInBuildMode)
 			{
-				// Right click to deselect current building
 				CancelBuildMode();
-				// Mark the event as handled
 				_player.GetViewport().SetInputAsHandled();
 			}
 		}
@@ -47,7 +46,6 @@ public class PlayerBuildingBuilder
 			return;
 		}
 		
-		// If already in build mode, update the existing preview
 		if (_isInBuildMode && _currentPreview != null)
 		{
 			_currentPreview.UpdateBuildingScene(buildingScene);
@@ -57,7 +55,6 @@ public class PlayerBuildingBuilder
 		
 		_isInBuildMode = true;
 		
-		// Create preview
 		_currentPreview = new BuildingPreview();
 		_currentPreview.BuildingScene = buildingScene;
 		_player.GetTree().Root.AddChild(_currentPreview);
@@ -77,7 +74,6 @@ public class PlayerBuildingBuilder
 			_currentPreview = null;
 		}
 		
-		// Notify Player to clear its building selection state
 		_player.ClearPlayerSelectionState();
 		
 		GD.Print("❌ Cancelled building build mode");
@@ -88,14 +84,12 @@ public class PlayerBuildingBuilder
 		if (!_isInBuildMode || _currentPreview == null)
 			return;
 		
-		// Check placement validity and log if on restricted area
 		Vector2 buildPosition = _currentPreview.GetPlacementPosition();
 		if (!BuildingZoneValidator.CanBuildAtWithLogging(buildPosition))
 		{
 			return;
 		}
 		
-		// Check for building overlaps
 		var buildingManager = _player.GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;
 		if (buildingManager != null && buildingManager.IsPositionOccupied(buildPosition, 16.0f))
 		{
@@ -110,7 +104,6 @@ public class PlayerBuildingBuilder
 			return;
 		}
 
-		// Use GameManager's money system
 		if (GameManager.Instance == null)
 		{
 			GD.PrintErr("❌ GameManager not available!");
@@ -125,17 +118,12 @@ public class PlayerBuildingBuilder
 			return;
 		}
 
-		// Create the actual building
 		var building = _currentPreview.BuildingScene.Instantiate<Building>();
 		building.GlobalPosition = _currentPreview.GetPlacementPosition();
 		_player.GetTree().Root.AddChild(building);
 
-		// Register with BuildingManager (reuse existing variable)
 		buildingManager?.AddBuilding(building);
 
 		GD.Print($"🔧 Built building at {building.GlobalPosition} for ${cost}");
-		
-		// Stay in build mode to allow building more of the same type
 	}
-
 }

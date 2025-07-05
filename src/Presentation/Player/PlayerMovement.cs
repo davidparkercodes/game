@@ -1,5 +1,7 @@
 using Godot;
 
+namespace Game.Presentation.Player;
+
 public class PlayerMovement
 {
 	private readonly Player _player;

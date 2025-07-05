@@ -40,18 +40,61 @@ This document outlines the step-by-step refactoring plan to transform our game c
 - [x] **READY FOR MANUAL TEST**: Game launches
 
 ### 5.3 Feature-Based Presentation
-- [ ] Move `BuildingPreview.cs` → `Presentation/Buildings/`
-- [ ] Refactor to use CQRS commands via mediator
-- [ ] Move player classes → `Presentation/Player/`
+- [x] Move `BuildingPreview.cs` → `Presentation/Buildings/`
+- [x] Update namespace to `Game.Presentation.Buildings`
+- [x] Move `Player.cs` → `Presentation/Player/`
+- [x] Move `PlayerMovement.cs` → `Presentation/Player/`
+- [x] Move `PlayerBuildingBuilder.cs` → `Presentation/Player/`
+- [x] Update all namespaces to `Game.Presentation.Player`
+- [x] Update cross-references and dependencies
+- [x] Fix Player.tscn scene script path
+- [x] Resolve exported property issues (Speed fallback)
+- [x] **READY FOR MANUAL TEST**: Movement and building functionality restored
+- [ ] Refactor presentation classes to use CQRS commands via mediator
 - [ ] Move UI classes → `Presentation/UI/`
 - [ ] Move component classes → `Presentation/Components/`
-- [ ] Manual test: All features work
+- [ ] Move inventory classes → `Presentation/Inventory/`
+- [ ] Manual test: All features work with CQRS integration
 
 ### 5.4 Integration Testing
 - [ ] Test complete feature flows
 - [ ] Verify CQRS command/query execution
 - [ ] Validate DI container resolution
 - [ ] **TEST CHECKPOINT**: Full integration working
+
+---
+
+## Current Status (Section 5.3 - Feature-Based Presentation)
+
+### ✅ **COMPLETED: Core Presentation Classes Migration**
+
+**Successfully Moved & Configured:**
+- `BuildingPreview.cs` → `src/Presentation/Buildings/` (namespace: `Game.Presentation.Buildings`)
+- `Player.cs` → `src/Presentation/Player/` (namespace: `Game.Presentation.Player`)
+- `PlayerMovement.cs` → `src/Presentation/Player/` (namespace: `Game.Presentation.Player`)  
+- `PlayerBuildingBuilder.cs` → `src/Presentation/Player/` (namespace: `Game.Presentation.Player`)
+
+**Issues Resolved:**
+- ✅ Updated Player.tscn scene file script reference
+- ✅ Fixed cross-references between moved classes
+- ✅ Added using directives for namespace resolution
+- ✅ Resolved exported property issues (Speed defaulting to 0)
+- ✅ Implemented Speed fallback mechanism for scene compatibility
+- ✅ Verified compilation success with no errors
+
+**Functional Verification:**
+- ✅ Player movement (WASD) working correctly
+- ✅ Building selection and placement functionality preserved
+- ✅ All existing game features operational
+
+### 🔄 **NEXT: CQRS Integration & Remaining Classes**
+
+**Remaining Tasks for Section 5.3:**
+1. Refactor presentation classes to use CQRS commands via mediator pattern
+2. Move UI classes to `src/Presentation/UI/`
+3. Move component classes to `src/Presentation/Components/`
+4. Move inventory classes to `src/Presentation/Inventory/`
+5. Complete integration testing of CQRS command flows
 
 ---
 

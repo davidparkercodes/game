@@ -1,5 +1,7 @@
 using Godot;
 
+namespace Game.Presentation.Player;
+
 public class PlayerBuildingStats
 {
 	public int Cost { get; set; }
@@ -15,17 +17,19 @@ public partial class Player : CharacterBody2D
 	[Export] public PackedScene BasicTurretScene;
 	[Export] public PackedScene SniperTurretScene;
 
-	public PackedScene CurrentBuildingScene { get; private set; } = null; // Start with no building selected
+	public PackedScene CurrentBuildingScene { get; private set; } = null;
 
 	private PlayerMovement _movement;
 	private PlayerBuildingBuilder _buildingBuilder;
 
 	public override void _Ready()
 	{
-		// Add to player group for easy reference
 		AddToGroup("player");
 		
-		// Start with no building selected
+		// Ensure Speed has a valid value
+		if (Speed <= 0)
+			Speed = 200f;
+		
 		CurrentBuildingScene = null;
 		UpdateSelectedBuildingDisplay("None");
 
@@ -38,7 +42,6 @@ public partial class Player : CharacterBody2D
 		_movement.Update(delta);
 	}
 
-
 	public override void _UnhandledInput(InputEvent @event)
 	{
 		_buildingBuilder.HandleInput(@event);
@@ -50,21 +53,17 @@ public partial class Player : CharacterBody2D
 				case Key.Key1:
 					if (BasicTurretScene != null)
 					{
-						// Debug: Print current state
 						GD.Print($"🔍 Key1 pressed. CurrentBuildingScene: {(CurrentBuildingScene == null ? "null" : CurrentBuildingScene.ResourcePath.GetFile().GetBaseName())}");
 						GD.Print($"🔍 BasicTurretScene: {BasicTurretScene.ResourcePath.GetFile().GetBaseName()}");
 						GD.Print($"🔍 Are they equal? {CurrentBuildingScene == BasicTurretScene}");
 						
-						// Toggle basic turret selection
 						if (CurrentBuildingScene == BasicTurretScene)
 						{
-							// Already selected, deselect
 							ClearBuildingSelection();
 							GD.Print("🚫 Deselected Basic Turret");
 						}
 						else
 						{
-							// Select basic turret
 							CurrentBuildingScene = BasicTurretScene;
 							UpdateSelectedBuildingDisplay("Basic");
 							_buildingBuilder.StartBuildMode(BasicTurretScene);
@@ -80,16 +79,13 @@ public partial class Player : CharacterBody2D
 				case Key.Key2:
 					if (SniperTurretScene != null)
 					{
-						// Toggle sniper turret selection
 						if (CurrentBuildingScene == SniperTurretScene)
 						{
-							// Already selected, deselect
 							ClearBuildingSelection();
 							GD.Print("🚫 Deselected Sniper Turret");
 						}
 						else
 						{
-							// Select sniper turret
 							CurrentBuildingScene = SniperTurretScene;
 							UpdateSelectedBuildingDisplay("Sniper");
 							_buildingBuilder.StartBuildMode(SniperTurretScene);
@@ -135,17 +131,14 @@ public partial class Player : CharacterBody2D
 	{
 		GD.Print($"🔧 CancelBuildMode called. CurrentBuildingScene before: {(CurrentBuildingScene == null ? "null" : CurrentBuildingScene.ResourcePath.GetFile().GetBaseName())}");
 		
-		// Cancel any active build mode through the building builder
 		_buildingBuilder?.CancelBuildMode();
 		
-		// Also clear the Player's building selection state
 		CurrentBuildingScene = null;
 		HideBuildingStats();
 		
-		GD.Print($"🔧 CancelBuildMode finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")})");
+		GD.Print($"🔧 CancelBuildMode finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")}");
 	}
 	
-	// Called by PlayerBuildingBuilder to clear Player state without circular calls
 	public void ClearPlayerSelectionState()
 	{
 		GD.Print($"🧹 ClearPlayerSelectionState called. CurrentBuildingScene before: {(CurrentBuildingScene == null ? "null" : CurrentBuildingScene.ResourcePath.GetFile().GetBaseName())}");
@@ -153,7 +146,7 @@ public partial class Player : CharacterBody2D
 		CurrentBuildingScene = null;
 		HideBuildingStats();
 		
-		GD.Print($"🧹 ClearPlayerSelectionState finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")})");
+		GD.Print($"🧹 ClearPlayerSelectionState finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")}");
 	}
 
 	private void UpdateSelectedBuildingDisplay(string buildingName)
@@ -187,9 +180,8 @@ public partial class Player : CharacterBody2D
 		
 		if (buildingScene == null) return null;
 		
-		// Create a temporary instance to get stats
 		var tempBuilding = buildingScene.Instantiate<Building>();
-		tempBuilding.InitializeStats(); // Configure stats before accessing them
+		tempBuilding.InitializeStats();
 		
 		var stats = new PlayerBuildingStats
 		{
@@ -218,6 +210,4 @@ public partial class Player : CharacterBody2D
 			GameManager.Instance.Hud.HideBuildingStats();
 		}
 	}
-
-
 }

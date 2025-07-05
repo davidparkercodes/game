@@ -1,5 +1,6 @@
 // scripts/Buildings/Building.cs
 using Godot;
+using Game.Presentation.Player;
 using System;
 
 public partial class Building : StaticBody2D
