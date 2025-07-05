@@ -6,6 +6,7 @@ using Game.Infrastructure.Sound;
 using Game.Presentation.Systems;
 using Game.Application.Shared.Services;
 using Game.Presentation.UI;
+using Game.Infrastructure.Waves.Services;
 using static Game.Di.DiConfiguration;
 
 namespace Game.Presentation.Core;
@@ -52,8 +53,24 @@ public partial class Main : Node
 
 	private void InitializeUI()
 	{
-		_inventoryPanel = GetNode<Panel>("InventoryUI/InventoryPanel");
-		_inventoryList = _inventoryPanel.GetNode<VBoxContainer>("MarginContainer/InventoryList");
+		// Try to initialize inventory - may not exist in all scenes
+		try
+		{
+			_inventoryPanel = GetNodeOrNull<Panel>("InventoryUI/InventoryPanel");
+			if (_inventoryPanel != null)
+			{
+				_inventoryList = _inventoryPanel.GetNodeOrNull<VBoxContainer>("MarginContainer/InventoryList");
+				GD.Print("✅ Inventory UI found and initialized");
+			}
+			else
+			{
+				GD.Print("⚠️ Inventory UI not found - skipping inventory initialization");
+			}
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"⚠️ Failed to initialize inventory: {ex.Message}");
+		}
 		
 		// Initialize HUD
 		InitializeHUD();
@@ -89,9 +106,12 @@ public partial class Main : Node
 			AddChild(_hudManager);
 			GD.Print("✅ HudManager created and added to tree");
 			
-			// Connect HUD Manager to HUD instance
-			_hudManager.Initialize(_hud);
-			GD.Print("🎯 HUD fully initialized and connected");
+		// Connect HUD Manager to HUD instance
+		_hudManager.Initialize(_hud);
+		GD.Print("🎯 HUD fully initialized and connected");
+		
+		// Initialize Wave Manager after everything is set up
+		CallDeferred(nameof(InitializeWaveManager));
 		}
 		catch (System.Exception ex)
 		{
@@ -162,7 +182,7 @@ public partial class Main : Node
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event.IsActionPressed("toggle_inventory"))
+		if (@event.IsActionPressed("toggle_inventory") && _inventoryPanel != null)
 		{
 			_inventoryPanel.Visible = !_inventoryPanel.Visible;
 
@@ -175,16 +195,29 @@ public partial class Main : Node
 
 	private void UpdateInventoryDisplay()
 	{
+		if (_inventoryList == null)
+		{
+			GD.PrintErr("⚠️ Cannot update inventory display - inventory list is null");
+			return;
+		}
+		
 		foreach (Node child in _inventoryList.GetChildren())
 		{
 			child.QueueFree();
 		}
 
-		foreach (var item in Game.Presentation.Inventory.Inventory.GetItems())
+		try
 		{
-			var label = new Label();
-			label.Text = $"{item.Key}: {item.Value}";
-			_inventoryList.AddChild(label);
+			foreach (var item in Game.Presentation.Inventory.Inventory.GetItems())
+			{
+				var label = new Label();
+				label.Text = $"{item.Key}: {item.Value}";
+				_inventoryList.AddChild(label);
+			}
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"⚠️ Failed to update inventory display: {ex.Message}");
 		}
 	}
 
@@ -199,6 +232,13 @@ public partial class Main : Node
 				GD.PrintErr("⚠️  Startup validation detected issues with configuration. Check logs for detailed errors.");
 			}
 		}
+	}
+
+	private void InitializeWaveManager()
+	{
+		// Initialize Wave Manager and set initial button state
+		WaveManager.Instance.Reset(); // This will set up the initial wave button state
+		GD.Print("🌊 Wave Manager initialized");
 	}
 
 	public DiContainer GetDiContainer() => _diContainer;

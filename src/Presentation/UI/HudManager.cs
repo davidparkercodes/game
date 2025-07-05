@@ -49,6 +49,9 @@ public partial class HudManager : Node
 
         // Hide tower stats panel initially
         _hud.HideTowerStats();
+        
+        // Initialize wave button state
+        SetWaveButtonState("Start Wave 1", true);
     }
 
     // Money Management
@@ -155,6 +158,20 @@ public partial class HudManager : Node
         else
         {
             GD.PrintErr("❌ Cannot hide skip button - HUD is null");
+        }
+    }
+
+    public void SetWaveButtonState(string text, bool enabled)
+    {
+        if (_hud?.SkipButton != null)
+        {
+            _hud.SkipButton.Text = text;
+            _hud.SkipButton.Disabled = !enabled;
+            GD.Print($"🌊 Wave button updated: '{text}', enabled: {enabled}");
+        }
+        else
+        {
+            GD.PrintErr("❌ Cannot update wave button - button is null");
         }
     }
 

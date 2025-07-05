@@ -1,5 +1,6 @@
 using Godot;
 using Game.Infrastructure.Rounds.Services;
+using Game.Infrastructure.Waves.Services;
 
 namespace Game.Presentation.UI;
 
@@ -126,9 +127,6 @@ public partial class Hud : CanvasLayer
 	
 	private void OnSkipButtonPressed()
 	{
-		if (RoundService.Instance != null)
-		{
-			RoundService.Instance.ForceStartDefendPhase();
-		}
+		WaveManager.Instance?.StartNextWave();
 	}
 }

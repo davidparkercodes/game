@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=4 uid="uid://wgthd0eexbcv"]
+[gd_scene load_steps=12 format=4 uid="uid://wgthd0eexbcv"]
 
 [ext_resource type="PackedScene" uid="uid://b25v1654ttu42" path="res://scenes/Player/Player.tscn" id="2_nxtc6"]
 [ext_resource type="PackedScene" uid="uid://ddkixe5gb73sy" path="res://scenes/Towers/BasicTower.tscn" id="3_wp0k4"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://3cpqs0fsd2cq" path="res://scenes/Levels/Level01.tscn" id="5_qmy6f"]
 [ext_resource type="Script" uid="uid://bviiroawinlya" path="res://src/Domain/Items/Entities/LootablePickup.cs" id="6_q8u5g"]
 [ext_resource type="Script" uid="uid://bdy1qo0owpahe" path="res://src/Presentation/Core/Main.cs" id="8_bjd11"]
-[ext_resource type="PackedScene" uid="uid://dtrqffq12t5q4" path="res://scenes/Enemies/Enemy.tscn" id="10_lhr70"]
 [ext_resource type="Resource" uid="uid://db8smygtfvfsh" path="res://data/levels/level_01.tres" id="11_ft6cd"]
 [ext_resource type="Script" uid="uid://y712veadk31o" path="res://src/Domain/Enemies/Services/PathManager.cs" id="11_pathmanager"]
 [ext_resource type="Script" uid="uid://criulo1jbp6r8" path="res://src/Application/Buildings/BuildingManager.cs" id="13_towermanager"]
@@ -82,7 +81,6 @@ script = ExtResource("11_pathmanager")
 CurrentLevel = ExtResource("11_ft6cd")
 
 [node name="WaveSpawner" type="Node2D" parent="."]
-BasicEnemyScene = ExtResource("10_lhr70")
 
 [node name="StatsManager" type="Node" parent="."]
 script = ExtResource("14_statsmanager")

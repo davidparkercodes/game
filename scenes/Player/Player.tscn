@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://b25v1654ttu42"]
 
 [ext_resource type="Script" uid="uid://6e12ogd5np7v" path="res://src/Presentation/Player/Player.cs" id="1_kpjcp"]
-[ext_resource type="Texture2D" uid="uid://4lncw5fj4845" path="res://assets/sprites/basic_shapes_vaporwave_tilesheet_16x16.png" id="2_bvqhm"]
+[ext_resource type="Texture2D" uid="uid://vvwher3fvaq" path="res://assets/sprites/simple_player_24x24_pink_diamond.png" id="2_bvqhm"]
 [ext_resource type="Script" uid="uid://g0wlghawnmxn" path="res://src/Presentation/Components/Hitbox.cs" id="3_3li8b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kpjcp"]
@@ -68,9 +68,10 @@ script = ExtResource("1_kpjcp")
 [node name="TempChar" type="Sprite2D" parent="."]
 texture = ExtResource("2_bvqhm")
 region_enabled = true
-region_rect = Rect2(0, 112, 16, 16)
+region_rect = Rect2(0, 0, 24, 24)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 0.759328
 shape = SubResource("RectangleShape2D_kpjcp")
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -81,6 +82,7 @@ collision_mask = 2
 script = ExtResource("3_3li8b")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+rotation = 0.771517
 shape = SubResource("RectangleShape2D_v6fml")
 disabled = true
 

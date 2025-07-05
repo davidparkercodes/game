@@ -1,5 +1,6 @@
 using Godot;
 using Game.Presentation.Buildings;
+using Game.Presentation.UI;
 
 namespace Game.Presentation.Player;
 
@@ -197,13 +198,27 @@ public partial class Player : CharacterBody2D
 	
 	private void ShowBuildingStats(string buildingName, int cost, int damage, float range, float fireRate)
 	{
-		// TODO: Implement proper HUD integration
-		GD.Print($"🏗️ Building Stats: {buildingName} - Cost: ${cost}, Damage: {damage}, Range: {range:F1}, FireRate: {fireRate:F1}s");
+		if (HudManager.Instance != null && HudManager.Instance.IsInitialized())
+		{
+			HudManager.Instance.ShowBuildingStats(buildingName, cost, damage, range, fireRate);
+			GD.Print($"🏗️ Building Stats: {buildingName} - Cost: ${cost}, Damage: {damage}, Range: {range:F1}, FireRate: {fireRate:F1}s");
+		}
+		else
+		{
+			GD.PrintErr("❌ Cannot show building stats - HudManager not available");
+		}
 	}
 
 	private void HideBuildingStats()
 	{
-		// TODO: Implement proper HUD integration
-		GD.Print("🚫 Hiding building stats");
+		if (HudManager.Instance != null && HudManager.Instance.IsInitialized())
+		{
+			HudManager.Instance.HideBuildingStats();
+			GD.Print("🚫 Hiding building stats");
+		}
+		else
+		{
+			GD.PrintErr("❌ Cannot hide building stats - HudManager not available");
+		}
 	}
 }

@@ -1,4 +1,6 @@
 using Godot;
+using Game.Presentation.UI;
+using Game.Infrastructure.Waves.Services;
 
 namespace Game.Infrastructure.Game.Services;
 
@@ -10,7 +12,6 @@ public class GameService
     public int Lives { get; private set; } = 20;
     public int Score { get; private set; } = 0;
     public bool IsGameActive { get; private set; } = false;
-    public object? Hud { get; set; }
 
     static GameService()
     {
@@ -23,6 +24,14 @@ public class GameService
         Money = 500;
         Lives = 20;
         Score = 0;
+        
+        // Initialize wave system
+        WaveManager.Instance?.Reset();
+        
+        // Update HUD with initial values
+        UpdateHudMoney();
+        UpdateHudLives();
+        
         GD.Print("Game started!");
     }
 
@@ -37,6 +46,7 @@ public class GameService
         if (Money >= amount)
         {
             Money -= amount;
+            UpdateHudMoney();
             GD.Print($"Spent {amount} money. Remaining: {Money}");
             return true;
         }
@@ -46,12 +56,18 @@ public class GameService
     public void AddMoney(int amount)
     {
         Money += amount;
+        UpdateHudMoney();
         GD.Print($"Added {amount} money. Total: {Money}");
     }
 
     public void OnEnemyReachedEnd()
     {
         Lives--;
+        UpdateHudLives();
+        
+        // Notify wave manager
+        WaveManager.Instance?.OnEnemyReachedEnd();
+        
         GD.Print($"Enemy reached end! Lives remaining: {Lives}");
         
         if (Lives <= 0)
@@ -64,6 +80,10 @@ public class GameService
     {
         AddMoney(reward);
         Score += reward * 10;
+        
+        // Notify wave manager
+        WaveManager.Instance?.OnEnemyKilled();
+        
         GD.Print($"Enemy killed! Score: {Score}");
     }
 
@@ -73,6 +93,13 @@ public class GameService
         Lives = 20;
         Score = 0;
         IsGameActive = false;
+        
+        // Reset wave manager
+        WaveManager.Instance?.Reset();
+        
+        // Update HUD with reset values
+        UpdateHudMoney();
+        UpdateHudLives();
     }
 
     public bool IsGameOver()
@@ -83,5 +110,30 @@ public class GameService
     public bool IsGameWon()
     {
         return false;
+    }
+    
+    // HUD Update Helper Methods
+    private void UpdateHudMoney()
+    {
+        if (HudManager.Instance != null && HudManager.Instance.IsInitialized())
+        {
+            HudManager.Instance.UpdateMoney(Money);
+        }
+    }
+    
+    private void UpdateHudLives()
+    {
+        if (HudManager.Instance != null && HudManager.Instance.IsInitialized())
+        {
+            HudManager.Instance.UpdateLives(Lives);
+        }
+    }
+    
+    public void UpdateHudWave(int wave)
+    {
+        if (HudManager.Instance != null && HudManager.Instance.IsInitialized())
+        {
+            HudManager.Instance.UpdateWave(wave);
+        }
     }
 }
