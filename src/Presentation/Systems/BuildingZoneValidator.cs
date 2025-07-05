@@ -5,18 +5,23 @@ namespace Game.Presentation.Systems;
 public static class BuildingZoneValidator
 {
     private static TileMapLayer? _groundLayer;
+    private static bool _isInitialized = false;
     
     public static void Initialize(TileMapLayer groundLayer)
     {
         _groundLayer = groundLayer;
-        GD.Print("🏗️ BuildingZoneValidator initialized");
+        _isInitialized = true;
+        GD.Print($"🏗️ BuildingZoneValidator initialized with {groundLayer.GetType().Name}");
     }
+    
+    public static bool IsInitialized => _isInitialized;
     
     public static bool CanBuildAt(Vector2 worldPosition)
     {
-        if (_groundLayer == null)
+        if (_groundLayer == null || !_isInitialized)
         {
-            GD.PrintErr("❌ GroundLayer not initialized in BuildingZoneValidator");
+            GD.PrintErr("❌ BuildingZoneValidator not properly initialized - cannot validate building placement");
+            GD.PrintErr("💡 Make sure Main.InitializeBuildingSystem() was called successfully");
             return false;
         }
         

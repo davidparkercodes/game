@@ -57,41 +57,61 @@ public partial class Main : Node
 
 	private void InitializeBuildingSystem()
 	{
-		var groundLayerInstance = GetNode("GroundLayer");
-		var groundLayer = groundLayerInstance as TileMapLayer;
+		TileMapLayer? foundLayer = null;
 		
-		if (groundLayer != null)
+		// Try to get the GroundLayer node - it should be a TileMapLayer itself
+		var groundLayerNode = GetNodeOrNull("GroundLayer");
+		if (groundLayerNode == null)
 		{
-			BuildingZoneValidator.Initialize(groundLayer);
+			GD.PrintErr("❌ GroundLayer node not found in scene");
+			return;
+		}
+		
+		GD.Print($"🔍 Found GroundLayer node: {groundLayerNode.GetType().Name}");
+		
+		// The GroundLayer should be a TileMapLayer directly since Level01.tscn's root is TileMapLayer
+		if (groundLayerNode is TileMapLayer directLayer)
+		{
+			foundLayer = directLayer;
+			GD.Print("✅ GroundLayer is directly a TileMapLayer");
+		}
+		else
+		{
+			// Fallback: search for TileMapLayer children
+			GD.Print($"🔍 GroundLayer is {groundLayerNode.GetType().Name}, searching for TileMapLayer children...");
+			
+			// Look for TileMapLayer in immediate children
+			foreach (Node child in groundLayerNode.GetChildren())
+			{
+				GD.Print($"  - Child: {child.Name} ({child.GetType().Name})");
+				if (child is TileMapLayer childLayer)
+				{
+					foundLayer = childLayer;
+					GD.Print($"✅ Found TileMapLayer child: {child.Name}");
+					break;
+				}
+			}
+			
+			// Last resort: use GetNode if we know the specific path
+			if (foundLayer == null)
+			{
+				foundLayer = groundLayerNode.GetNodeOrNull<TileMapLayer>(".");
+				if (foundLayer != null)
+				{
+					GD.Print("✅ Found TileMapLayer using GetNodeOrNull");
+				}
+			}
+		}
+		
+		if (foundLayer != null)
+		{
+			BuildingZoneValidator.Initialize(foundLayer);
 			GD.Print("🏗️ Building system initialized successfully");
 		}
 		else
 		{
-			GD.PrintErr("❌ Failed to find GroundLayer TileMapLayer");
-			GD.PrintErr($"❌ GroundLayer node type: {groundLayerInstance?.GetType().Name}");
-			
-			var tileMapLayer = groundLayerInstance?.GetNodeOrNull<TileMapLayer>(".");
-			if (tileMapLayer == null && groundLayerInstance != null)
-			{
-				foreach (Node child in groundLayerInstance.GetChildren())
-				{
-					if (child is TileMapLayer layer)
-					{
-						tileMapLayer = layer;
-						break;
-					}
-				}
-			}
-			
-			if (tileMapLayer != null)
-			{
-				BuildingZoneValidator.Initialize(tileMapLayer);
-				GD.Print("🏗️ Building system initialized successfully with child TileMapLayer");
-			}
-			else
-			{
-				GD.PrintErr("❌ Could not find any TileMapLayer in GroundLayer or its children");
-			}
+			GD.PrintErr("❌ Could not find any TileMapLayer - building placement will not work");
+			GD.PrintErr("💡 Make sure the GroundLayer scene contains a TileMapLayer node");
 		}
 	}
 
