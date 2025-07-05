@@ -7,6 +7,7 @@ using Game.Application.Simulation.ValueObjects;
 using Game.Application.Simulation.Services;
 using Game.Domain.Shared.ValueObjects;
 using Game.Domain.Buildings.Services;
+using Game.Domain.Enemies.Services;
 using Game.Application.Buildings.Services;
 
 namespace Game.Application.Simulation;
@@ -18,6 +19,7 @@ public class GameSimRunner
     private readonly MockWaveService _waveService;
     private readonly IBuildingTypeRegistry _buildingTypeRegistry;
     private readonly IPlacementStrategyProvider _placementStrategyProvider;
+    private readonly IWaveMetricsCollector _metricsCollector;
     private Random _random;
 
     public GameSimRunner()
@@ -27,6 +29,7 @@ public class GameSimRunner
         _waveService = new MockWaveService();
         _buildingTypeRegistry = new BuildingTypeRegistry(_buildingStatsProvider);
         _placementStrategyProvider = new PlacementStrategyProvider(_buildingTypeRegistry);
+        _metricsCollector = new WaveMetricsCollector();
         _random = new Random();
     }
 
@@ -47,10 +50,12 @@ public class GameSimRunner
             
             // Load wave configuration based on difficulty setting
             _waveService.LoadWaveSet(config.WaveSetDifficulty);
+            _waveService.SetEnemyCountMultiplier(config.EnemyCountMultiplier);
 
-            // Initialize game state
+            // Initialize game state and metrics
             var gameState = new GameState(config.StartingMoney, config.StartingLives);
             var waveResults = new List<WaveResult>();
+            _metricsCollector.Reset();
 
             // Report initial progress
             progress?.Report(new SimulationProgress(0, gameState.Money, gameState.Lives));
@@ -130,6 +135,16 @@ public class GameSimRunner
 
         return results;
     }
+    
+    public SimulationMetrics GetSimulationMetrics(string scenarioName, TimeSpan totalDuration, bool overallSuccess)
+    {
+        return _metricsCollector.GenerateSimulationMetrics(scenarioName, totalDuration, overallSuccess);
+    }
+    
+    public void ExportMetrics(string filePath, SimulationMetrics metrics)
+    {
+        _metricsCollector.ExportMetrics(filePath, metrics);
+    }
 
     private WaveResult RunWave(GameState gameState, int waveNumber, SimulationConfig config)
     {
@@ -139,6 +154,10 @@ public class GameSimRunner
         var startingScore = gameState.Score;
 
         gameState.StartWave(waveNumber);
+        
+        // Start metrics tracking for this wave
+        var waveName = $"Wave {waveNumber}";
+        _metricsCollector.StartWaveTracking(waveNumber, waveName);
 
         // Phase 1: Pre-wave building placement
         if (waveNumber == 1)
@@ -153,6 +172,12 @@ public class GameSimRunner
         // Phase 2: Spawn enemies for this wave
         var enemies = SpawnEnemiesForWave(gameState, waveNumber);
         var enemiesKilled = 0;
+        
+        // Track enemy spawns for metrics
+        foreach (var enemy in enemies)
+        {
+            _metricsCollector.RecordEnemySpawn("simulated_enemy", waveStopwatch.Elapsed);
+        }
 
         // Phase 3: Combat simulation
         while (enemies.Count > 0 && gameState.Lives > 0)
@@ -177,24 +202,37 @@ public class GameSimRunner
         }
 
         // Phase 4: Wave completion rewards
-        var moneyEarned = enemiesKilled * 10; // Base reward per enemy
-        var scoreEarned = enemiesKilled * 100 + (waveNumber * 50); // Wave bonus
+        // Calculate base rewards from enemies killed
+        var baseMoneyFromEnemies = enemiesKilled * 10; 
+        var baseScoreFromEnemies = enemiesKilled * 100 + (waveNumber * 50);
         
-        gameState.AddMoney(moneyEarned);
-        gameState.AddScore(scoreEarned);
+        // Add wave completion bonus (simulates bonus money from wave configuration)
+        var waveBonusMoney = waveNumber * 25; // Progressive bonus per wave
+        
+        gameState.AddMoney(baseMoneyFromEnemies + waveBonusMoney);
+        gameState.AddScore(baseScoreFromEnemies);
         gameState.CompleteWave(config.MaxWaves);
+        
+        // Complete the wave in the wave service
+        _waveService.StopCurrentWave();
 
         waveStopwatch.Stop();
 
         var livesLost = startingLives - gameState.Lives;
         var waveCompleted = gameState.Lives > 0;
+        var totalEnemies = enemies.Count + enemiesKilled;
+        var enemiesLeaked = totalEnemies - enemiesKilled;
+        var moneyEarned = gameState.Money - startingMoney;
+        
+        // Complete metrics tracking for this wave
+        _metricsCollector.EndWaveTracking(totalEnemies, enemiesKilled, enemiesLeaked, moneyEarned, livesLost);
 
         return new WaveResult(
             waveNumber: waveNumber,
             completed: waveCompleted,
             enemiesKilled: enemiesKilled,
             livesLost: livesLost,
-            moneyEarned: gameState.Money - startingMoney,
+            moneyEarned: moneyEarned,
             scoreEarned: gameState.Score - startingScore,
             waveDuration: waveStopwatch.Elapsed
         );
@@ -287,16 +325,17 @@ public class GameSimRunner
         // Start the wave in the wave service to get configuration
         _waveService.StartWave(waveNumber);
         
-        // Get enemy stats from wave service which loads from configuration
-        var enemyStats = _waveService.GetNextEnemyType();
+        // Get the total number of enemies from wave configuration
+        var totalEnemiesInWave = _waveService.GetRemainingEnemies();
         
-        // Use wave service to determine enemy count based on configuration
-        var totalEnemies = _waveService.GetRemainingEnemies();
-        
-        for (int i = 0; i < totalEnemies; i++)
+        // Create enemies based on wave configuration
+        for (int i = 0; i < totalEnemiesInWave; i++)
         {
+            // Get enemy stats for this enemy (wave service handles enemy type distribution)
+            var enemyStats = _waveService.GetNextEnemyType();
+            
             var enemy = new SimulatedEnemy(
-                "simulated_enemy", // Type doesn't matter for simulation
+                $"wave_{waveNumber}_enemy_{i}", // Unique identifier for simulation
                 enemyStats.MaxHealth,
                 enemyStats.Speed,
                 enemyStats.RewardGold,
@@ -335,6 +374,7 @@ public class GameSimRunner
                     enemiesKilled++;
                     gameState.AddMoney(target.Reward);
                     _waveService.OnEnemyKilled(); // Notify wave service
+                    _metricsCollector.RecordEnemyKill("simulated_enemy", TimeSpan.FromMilliseconds(0)); // Track kill
                 }
             }
         }

@@ -21,25 +21,39 @@ public class MockWaveService : IWaveService
     private int _remainingEnemies = 0;
     private int _totalWaves = 0;
     private string _currentWaveSetName = "Unknown";
+    private float _enemyCountMultiplier = 1.0f;
+    private int _currentEnemyGroupIndex = 0;
 
     public MockWaveService()
     {
+        Console.WriteLine("DEBUG: MockWaveService constructor starting");
         LoadWaveConfiguration();
+        Console.WriteLine($"DEBUG: MockWaveService initialized with {_waves?.Count ?? 0} waves");
     }
 
     public void StartWave(int waveNumber)
     {
+        // Ensure we have waves loaded, create fallback if needed
+        if (_waves == null || _waves.Count == 0)
+        {
+            Console.WriteLine("DEBUG: No waves loaded, creating fallback configuration");
+            CreateFallbackConfiguration();
+        }
+        
         if (_waves == null || waveNumber <= 0 || waveNumber > _waves.Count)
         {
-            throw new ArgumentOutOfRangeException(nameof(waveNumber), $"Invalid wave number: {waveNumber}");
+            Console.WriteLine($"DEBUG: Invalid wave setup - waves count: {_waves?.Count ?? 0}, requested wave: {waveNumber}");
+            throw new ArgumentOutOfRangeException(nameof(waveNumber), $"Invalid wave number: {waveNumber}. Available waves: {_waves?.Count ?? 0}");
         }
 
         _currentWaveNumber = waveNumber;
         _isWaveActive = true;
         _isWaveComplete = false;
+        _currentEnemyGroupIndex = 0;
         
         var currentWave = _waves[waveNumber - 1];
-        _remainingEnemies = currentWave.EnemyGroups.Sum(group => group.Count);
+        var baseEnemyCount = currentWave.EnemyGroups.Sum(group => group.Count);
+        _remainingEnemies = (int)(baseEnemyCount * _enemyCountMultiplier);
     }
 
     public void StopCurrentWave()
@@ -86,20 +100,26 @@ public class MockWaveService : IWaveService
         }
 
         var currentWave = _waves[_currentWaveNumber - 1];
-        var nextGroup = currentWave.EnemyGroups.FirstOrDefault(g => g.Count > 0);
         
-        if (nextGroup == null)
+        // Cycle through enemy groups to provide variety
+        if (currentWave.EnemyGroups.Count == 0)
         {
             return EnemyStats.CreateDefault();
         }
+        
+        var groupIndex = _currentEnemyGroupIndex % currentWave.EnemyGroups.Count;
+        var selectedGroup = currentWave.EnemyGroups[groupIndex];
+        
+        // Move to next group for next enemy
+        _currentEnemyGroupIndex++;
 
         return new EnemyStats(
-            maxHealth: (int)(100 * nextGroup.HealthMultiplier),
-            speed: 50 * nextGroup.SpeedMultiplier,
+            maxHealth: (int)(100 * selectedGroup.HealthMultiplier),
+            speed: 50 * selectedGroup.SpeedMultiplier,
             damage: 10,
-            rewardGold: nextGroup.MoneyReward,
+            rewardGold: selectedGroup.MoneyReward,
             rewardXp: 5,
-            description: $"Simulated enemy of type {nextGroup.EnemyType}"
+            description: $"Simulated enemy of type {selectedGroup.EnemyType}"
         );
     }
 
@@ -136,6 +156,12 @@ public class MockWaveService : IWaveService
         _isWaveActive = false;
         _isWaveComplete = false;
         _remainingEnemies = 0;
+        _currentEnemyGroupIndex = 0;
+    }
+    
+    public void SetEnemyCountMultiplier(float multiplier)
+    {
+        _enemyCountMultiplier = multiplier;
     }
 
     public int GetTotalWaves()
@@ -187,9 +213,11 @@ public class MockWaveService : IWaveService
 
     private void LoadWaveConfiguration(string difficulty = "default")
     {
+        Console.WriteLine($"DEBUG: Loading wave configuration for difficulty: {difficulty}");
         try
         {
             var configPath = GetWaveConfigPath(difficulty);
+            Console.WriteLine($"DEBUG: Attempting to load config from: {configPath}");
             var configContent = System.IO.File.ReadAllText(configPath);
             
             _currentWaveSet = JsonSerializer.Deserialize<SimulationWaveSetConfiguration>(configContent);
@@ -202,38 +230,45 @@ public class MockWaveService : IWaveService
             }
             else
             {
+                Console.WriteLine("DEBUG: Wave set loaded but no waves found, creating fallback");
                 CreateFallbackConfiguration();
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine($"DEBUG: Failed to load wave configuration: {ex.Message}");
             CreateFallbackConfiguration();
         }
     }
 
     private void CreateFallbackConfiguration()
     {
-        _waves = new List<SimulationWaveConfiguration>
+        Console.WriteLine("DEBUG: Creating fallback wave configuration");
+        _waves = new List<SimulationWaveConfiguration>();
+        
+        // Create 15 fallback waves to support typical simulation scenarios
+        for (int waveNum = 1; waveNum <= 15; waveNum++)
         {
-            new SimulationWaveConfiguration
+            var waveConfig = new SimulationWaveConfiguration
             {
-                WaveNumber = 1,
-                WaveName = "Basic Wave",
-                Description = "Fallback wave configuration",
+                WaveNumber = waveNum,
+                WaveName = $"Fallback Wave {waveNum}",
+                Description = $"Auto-generated fallback wave {waveNum}",
                 EnemyGroups = new List<SimulationEnemyGroupConfiguration>
                 {
                     new SimulationEnemyGroupConfiguration
                     {
                         EnemyType = "basic_enemy",
-                        Count = 5,
+                        Count = 5 + (waveNum * 2), // Scale enemy count with wave number
                         SpawnInterval = 1.0f,
-                        HealthMultiplier = 1.0f,
-                        SpeedMultiplier = 1.0f,
-                        MoneyReward = 10
+                        HealthMultiplier = 1.0f + (waveNum * 0.1f), // Increase health each wave
+                        SpeedMultiplier = 1.0f + (waveNum * 0.05f), // Slightly increase speed
+                        MoneyReward = 10 + waveNum // Increase reward per wave
                     }
                 }
-            }
-        };
+            };
+            _waves.Add(waveConfig);
+        }
         _totalWaves = _waves.Count;
         _currentWaveSetName = "Fallback";
     }

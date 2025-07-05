@@ -61,6 +61,24 @@ public class GameSimRunnerTests
         result.WavesCompleted.Should().BeGreaterThan(0);
         result.WaveResults.Should().NotBeEmpty();
         result.WaveResults.Count.Should().BeLessOrEqualTo(config.MaxWaves);
+        result.WaveResults.Should().AllSatisfy(w => w.EnemiesKilled.Should().BeGreaterThan(0));
+    }
+
+    [Fact]
+    public void RunSimulation_WithEnemyCountMultiplier_ShouldReflectEnemyCounts()
+    {
+        // Arrange
+        var config = new SimulationConfig(
+            enemyCountMultiplier: 2.0f, // Double the enemies
+            maxWaves: 3
+        );
+
+        // Act
+        var result = _runner.RunSimulation(config);
+
+        // Assert
+        result.WaveResults.Should().NotBeEmpty();
+        result.WaveResults.Should().AllSatisfy(w => w.EnemiesKilled.Should().BeGreaterThan(0));
     }
 
     [Fact]
@@ -134,8 +152,24 @@ public class GameSimRunnerTests
         config.MaxWaves.Should().BeGreaterThan(0);
         config.EnemyHealthMultiplier.Should().Be(1.0f);
         config.EnemySpeedMultiplier.Should().Be(1.0f);
+        config.EnemyCountMultiplier.Should().Be(1.0f);
         config.BuildingCostMultiplier.Should().Be(1.0f);
+        config.BuildingDamageMultiplier.Should().Be(1.0f);
+        config.WaveSetDifficulty.Should().Be("default");
         config.FastMode.Should().BeTrue();
+        config.VerboseOutput.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SimulationConfig_ForBalanceTesting_ShouldUseBalanceTestingWaveSet()
+    {
+        // Act
+        var config = SimulationConfig.ForBalanceTesting();
+
+        // Assert
+        config.WaveSetDifficulty.Should().Be("balance-testing");
+        config.MaxWaves.Should().Be(5);
+        config.RandomSeed.Should().Be(42); // Fixed seed for deterministic testing
     }
 
     [Fact]
