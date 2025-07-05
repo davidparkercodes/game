@@ -181,6 +181,11 @@ public partial class HudManager : Node
         return _hud != null;
     }
 
+    public Hud? GetHud()
+    {
+        return _hud;
+    }
+
     public override void _ExitTree()
     {
         if (Instance == this)

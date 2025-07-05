@@ -13,7 +13,7 @@ script = ExtResource("8_bjd11")
 
 [node name="Player" parent="." instance=ExtResource("2_nxtc6")]
 z_index = 2
-position = Vector2(560, 480)
+position = Vector2(220, 220)
 BasicTowerScene = ExtResource("3_wp0k4")
 SniperTowerScene = ExtResource("4_wp0k4")
 
