@@ -4,14 +4,14 @@ namespace Game.Domain.Buildings.ValueObjects;
 
 public readonly struct BuildingStatsData
 {
-    public int cost { get; }
-    public int damage { get; }
-    public float range { get; }
-    public float attack_speed { get; }
-    public int upgrade_cost { get; }
-    public string description { get; }
+    public int cost { get; init; }
+    public int damage { get; init; }
+    public float range { get; init; }
+    public float attack_speed { get; init; }
+    public int upgrade_cost { get; init; }
+    public string description { get; init; }
     public float fire_rate => attack_speed;
-    public float bullet_speed { get; }
+    public float bullet_speed { get; init; }
 
     public BuildingStatsData(
         int cost = 0,

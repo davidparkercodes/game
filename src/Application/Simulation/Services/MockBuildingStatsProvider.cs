@@ -17,8 +17,15 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
     public MockBuildingStatsProvider(string configPath = null)
     {
         var actualConfigPath = FindConfigFile(configPath ?? DEFAULT_CONFIG_PATH);
+        Console.WriteLine($"DEBUG: Loading building stats from: {actualConfigPath}");
         _config = LoadBuildingStatsConfig(actualConfigPath);
+        Console.WriteLine($"DEBUG: Loaded config with {_config.building_types?.Count ?? 0} building types");
         _buildingStats = ConvertToBuildingStats(_config.building_types);
+        Console.WriteLine($"DEBUG: Converted to {_buildingStats.Count} building stats");
+        foreach (var key in _buildingStats.Keys)
+        {
+            Console.WriteLine($"DEBUG: Available building type: {key}");
+        }
     }
 
     public BuildingStats GetBuildingStats(string buildingType)
@@ -135,10 +142,12 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         foreach (var kvp in rawStats)
         {
             var raw = kvp.Value;
+            Console.WriteLine($"DEBUG: Processing building '{kvp.Key}': range={raw.range}, attack_speed={raw.attack_speed}, cost={raw.cost}");
             
             // Skip invalid entries (like default_stats with zero values)
             if (raw.range <= 0 || raw.attack_speed <= 0)
             {
+                Console.WriteLine($"DEBUG: Skipping '{kvp.Key}' due to invalid values (range={raw.range}, attack_speed={raw.attack_speed})");
                 continue;
             }
             

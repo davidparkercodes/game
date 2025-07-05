@@ -55,16 +55,57 @@ public class Program
         AnsiConsole.WriteLine();
 
         var config = GetConfig(scenario);
-        var runner = new Game.Application.Simulation.GameSimRunner();
+        
+        // Debug: Show working directory and config loading
+        if (outputLevel >= OutputLevel.Verbose)
+        {
+            AnsiConsole.MarkupLine($"[dim]Working Directory: {Environment.CurrentDirectory}[/]");
+            AnsiConsole.MarkupLine($"[dim]Looking for config files...[/]");
+        }
+        
+        Game.Application.Simulation.GameSimRunner runner;
+        try
+        {
+            runner = new Game.Application.Simulation.GameSimRunner();
+            if (outputLevel >= OutputLevel.Verbose)
+            {
+                AnsiConsole.MarkupLine($"[green]✅ GameSimRunner initialized successfully[/]");
+            }
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLine($"[red]❌ Failed to initialize GameSimRunner: {ex.Message}[/]");
+            if (outputLevel >= OutputLevel.Verbose)
+            {
+                AnsiConsole.MarkupLine($"[red]Stack trace: {ex.StackTrace}[/]");
+            }
+            return;
+        }
         
         if (outputLevel >= OutputLevel.Normal)
         {
             DisplayScenarioInfo(config, scenario ?? "default");
         }
 
-        var result = await RunWithProgressBar(runner, config, outputLevel);
-
-        DisplayResults(result, outputLevel);
+        try
+        {
+            var result = await RunWithProgressBar(runner, config, outputLevel);
+            DisplayResults(result, outputLevel);
+            
+            // Debug: Show failure reason if available
+            if (!result.Success && outputLevel >= OutputLevel.Verbose)
+            {
+                AnsiConsole.MarkupLine($"[red]Failure Details: {result.ToString()}[/]");
+            }
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLine($"[red]❌ Simulation failed: {ex.Message}[/]");
+            if (outputLevel >= OutputLevel.Verbose)
+            {
+                AnsiConsole.MarkupLine($"[red]Stack trace: {ex.StackTrace}[/]");
+            }
+        }
     }
 
     private static SimulationConfig GetConfig(string? scenario)

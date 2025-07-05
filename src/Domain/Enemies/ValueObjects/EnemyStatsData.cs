@@ -4,12 +4,12 @@ namespace Game.Domain.Enemies.ValueObjects;
 
 public readonly struct EnemyStatsData
 {
-    public int max_health { get; }
-    public float speed { get; }
-    public int damage { get; }
-    public int reward_gold { get; }
-    public int reward_xp { get; }
-    public string description { get; }
+    public int max_health { get; init; }
+    public float speed { get; init; }
+    public int damage { get; init; }
+    public int reward_gold { get; init; }
+    public int reward_xp { get; init; }
+    public string description { get; init; }
 
     public EnemyStatsData(
         int maxHealth = 0,
