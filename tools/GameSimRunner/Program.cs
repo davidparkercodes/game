@@ -4,6 +4,8 @@ using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
 using Game.Application.Simulation.ValueObjects;
+using Game.Application.Shared.Services;
+using Game.Infrastructure.DI;
 using Spectre.Console;
 
 #nullable enable
@@ -30,15 +32,27 @@ public class Program
             "--minimal",
             "Enable minimal output (overrides verbose)"
         );
+        
+        var debugOption = new Option<bool>(
+            "--debug",
+            "Run debug commands to test type registries and validation"
+        );
 
         rootCommand.AddOption(scenarioOption);
         rootCommand.AddOption(verboseOption);
         rootCommand.AddOption(minimalOption);
+        rootCommand.AddOption(debugOption);
 
-        rootCommand.SetHandler(async (scenario, verbose, minimal) =>
+        rootCommand.SetHandler(async (scenario, verbose, minimal, debug) =>
         {
             try
             {
+                if (debug)
+                {
+                    TestDebugCommands.RunDebugTests();
+                    return;
+                }
+                
                 var outputLevel = minimal ? OutputLevel.Minimal :
                                  verbose ? OutputLevel.Verbose :
                                  OutputLevel.Normal;
@@ -49,7 +63,7 @@ public class Program
             {
                 AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
             }
-        }, scenarioOption, verboseOption, minimalOption);
+        }, scenarioOption, verboseOption, minimalOption, debugOption);
 
         return await rootCommand.InvokeAsync(args);
     }
@@ -58,6 +72,21 @@ public class Program
     {
         AnsiConsole.MarkupLine("[bold cyan]🎯 GameSimRunner - Tower Defense Balance Testing[/]");
         AnsiConsole.WriteLine();
+
+        // Initialize DI container and perform startup validation
+        var serviceLocator = new ServiceLocator();
+        SimpleServiceConfiguration.RegisterServices(serviceLocator);
+        
+        var validationService = serviceLocator.Resolve<StartupValidationService>();
+        if (validationService != null)
+        {
+            bool isValid = validationService.ValidateOnStartup();
+            if (!isValid)
+            {
+                AnsiConsole.MarkupLine("[red]⚠️  Startup validation detected configuration issues. Cannot proceed.[/]");
+                return;
+            }
+        }
 
         var config = GetConfig(scenario);
 
