@@ -1,0 +1,40 @@
+using System.Threading;
+using System.Threading.Tasks;
+using Game.Application.Shared.Cqrs;
+using Game.Application.Queries;
+
+namespace Game.Application.Queries.Handlers;
+
+public class GetGameStateQueryHandler : IQueryHandler<GetGameStateQuery, GameStateResponse>
+{
+    public Task<GameStateResponse> HandleAsync(GetGameStateQuery query, CancellationToken cancellationToken = default)
+    {
+        var gameManager = GameManager.Instance;
+        var roundManager = RoundManager.Instance;
+
+        var money = gameManager?.Money ?? 0;
+        var lives = gameManager?.Lives ?? 0;
+        var isGameOver = gameManager?.IsGameOver ?? false;
+        var isGameWon = gameManager?.IsGameWon ?? false;
+
+        var currentRound = roundManager?.CurrentRound ?? 1;
+        var currentPhase = roundManager?.CurrentPhase.ToString() ?? "Unknown";
+        var phaseTimeRemaining = roundManager?.PhaseTimeRemaining ?? 0;
+        var isRoundActive = roundManager?.IsRoundActive ?? false;
+        var enemiesRemaining = roundManager?.EnemiesRemaining ?? 0;
+
+        var response = new GameStateResponse(
+            money,
+            lives,
+            currentRound,
+            currentPhase,
+            phaseTimeRemaining,
+            isGameOver,
+            isGameWon,
+            isRoundActive,
+            enemiesRemaining
+        );
+
+        return Task.FromResult(response);
+    }
+}

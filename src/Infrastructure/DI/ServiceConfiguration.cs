@@ -6,6 +6,14 @@ using Game.Infrastructure.Waves;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
 using Game.Application.Buildings.Handlers;
+using Game.Application.Game.Commands;
+using Game.Application.Game.Handlers;
+using Game.Application.Rounds.Commands;
+using Game.Application.Rounds.Handlers;
+using Game.Application.Waves.Commands;
+using Game.Application.Waves.Handlers;
+using Game.Application.Queries;
+using Game.Application.Queries.Handlers;
 using Game.Infrastructure.Buildings;
 
 namespace Game.Infrastructure.DI;
@@ -32,6 +40,22 @@ public static class ServiceConfiguration
             new PlaceBuildingCommandHandler(
                 serviceLocator.Resolve<IStatsService>(),
                 serviceLocator.Resolve<IBuildingZoneService>()));
+        
+        serviceLocator.RegisterFactory<ICommandHandler<SpendMoneyCommand, SpendMoneyResult>>(() => 
+            new SpendMoneyCommandHandler());
+        
+        serviceLocator.RegisterFactory<ICommandHandler<StartRoundCommand, StartRoundResult>>(() => 
+            new StartRoundCommandHandler());
+        
+        serviceLocator.RegisterFactory<ICommandHandler<StartWaveCommand, StartWaveResult>>(() => 
+            new StartWaveCommandHandler());
+        
+        // Query handlers
+        serviceLocator.RegisterFactory<IQueryHandler<GetTurretStatsQuery, TurretStatsResponse>>(() => 
+            new GetTurretStatsQueryHandler(serviceLocator.Resolve<IStatsService>()));
+        
+        serviceLocator.RegisterFactory<IQueryHandler<GetGameStateQuery, GameStateResponse>>(() => 
+            new GetGameStateQueryHandler());
     }
 
     public static void RegisterSingletonsFromGodot(ServiceLocator serviceLocator)
