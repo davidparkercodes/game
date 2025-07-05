@@ -1,5 +1,8 @@
 using Godot;
 using Game.Di;
+using Game.Presentation.Enemies;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Game.Presentation.Buildings;
 
@@ -16,6 +19,11 @@ public partial class Building : StaticBody2D
 	protected CollisionShape2D _rangeCollision = null!;
 	protected bool _showingRange = false;
 	private Line2D _rangeCircle = null!;
+	
+	protected List<Enemy> _enemiesInRange = new List<Enemy>();
+	protected Enemy? _currentTarget = null;
+	private const string LogPrefix = "🏢 [TOWER]";
+	private bool _isActive = true;
 
 	public override void _Ready()
 	{
@@ -25,6 +33,23 @@ public partial class Building : StaticBody2D
 		
 		InitializeStats();
 		CreateRangeVisual();
+		ConnectSignals();
+		
+		GD.Print($"{LogPrefix} {Name} ready - Range: {Range}, Damage: {Damage}, FireRate: {FireRate}");
+	}
+	
+	private void ConnectSignals()
+	{
+		if (_rangeArea != null)
+		{
+			_rangeArea.Connect("area_entered", new Callable(this, nameof(OnEnemyEnteredRange)));
+			_rangeArea.Connect("area_exited", new Callable(this, nameof(OnEnemyExitedRange)));
+			GD.Print($"{LogPrefix} {Name} signals connected");
+		}
+		else
+		{
+			GD.PrintErr($"{LogPrefix} {Name} failed to connect signals - _rangeArea is null");
+		}
 	}
 
 	public virtual void InitializeStats()
@@ -82,5 +107,122 @@ public partial class Building : StaticBody2D
 		}
 		
 		AddChild(_rangeCircle);
+	}
+	
+	private void OnEnemyEnteredRange(Area2D area)
+	{
+		if (!_isActive) return;
+		
+		if (area is Enemy enemy)
+		{
+			if (!_enemiesInRange.Contains(enemy))
+			{
+				_enemiesInRange.Add(enemy);
+				GD.Print($"{LogPrefix} {Name} detected enemy: {enemy.Name} (Total in range: {_enemiesInRange.Count})");
+				
+				if (_currentTarget == null)
+				{
+					UpdateTarget();
+				}
+			}
+		}
+	}
+	
+	private void OnEnemyExitedRange(Area2D area)
+	{
+		if (area is Enemy enemy)
+		{
+			if (_enemiesInRange.Contains(enemy))
+			{
+				_enemiesInRange.Remove(enemy);
+				GD.Print($"{LogPrefix} {Name} lost enemy: {enemy.Name} (Total in range: {_enemiesInRange.Count})");
+				
+				if (_currentTarget == enemy)
+				{
+					_currentTarget = null;
+					UpdateTarget();
+				}
+			}
+		}
+	}
+	
+	protected virtual void UpdateTarget()
+	{
+		CleanupEnemiesList();
+		
+		if (_enemiesInRange.Count == 0)
+		{
+			_currentTarget = null;
+			GD.Print($"{LogPrefix} {Name} no targets available");
+			return;
+		}
+		
+		Enemy? newTarget = SelectBestTarget();
+		if (newTarget != _currentTarget)
+		{
+			_currentTarget = newTarget;
+			if (_currentTarget != null)
+				{
+					GD.Print($"{LogPrefix} {Name} targeting: {_currentTarget.Name}");
+				}
+		}
+	}
+	
+	private void CleanupEnemiesList()
+	{
+		for (int i = _enemiesInRange.Count - 1; i >= 0; i--)
+		{
+			if (_enemiesInRange[i] == null || !IsInstanceValid(_enemiesInRange[i]))
+			{
+				_enemiesInRange.RemoveAt(i);
+			}
+		}
+	}
+	
+	protected virtual Enemy? SelectBestTarget()
+	{
+		if (_enemiesInRange.Count == 0) return null;
+		
+		Enemy? closestEnemy = null;
+		float closestDistance = float.MaxValue;
+		
+		foreach (Enemy enemy in _enemiesInRange)
+		{
+			if (enemy == null || !IsInstanceValid(enemy)) continue;
+			
+			float distance = GlobalPosition.DistanceTo(enemy.GlobalPosition);
+			if (distance < closestDistance)
+			{
+				closestDistance = distance;
+				closestEnemy = enemy;
+			}
+		}
+		
+		return closestEnemy;
+	}
+	
+	public bool HasTarget()
+	{
+		return _currentTarget != null && IsInstanceValid(_currentTarget);
+	}
+	
+	public Enemy? GetCurrentTarget()
+	{
+		return _currentTarget;
+	}
+	
+	public int GetEnemyCount()
+	{
+		return _enemiesInRange.Count;
+	}
+	
+	public void SetActive(bool active)
+	{
+		_isActive = active;
+		if (!_isActive)
+		{
+			_currentTarget = null;
+			_enemiesInRange.Clear();
+		}
 	}
 }
