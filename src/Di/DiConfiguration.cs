@@ -4,7 +4,7 @@ using Game.Domain.Buildings.Services;
 using Game.Domain.Enemies.Services;
 using Game.Infrastructure.Stats;
 using Game.Infrastructure.Sound;
-using Game.Infrastructure.Buildings;
+using Game.Infrastructure.Buildings.Services;
 using Game.Infrastructure.Stats.Services;
 using Game.Infrastructure.Audio.Services;
 using Game.Application.Shared.Cqrs;

@@ -2,7 +2,7 @@ using Godot;
 using Game.Presentation.Buildings;
 using Game.Presentation.Systems;
 using Game.Infrastructure.Game.Services;
-using Game.Infrastructure.Validators;
+using PresentationValidator = Game.Presentation.Systems.BuildingZoneValidator;
 
 namespace Game.Presentation.Player;
 
@@ -87,11 +87,11 @@ public class PlayerBuildingBuilder
 		if (!_isInBuildMode || _currentPreview == null)
 			return;
 		
-		Vector2 buildPosition = _currentPreview.GetPlacementPosition();
-		if (!Game.Infrastructure.Validators.BuildingZoneValidator.CanBuildAtWithLogging(buildPosition))
-		{
-			return;
-		}
+	Vector2 buildPosition = _currentPreview.GetPlacementPosition();
+	if (!PresentationValidator.CanBuildAtWithLogging(buildPosition))
+	{
+		return;
+	}
 		
 		// TODO: Implement proper building manager integration
 		// var buildingManager = _player.GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;

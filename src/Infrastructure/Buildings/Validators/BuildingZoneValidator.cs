@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Game.Infrastructure.Validators;
+namespace Game.Infrastructure.Buildings.Validators;
 
 public static class BuildingZoneValidator
 {

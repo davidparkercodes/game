@@ -1,27 +1,27 @@
 using Godot;
 using Game.Domain.Buildings.Services;
 using Game.Domain.Shared.ValueObjects;
-using Game.Infrastructure.Validators;
+using InfrastructureValidator = Game.Infrastructure.Buildings.Validators.BuildingZoneValidator;
 
-namespace Game.Infrastructure.Buildings;
+namespace Game.Infrastructure.Buildings.Services;
 
 public class BuildingZoneService : IBuildingZoneService
 {
     public bool CanBuildAt(Position worldPosition)
     {
         var godotPosition = new Vector2(worldPosition.X, worldPosition.Y);
-        return Infrastructure.Validators.BuildingZoneValidator.CanBuildAt(godotPosition);
+        return InfrastructureValidator.CanBuildAt(godotPosition);
     }
 
     public bool IsOnPath(Position worldPosition)
     {
         var godotPosition = new Vector2(worldPosition.X, worldPosition.Y);
-        return Infrastructure.Validators.BuildingZoneValidator.IsOnPath(godotPosition);
+        return InfrastructureValidator.IsOnPath(godotPosition);
     }
 
     public bool CanBuildAtWithLogging(Position worldPosition)
     {
         var godotPosition = new Vector2(worldPosition.X, worldPosition.Y);
-        return Infrastructure.Validators.BuildingZoneValidator.CanBuildAtWithLogging(godotPosition);
+        return InfrastructureValidator.CanBuildAtWithLogging(godotPosition);
     }
 }
