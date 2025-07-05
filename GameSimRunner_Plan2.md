@@ -5,8 +5,8 @@ Fix the Clean Architecture violations by removing Godot dependencies from Domain
 
 ## Key Goals
 - [x] **Clean Architecture**: Remove all Godot dependencies from Domain/Application layers
-- [ ] **Accurate Simulation**: Leverage real game logic for simulation.
-- [ ] **Visual Feedback**: Continue using ASCII progress bars with Spectre.Console for intuitive visual feedback.
+- [x] **Accurate Simulation**: Leverage real game logic for simulation.
+- [x] **Visual Feedback**: Continue using ASCII progress bars with Spectre.Console for intuitive visual feedback.
 - [ ] **Config-Driven**: Ensure all simulations use existing JSON configuration files for stats and scenarios.
 - [ ] **Scalability**: Allow for batch processing and different output modes.
 
@@ -23,10 +23,13 @@ Fix the Clean Architecture violations by removing Godot dependencies from Domain
 - [x] Import the clean `GameSimRunner` logic from `src/Application/Simulation/GameSimRunner.cs` into the standalone console app.
 - [x] Ensure that the real logic is executed for both scenario and balance-testing modes.
 
-### 2. Update Console App
-- [ ] Modify `GameSimRunner.Standalone` to integrate with the real `GameSimRunner`.
-- [ ] Replace the fake simulation with actual waves processing, tower strategy, and enemy defeats.
-- [ ] Integrate progress reporting to reflect real-time stats, including gold and lives.
+### 2. Update Console App ✅ COMPLETED
+- [x] Create `GameSimRunner` console app with real simulation integration.
+- [x] Replace the fake simulation with actual waves processing, tower strategy, and enemy defeats.
+- [x] Integrate progress reporting to reflect real-time stats, including gold and lives.
+- [x] Clean up obsolete `GameSimRunner.Standalone` fake simulation.
+
+**Achievement Note:** Instead of modifying the existing Standalone app, we created a clean `GameSimRunner.Real` app with real simulation, then renamed it to `GameSimRunner`. This achieved all goals while maintaining cleaner architecture.
 
 ### 3. Configuration
 - [ ] Ensure the console app reads building stats and enemy stats from JSON config files located in `data/simulation/`.
