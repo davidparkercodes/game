@@ -16,6 +16,7 @@
 size = Vector2(58, 60)
 
 [node name="Main" type="Node2D"]
+script = ExtResource("8_bjd11")
 
 [node name="Player" parent="." instance=ExtResource("2_nxtc6")]
 z_index = 2

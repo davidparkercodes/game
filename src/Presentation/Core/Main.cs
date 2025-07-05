@@ -5,6 +5,7 @@ using Game.Application.Shared.Cqrs;
 using Game.Infrastructure.Sound;
 using Game.Presentation.Systems;
 using Game.Application.Shared.Services;
+using Game.Presentation.UI;
 using static Game.Di.DiConfiguration;
 
 namespace Game.Presentation.Core;
@@ -15,6 +16,8 @@ public partial class Main : Node
 	private VBoxContainer _inventoryList = null!;
 	private DiContainer _diContainer = null!;
 	private IMediator _mediator = null!;
+	private HudManager _hudManager = null!;
+	private Hud _hud = null!;
 
 	public override void _Ready()
 	{
@@ -52,7 +55,49 @@ public partial class Main : Node
 		_inventoryPanel = GetNode<Panel>("InventoryUI/InventoryPanel");
 		_inventoryList = _inventoryPanel.GetNode<VBoxContainer>("MarginContainer/InventoryList");
 		
+		// Initialize HUD
+		InitializeHUD();
+		
 		GD.Print("🎨 UI components initialized");
+	}
+
+	private void InitializeHUD()
+	{
+		try
+		{
+			// Load and instantiate HUD scene
+			var hudScene = GD.Load<PackedScene>("res://scenes/UI/Hud.tscn");
+			if (hudScene == null)
+			{
+				GD.PrintErr("❌ Failed to load HUD scene from res://scenes/UI/Hud.tscn");
+				return;
+			}
+			
+			_hud = hudScene.Instantiate<Hud>();
+			if (_hud == null)
+			{
+				GD.PrintErr("❌ Failed to instantiate HUD from scene");
+				return;
+			}
+			
+			// Add HUD to scene tree
+			AddChild(_hud);
+			GD.Print("✅ HUD scene instantiated and added to tree");
+			
+			// Create and initialize HUD Manager
+			_hudManager = new HudManager();
+			AddChild(_hudManager);
+			GD.Print("✅ HudManager created and added to tree");
+			
+			// Connect HUD Manager to HUD instance
+			_hudManager.Initialize(_hud);
+			GD.Print("🎯 HUD fully initialized and connected");
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"❌ Failed to initialize HUD: {ex.Message}");
+			GD.PrintErr($"Stack trace: {ex.StackTrace}");
+		}
 	}
 
 	private void InitializeBuildingSystem()
