@@ -1,12 +1,9 @@
 using System.Threading.Tasks;
-using Godot;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
 using Game.Domain.Buildings.Services;
 using Game.Domain.Buildings.ValueObjects;
 using Game.Domain.Shared.ValueObjects;
-using Game.Infrastructure.Managers;
-using Game.Presentation.Buildings;
 
 namespace Game.Application.Buildings.Handlers;
 
@@ -34,8 +31,7 @@ public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand,
         if (buildingStats.Cost == 0 && command.BuildingType != "basic_tower")
             return Task.FromResult(PlaceBuildingResult.Failed($"Unknown building type: {command.BuildingType}"));
 
-        var domainPosition = new Position(command.Position.X, command.Position.Y);
-        if (!_zoneService.CanBuildAt(domainPosition))
+        if (!_zoneService.CanBuildAt(command.Position))
             return Task.FromResult(PlaceBuildingResult.Failed("Cannot build at this location - invalid zone"));
 
         if (!HasEnoughMoney(buildingStats.Cost))
@@ -52,48 +48,28 @@ public class PlaceBuildingCommandHandler : ICommandHandler<PlaceBuildingCommand,
 
     private bool HasEnoughMoney(int cost)
     {
-        return GameManager.Instance?.Money >= cost;
+        // TODO: Inject IGameStateService to check money
+        // For now, return true for simulation purposes
+        return true;
     }
 
     private void SpendMoney(int cost)
     {
-        GameManager.Instance?.SpendMoney(cost);
+        // TODO: Inject IGameStateService to spend money
+        // For now, no-op for simulation purposes
     }
 
-    private bool IsPositionOccupied(Vector2 position)
+    private bool IsPositionOccupied(Position position)
     {
-        // TODO: Implement proper building collision detection
+        // TODO: Inject IBuildingCollisionService to check occupancy
+        // For now, return false for simulation purposes
         return false;
     }
 
-    private int CreateBuilding(string buildingType, Vector2 position, BuildingStats stats)
+    private int CreateBuilding(string buildingType, Position position, BuildingStats stats)
     {
-        var buildingScene = LoadBuildingScene(buildingType);
-        if (buildingScene == null)
-            return 0;
-
-        var building = buildingScene.Instantiate<Building>();
-        building.GlobalPosition = position;
-        
-        GetSceneTree()?.Root.AddChild(building);
-        // TODO: Register building with building manager
-
+        // TODO: Inject IBuildingCreationService to handle building creation
+        // For now, just return a unique ID for simulation purposes
         return _nextBuildingId++;
-    }
-
-    private PackedScene LoadBuildingScene(string buildingType)
-    {
-        var scenePath = $"res://scenes/Buildings/{buildingType}.tscn";
-        return GD.Load<PackedScene>(scenePath);
-    }
-
-    private BuildingManager GetBuildingManager()
-    {
-        return BuildingManager.Instance;
-    }
-
-    private SceneTree GetSceneTree()
-    {
-        return Engine.GetMainLoop() as SceneTree;
     }
 }

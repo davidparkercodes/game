@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using Godot;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
+using Game.Domain.Shared.ValueObjects;
 using Game.Infrastructure.DI;
 
 namespace Game.Application.Buildings;
@@ -23,13 +23,13 @@ public class BuildingManager
         Instance = new BuildingManager(mediator);
     }
 
-    public async Task<PlaceBuildingResult> PlaceBuildingAsync(string buildingType, Vector2 position, int playerId = 0)
+    public async Task<PlaceBuildingResult> PlaceBuildingAsync(string buildingType, Position position, int playerId = 0)
     {
         var command = new PlaceBuildingCommand(buildingType, position, playerId);
         return await _mediator.SendAsync<PlaceBuildingResult>(command);
     }
 
-    public async Task<PlaceBuildingResult> TryPlaceBuilding(string buildingType, Vector2 position)
+    public async Task<PlaceBuildingResult> TryPlaceBuilding(string buildingType, Position position)
     {
         try
         {

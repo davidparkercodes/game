@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Domain.Buildings.Entities;
+using Game.Domain.Shared.ValueObjects;
 
 namespace Game.Domain.Buildings.Services;
 
@@ -32,7 +33,7 @@ public class BuildingZoneValidator
         return true;
     }
 
-    public bool CanBuildAt(Godot.Vector2 position)
+    public bool CanBuildAt(Position position)
     {
         return CanPlaceBuilding(position.X, position.Y);
     }

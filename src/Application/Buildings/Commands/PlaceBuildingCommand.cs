@@ -1,15 +1,15 @@
-using Godot;
 using Game.Application.Shared.Cqrs;
+using Game.Domain.Shared.ValueObjects;
 
 namespace Game.Application.Buildings.Commands;
 
 public class PlaceBuildingCommand : ICommand<PlaceBuildingResult>
 {
     public string BuildingType { get; }
-    public Vector2 Position { get; }
+    public Position Position { get; }
     public int PlayerId { get; }
 
-    public PlaceBuildingCommand(string buildingType, Vector2 position, int playerId = 0)
+    public PlaceBuildingCommand(string buildingType, Position position, int playerId = 0)
     {
         BuildingType = buildingType ?? throw new System.ArgumentNullException(nameof(buildingType));
         Position = position;
