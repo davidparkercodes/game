@@ -63,6 +63,13 @@ public class Program
             AnsiConsole.MarkupLine($"[dim]Looking for config files...[/]");
         }
         
+        // Validate configuration files exist
+        if (!ValidateConfigurationFiles(outputLevel))
+        {
+            AnsiConsole.MarkupLine("[red]❌ Configuration validation failed. Cannot proceed with simulation.[/]");
+            return;
+        }
+        
         Game.Application.Simulation.GameSimRunner runner;
         try
         {
@@ -71,6 +78,12 @@ public class Program
             {
                 AnsiConsole.MarkupLine($"[green]✅ GameSimRunner initialized successfully[/]");
             }
+        }
+        catch (FileNotFoundException ex)
+        {
+            AnsiConsole.MarkupLine($"[red]❌ Configuration file not found: {ex.FileName}[/]");
+            AnsiConsole.MarkupLine("[yellow]💡 Ensure that data/simulation/ directory contains the required JSON config files.[/]");
+            return;
         }
         catch (Exception ex)
         {
@@ -161,19 +174,113 @@ public class Program
 
         if (outputLevel == OutputLevel.Minimal)
         {
-            AnsiConsole.MarkupLine($"{status} | {finalStats}");
+            AnsiConsole.MarkupLine($"{status} | {finalStats} | Score: {result.FinalScore} | Enemies: {result.TotalEnemiesKilled}");
             return;
         }
 
-        var resultsPanel = new Panel($"{status}\n" +
-                                   $"{finalStats}\n" +
-                                   $"[yellow]Duration:[/] {result.SimulationDuration.TotalMilliseconds:F0}ms")
+        // Display wave-by-wave breakdown in verbose mode
+        if (outputLevel >= OutputLevel.Verbose && result.WaveResults.Count > 0)
+        {
+            DisplayWaveBreakdown(result.WaveResults);
+            AnsiConsole.WriteLine();
+        }
+
+        var detailedStats = outputLevel >= OutputLevel.Verbose 
+            ? $"{status}\n" +
+              $"{finalStats}\n" +
+              $"[yellow]Final Score:[/] {result.FinalScore}\n" +
+              $"[yellow]Waves Completed:[/] {result.WavesCompleted}\n" +
+              $"[yellow]Total Enemies Killed:[/] {result.TotalEnemiesKilled}\n" +
+              $"[yellow]Buildings Placed:[/] {result.TotalBuildingsPlaced}\n" +
+              $"[yellow]Duration:[/] {result.SimulationDuration.TotalMilliseconds:F0}ms"
+            : $"{status}\n" +
+              $"{finalStats}\n" +
+              $"[yellow]Duration:[/] {result.SimulationDuration.TotalMilliseconds:F0}ms";
+
+        var resultsPanel = new Panel(detailedStats)
         {
             Header = new PanelHeader("🎯 Results"),
             Border = BoxBorder.Rounded
         };
 
         AnsiConsole.Write(resultsPanel);
+        
+        // Show failure reason if applicable
+        if (!result.Success && !string.IsNullOrEmpty(result.FailureReason))
+        {
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine($"[red]💥 Failure Reason: {result.FailureReason}[/]");
+        }
+    }
+    
+    private static void DisplayWaveBreakdown(List<Game.Application.Simulation.ValueObjects.WaveResult> waveResults)
+    {
+        AnsiConsole.MarkupLine("[bold cyan]📊 Wave-by-Wave Breakdown[/]");
+        
+        var table = new Table()
+            .AddColumn("[yellow]Wave[/]")
+            .AddColumn("[green]Status[/]")
+            .AddColumn("[cyan]Enemies[/]")
+            .AddColumn("[red]Lives Lost[/]")
+            .AddColumn("[yellow]Money[/]")
+            .AddColumn("[blue]Score[/]")
+            .AddColumn("[dim]Duration[/]");
+            
+        table.Border = TableBorder.Rounded;
+        
+        foreach (var wave in waveResults)
+        {
+            var status = wave.Completed ? "[green]✓[/]" : "[red]✗[/]";
+            var duration = $"{wave.WaveDuration.TotalMilliseconds:F0}ms";
+            
+            table.AddRow(
+                wave.WaveNumber.ToString(),
+                status,
+                wave.EnemiesKilled.ToString(),
+                wave.LivesLost.ToString(),
+                $"+{wave.MoneyEarned}",
+                $"+{wave.ScoreEarned}",
+                duration
+            );
+        }
+        
+        AnsiConsole.Write(table);
+    }
+    
+    private static bool ValidateConfigurationFiles(OutputLevel outputLevel)
+    {
+        var configFiles = new[]
+        {
+            "data/simulation/building-stats.json",
+            "data/simulation/enemy-stats.json"
+        };
+        
+        var allFilesExist = true;
+        
+        foreach (var configFile in configFiles)
+        {
+            if (!File.Exists(configFile))
+            {
+                AnsiConsole.MarkupLine($"[red]❌ Missing config file: {configFile}[/]");
+                allFilesExist = false;
+            }
+            else if (outputLevel >= OutputLevel.Verbose)
+            {
+                AnsiConsole.MarkupLine($"[green]✓ Found config file: {configFile}[/]");
+            }
+        }
+        
+        if (!allFilesExist)
+        {
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("[yellow]💡 Expected configuration files:[/]");
+            foreach (var file in configFiles)
+            {
+                AnsiConsole.MarkupLine($"  - {file}");
+            }
+        }
+        
+        return allFilesExist;
     }
 }
 
