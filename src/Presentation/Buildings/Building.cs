@@ -1,6 +1,9 @@
 using Godot;
 using Game.Di;
 using Game.Presentation.Enemies;
+using Game.Presentation.Projectiles;
+using Game.Infrastructure.Audio.Services;
+using Game.Infrastructure.Stats.Services;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,6 +27,11 @@ public partial class Building : StaticBody2D
 	protected Enemy? _currentTarget = null;
 	private const string LogPrefix = "🏢 [TOWER]";
 	private bool _isActive = true;
+	
+	// Shooting system properties
+	protected string _shootSoundKey = "basic_tower_shoot";
+	protected string _bulletImpactSoundKey = "basic_bullet_impact";
+	private bool _canFire = true;
 
 	public override void _Ready()
 	{
@@ -44,11 +52,22 @@ public partial class Building : StaticBody2D
 		{
 			_rangeArea.Connect("area_entered", new Callable(this, nameof(OnEnemyEnteredRange)));
 			_rangeArea.Connect("area_exited", new Callable(this, nameof(OnEnemyExitedRange)));
-			GD.Print($"{LogPrefix} {Name} signals connected");
+			GD.Print($"{LogPrefix} {Name} range area signals connected");
 		}
 		else
 		{
-			GD.PrintErr($"{LogPrefix} {Name} failed to connect signals - _rangeArea is null");
+			GD.PrintErr($"{LogPrefix} {Name} failed to connect range area signals - _rangeArea is null");
+		}
+		
+		if (_fireTimer != null)
+		{
+			_fireTimer.Connect("timeout", new Callable(this, nameof(OnFireTimerTimeout)));
+			_fireTimer.OneShot = false;
+			GD.Print($"{LogPrefix} {Name} fire timer connected");
+		}
+		else
+		{
+			GD.PrintErr($"{LogPrefix} {Name} failed to connect fire timer - _fireTimer is null");
 		}
 	}
 
@@ -120,10 +139,12 @@ public partial class Building : StaticBody2D
 				_enemiesInRange.Add(enemy);
 				GD.Print($"{LogPrefix} {Name} detected enemy: {enemy.Name} (Total in range: {_enemiesInRange.Count})");
 				
-				if (_currentTarget == null)
+			if (_currentTarget == null)
 				{
 					UpdateTarget();
 				}
+				
+				StartFiringIfNeeded();
 			}
 		}
 	}
@@ -142,6 +163,8 @@ public partial class Building : StaticBody2D
 					_currentTarget = null;
 					UpdateTarget();
 				}
+				
+				StopFiringIfNeeded();
 			}
 		}
 	}
@@ -223,6 +246,147 @@ public partial class Building : StaticBody2D
 		{
 			_currentTarget = null;
 			_enemiesInRange.Clear();
+			StopFiring();
+		}
+	}
+	
+	// ===== SHOOTING SYSTEM =====
+	
+	private void OnFireTimerTimeout()
+	{
+		if (!_isActive || !_canFire) return;
+		
+		if (HasTarget())
+		{
+			FireAtTarget();
+		}
+		else
+		{
+			StopFiring();
+		}
+	}
+	
+	protected virtual void FireAtTarget()
+	{
+		if (_currentTarget == null || !IsInstanceValid(_currentTarget)) return;
+		
+		if (BulletScene == null)
+		{
+			GD.PrintErr($"{LogPrefix} {Name} cannot fire - BulletScene is null");
+			return;
+		}
+		
+		// Calculate direction to target
+		Vector2 direction = (_currentTarget.GlobalPosition - GlobalPosition).Normalized();
+		
+		// Instantiate bullet
+		Bullet bullet = BulletScene.Instantiate<Bullet>();
+		if (bullet == null)
+		{
+			GD.PrintErr($"{LogPrefix} {Name} failed to instantiate bullet");
+			return;
+		}
+		
+		// Configure bullet
+		bullet.GlobalPosition = GlobalPosition;
+		bullet.SetBulletVelocity(direction * bullet.Speed);
+		bullet.Damage = Damage;
+		bullet.SetImpactSound(_bulletImpactSoundKey);
+		
+		// Add bullet to scene
+		GetTree().CurrentScene.AddChild(bullet);
+		
+		// Play shooting sound
+		PlayShootSound();
+		
+		GD.Print($"{LogPrefix} {Name} fired at {_currentTarget.Name} (Damage: {Damage})");
+	}
+	
+	protected virtual void PlayShootSound()
+	{
+		if (SoundManagerService.Instance != null)
+		{
+			SoundManagerService.Instance.PlaySound(_shootSoundKey);
+		}
+	}
+	
+	private void StartFiringIfNeeded()
+	{
+		if (!_isActive || !HasTarget()) return;
+		
+		if (_fireTimer != null && _fireTimer.IsStopped())
+		{
+			_fireTimer.Start();
+			GD.Print($"{LogPrefix} {Name} started firing");
+		}
+	}
+	
+	private void StopFiringIfNeeded()
+	{
+		if (_enemiesInRange.Count == 0 || !HasTarget())
+		{
+			StopFiring();
+		}
+	}
+	
+	private void StopFiring()
+	{
+		if (_fireTimer != null && !_fireTimer.IsStopped())
+		{
+			_fireTimer.Stop();
+			GD.Print($"{LogPrefix} {Name} stopped firing");
+		}
+	}
+	
+	protected virtual void SetShootSoundKey(string soundKey)
+	{
+		_shootSoundKey = soundKey;
+	}
+	
+	protected virtual void SetBulletImpactSoundKey(string soundKey)
+	{
+		_bulletImpactSoundKey = soundKey;
+	}
+	
+	protected virtual void LoadStatsFromConfig(string towerType)
+	{
+		if (StatsManagerService.Instance != null)
+		{
+			var stats = StatsManagerService.Instance.GetBuildingStats(towerType);
+			
+			Cost = stats.cost;
+			Damage = stats.damage;
+			Range = stats.range;
+			FireRate = stats.fire_rate;
+			
+			// Set sound keys based on tower type
+			SetSoundKeysForTowerType(towerType);
+			
+			GD.Print($"{LogPrefix} {Name} loaded config for {towerType}: Cost={Cost}, Damage={Damage}, Range={Range}, FireRate={FireRate}");
+		}
+		else
+		{
+			GD.PrintErr($"{LogPrefix} {Name} StatsManagerService not available, using default stats");
+			SetSoundKeysForTowerType(towerType);
+		}
+	}
+	
+	private void SetSoundKeysForTowerType(string towerType)
+	{
+		switch (towerType)
+		{
+			case "basic_tower":
+				SetShootSoundKey("basic_tower_shoot");
+				SetBulletImpactSoundKey("basic_bullet_impact");
+				break;
+			case "sniper_tower":
+				SetShootSoundKey("sniper_tower_shoot");
+				SetBulletImpactSoundKey("sniper_bullet_impact");
+				break;
+			default:
+				SetShootSoundKey("basic_tower_shoot");
+				SetBulletImpactSoundKey("basic_bullet_impact");
+				break;
 		}
 	}
 }

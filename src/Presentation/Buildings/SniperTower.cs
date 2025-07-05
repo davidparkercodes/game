@@ -1,4 +1,5 @@
 using Godot;
+using Game.Infrastructure.Stats.Services;
 
 namespace Game.Presentation.Buildings;
 
@@ -6,11 +7,7 @@ public partial class SniperTower : Building
 {
 	public override void _Ready()
 	{
-		Cost = 25;
-		Damage = 30;
-		Range = 250.0f;
-		FireRate = 0.5f;
-		
+		LoadStatsFromConfig("sniper_tower");
 		base._Ready();
 	}
 }

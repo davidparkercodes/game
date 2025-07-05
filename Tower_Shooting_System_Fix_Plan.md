@@ -11,8 +11,10 @@ After the refactor, the tower shooting functionality is completely missing. The 
 - ✅ Bullet class exists and handles collision/damage
 - ✅ Enemy detection logic implemented in towers
 - ✅ Target selection logic implemented
-- ❌ No projectile firing logic
-- ❌ Timer not connected to fire events
+- ✅ Projectile firing logic implemented
+- ✅ Timer connected to fire events
+- ✅ Sound integration completed
+- ✅ Tower-specific behaviors implemented
 
 ---
 
@@ -32,25 +34,27 @@ After the refactor, the tower shooting functionality is completely missing. The 
 - [x] Handle case when no enemies in range
 - [x] Update target when current target dies/leaves range
 
-### Phase 2: Projectile Firing System 🔫
+### Phase 2: Projectile Firing System 🔫 ✅ COMPLETED
 
-#### [ ] 2.1 Implement Basic Shooting Logic
-- [ ] Connect Timer timeout signal to shooting method
-- [ ] Calculate direction to target enemy
-- [ ] Instantiate bullet from BulletScene
-- [ ] Set bullet velocity toward target
-- [ ] Set bullet damage from tower stats
-- [ ] Start timer only when enemies are in range
+#### [x] 2.1 Implement Basic Shooting Logic
+- [x] Connect Timer timeout signal to shooting method
+- [x] Calculate direction to target enemy
+- [x] Instantiate bullet from BulletScene
+- [x] Set bullet velocity toward target
+- [x] Set bullet damage from tower stats
+- [x] Start timer only when enemies are in range
 
-#### [ ] 2.2 Implement Sound Integration
-- [ ] Add shooting sound properties to tower types
-- [ ] Play appropriate sound when firing (basic_tower_shoot, sniper_tower_shoot)
-- [ ] Integrate with existing SoundManagerService
+#### [x] 2.2 Implement Sound Integration
+- [x] Add shooting sound properties to tower types
+- [x] Play appropriate sound when firing (basic_tower_shoot, sniper_tower_shoot)
+- [x] Integrate with existing SoundManagerService
 
-#### [ ] 2.3 Implement Tower-Specific Behaviors
-- [ ] BasicTower: Standard firing rate, standard bullets
-- [ ] SniperTower: Slower firing rate, higher damage bullets
-- [ ] Set appropriate impact sounds for different bullet types
+#### [x] 2.3 Implement Tower-Specific Behaviors
+- [x] BasicTower: Loads stats from config (basic_tower)
+- [x] SniperTower: Loads stats from config (sniper_tower) 
+- [x] Config-driven stats loading (Cost, Damage, Range, FireRate)
+- [x] Config-driven sound keys (shoot_sound, impact_sound)
+- [x] **NO HARDCODED VALUES** - All stats from data/stats/building_stats.json
 
 ### Phase 3: Polish & Optimization 🎨
 

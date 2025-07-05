@@ -4,40 +4,36 @@
       "cost": 50,
       "damage": 10,
       "range": 120.0,
-      "fire_rate": 1.2,
+      "attack_speed": 1.2,
+      "upgrade_cost": 25,
       "bullet_speed": 900,
-      "shoot_sound": "basic_tower_shoot",
-      "impact_sound": "basic_bullet_impact",
       "description": "Basic tower with balanced stats"
     },
     "sniper_tower": {
       "cost": 75,
       "damage": 35,
       "range": 200.0,
-      "fire_rate": 2.5,
+      "attack_speed": 0.4,
+      "upgrade_cost": 40,
       "bullet_speed": 1200,
-      "shoot_sound": "sniper_tower_shoot",
-      "impact_sound": "sniper_bullet_impact",
       "description": "Long range, high damage tower with slow fire rate"
     },
     "rapid_tower": {
       "cost": 75,
       "damage": 6,
       "range": 100.0,
-      "fire_rate": 0.4,
+      "attack_speed": 2.5,
+      "upgrade_cost": 35,
       "bullet_speed": 800,
-      "shoot_sound": "rapid_tower_shoot",
-      "impact_sound": "rapid_bullet_impact",
       "description": "Fast firing tower with lower damage"
     },
     "heavy_tower": {
-      "cost": 75,
+      "cost": 100,
       "damage": 50,
       "range": 150.0,
-      "fire_rate": 3.0,
+      "attack_speed": 0.6,
+      "upgrade_cost": 75,
       "bullet_speed": 700,
-      "shoot_sound": "heavy_tower_shoot",
-      "impact_sound": "heavy_bullet_impact",
       "description": "Heavy damage tower with slow fire rate"
     }
   },
@@ -45,9 +41,9 @@
     "cost": 50,
     "damage": 10,
     "range": 150.0,
-    "fire_rate": 1.0,
+    "attack_speed": 1.0,
+    "upgrade_cost": 25,
     "bullet_speed": 900,
-    "shoot_sound": "basic_tower_shoot",
-    "impact_sound": "basic_bullet_impact"
+    "description": "Default building stats"
   }
 }
