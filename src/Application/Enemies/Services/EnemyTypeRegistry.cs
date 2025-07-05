@@ -130,9 +130,9 @@ public class EnemyTypeRegistry : IEnemyTypeRegistry
         var enemyType = GetByCategory(enemyCategory).FirstOrDefault();
         
         // Fallback to default enemy type if category not found
-        if (enemyType == null)
+        if (enemyType.Equals(default(EnemyType)))
         {
-            enemyType = GetDefaultType() ?? GetBasicType();
+            return GetDefaultType() ?? GetBasicType();
         }
 
         return enemyType;
@@ -144,7 +144,7 @@ public class EnemyTypeRegistry : IEnemyTypeRegistry
         if (enemyType == null) return false;
         
         // Check tier-based availability
-        return enemyType.Tier switch
+        return enemyType.Value.Tier switch
         {
             1 => waveNumber >= 1,  // Basic/Fast enemies
             2 => waveNumber >= 4,  // Tank enemies

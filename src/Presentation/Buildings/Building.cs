@@ -11,7 +11,7 @@ public partial class Building : StaticBody2D
 	[Export] public float FireRate { get; set; } = 1.0f;
 	[Export] public PackedScene BulletScene;
 
-	protected Timer _fireTimer;
+	protected Godot.Timer _fireTimer;
 	protected Area2D _rangeArea;
 	protected CollisionShape2D _rangeCollision;
 	protected bool _showingRange = false;

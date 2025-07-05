@@ -1,7 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.CommandLine;
-using Game.Application.Simulation;
+using System.IO;
+using System.Threading.Tasks;
 using Game.Application.Simulation.ValueObjects;
 using Spectre.Console;
+
+#nullable enable
 
 namespace GameSimRunner;
 
@@ -34,8 +39,8 @@ public class Program
         {
             try
             {
-                var outputLevel = minimal ? OutputLevel.Minimal : 
-                                 verbose ? OutputLevel.Verbose : 
+                var outputLevel = minimal ? OutputLevel.Minimal :
+                                 verbose ? OutputLevel.Verbose :
                                  OutputLevel.Normal;
 
                 await RunSimulation(scenario, outputLevel);
@@ -55,21 +60,21 @@ public class Program
         AnsiConsole.WriteLine();
 
         var config = GetConfig(scenario);
-        
+
         // Debug: Show working directory and config loading
         if (outputLevel >= OutputLevel.Verbose)
         {
             AnsiConsole.MarkupLine($"[dim]Working Directory: {Environment.CurrentDirectory}[/]");
             AnsiConsole.MarkupLine($"[dim]Looking for config files...[/]");
         }
-        
+
         // Validate configuration files exist
         if (!ValidateConfigurationFiles(outputLevel))
         {
             AnsiConsole.MarkupLine("[red]❌ Configuration validation failed. Cannot proceed with simulation.[/]");
             return;
         }
-        
+
         Game.Application.Simulation.GameSimRunner runner;
         try
         {
@@ -94,7 +99,7 @@ public class Program
             }
             return;
         }
-        
+
         if (outputLevel >= OutputLevel.Normal)
         {
             DisplayScenarioInfo(config, scenario ?? "default");
@@ -104,7 +109,7 @@ public class Program
         {
             var result = await RunWithProgressBar(runner, config, outputLevel);
             DisplayResults(result, outputLevel);
-            
+
             // Debug: Show failure reason if available
             if (!result.Success && outputLevel >= OutputLevel.Verbose)
             {
@@ -151,12 +156,12 @@ public class Program
             .StartAsync(async ctx =>
             {
                 var task = ctx.AddTask("[cyan]Simulation[/]", maxValue: config.MaxWaves);
-                
+
                 var progress = new Progress<SimulationProgress>(update =>
                 {
                     task.Value = update.CurrentWave;
                     task.Description = $"[cyan]Simulation[/] - Wave {update.CurrentWave}/{config.MaxWaves}";
-                    
+
                     if (outputLevel >= OutputLevel.Verbose)
                     {
                         task.Description += $" | Gold: {update.CurrentGold} | Lives: {update.RemainingLives}";
@@ -185,7 +190,7 @@ public class Program
             AnsiConsole.WriteLine();
         }
 
-        var detailedStats = outputLevel >= OutputLevel.Verbose 
+        var detailedStats = outputLevel >= OutputLevel.Verbose
             ? $"{status}\n" +
               $"{finalStats}\n" +
               $"[yellow]Final Score:[/] {result.FinalScore}\n" +
@@ -204,7 +209,7 @@ public class Program
         };
 
         AnsiConsole.Write(resultsPanel);
-        
+
         // Show failure reason if applicable
         if (!result.Success && !string.IsNullOrEmpty(result.FailureReason))
         {
@@ -212,11 +217,11 @@ public class Program
             AnsiConsole.MarkupLine($"[red]💥 Failure Reason: {result.FailureReason}[/]");
         }
     }
-    
+
     private static void DisplayWaveBreakdown(List<Game.Application.Simulation.ValueObjects.WaveResult> waveResults)
     {
         AnsiConsole.MarkupLine("[bold cyan]📊 Wave-by-Wave Breakdown[/]");
-        
+
         var table = new Table()
             .AddColumn("[yellow]Wave[/]")
             .AddColumn("[green]Status[/]")
@@ -225,14 +230,14 @@ public class Program
             .AddColumn("[yellow]Money[/]")
             .AddColumn("[blue]Score[/]")
             .AddColumn("[dim]Duration[/]");
-            
+
         table.Border = TableBorder.Rounded;
-        
+
         foreach (var wave in waveResults)
         {
             var status = wave.Completed ? "[green]✓[/]" : "[red]✗[/]";
             var duration = $"{wave.WaveDuration.TotalMilliseconds:F0}ms";
-            
+
             table.AddRow(
                 wave.WaveNumber.ToString(),
                 status,
@@ -243,10 +248,10 @@ public class Program
                 duration
             );
         }
-        
+
         AnsiConsole.Write(table);
     }
-    
+
     private static bool ValidateConfigurationFiles(OutputLevel outputLevel)
     {
         var configFiles = new[]
@@ -254,9 +259,9 @@ public class Program
             "data/simulation/building-stats.json",
             "data/simulation/enemy-stats.json"
         };
-        
+
         var allFilesExist = true;
-        
+
         foreach (var configFile in configFiles)
         {
             if (!File.Exists(configFile))
@@ -269,7 +274,7 @@ public class Program
                 AnsiConsole.MarkupLine($"[green]✓ Found config file: {configFile}[/]");
             }
         }
-        
+
         if (!allFilesExist)
         {
             AnsiConsole.WriteLine();
@@ -279,7 +284,7 @@ public class Program
                 AnsiConsole.MarkupLine($"  - {file}");
             }
         }
-        
+
         return allFilesExist;
     }
 }

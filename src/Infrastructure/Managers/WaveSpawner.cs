@@ -1,5 +1,4 @@
 using Godot;
-using Game.Infrastructure.Configuration;
 
 namespace Game.Infrastructure.Managers;
 
@@ -12,7 +11,7 @@ public class WaveSpawner
     public int EnemiesSpawned { get; private set; } = 0;
     public int TotalEnemiesInWave { get; private set; } = 0;
 
-    private Timer _spawnTimer;
+    private Godot.Timer _spawnTimer;
     private WaveConfig _currentWaveConfig;
 
     static WaveSpawner()

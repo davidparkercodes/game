@@ -45,9 +45,9 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
 
         // Return default stats for unknown enemy types using EnemyTypeRegistry
         var defaultType = EnemyTypeRegistry.GetDefaultType() ?? EnemyTypeRegistry.GetBasicType();
-        if (defaultType != null && _enemyStats.ContainsKey(defaultType.ConfigKey))
+        if (defaultType != null && _enemyStats.ContainsKey(defaultType.Value.ConfigKey))
         {
-            var defaultStats = _enemyStats[defaultType.ConfigKey];
+            var defaultStats = _enemyStats[defaultType.Value.ConfigKey];
             return new EnemyStats(
                 maxHealth: (int)(defaultStats.MaxHealth * _healthMultiplier),
                 speed: defaultStats.Speed * _speedMultiplier,
@@ -106,9 +106,9 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
         else
         {
             var defaultType = EnemyTypeRegistry.GetDefaultType() ?? EnemyTypeRegistry.GetBasicType();
-            if (defaultType != null && _enemyStats.ContainsKey(defaultType.ConfigKey))
+            if (defaultType != null && _enemyStats.ContainsKey(defaultType.Value.ConfigKey))
             {
-                baseStats = _enemyStats[defaultType.ConfigKey];
+                baseStats = _enemyStats[defaultType.Value.ConfigKey];
             }
             else
             {

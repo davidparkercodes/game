@@ -74,7 +74,7 @@ public class PlacementStrategyProvider : IPlacementStrategyProvider
             var defaultType = _buildingTypeRegistry.GetDefaultType();
             if (defaultType != null)
             {
-                return defaultType.ConfigKey;
+                return defaultType.Value.ConfigKey;
             }
         }
         
@@ -83,7 +83,7 @@ public class PlacementStrategyProvider : IPlacementStrategyProvider
             var cheapestType = _buildingTypeRegistry.GetCheapestType();
             if (cheapestType != null)
             {
-                return cheapestType.ConfigKey;
+                return cheapestType.Value.ConfigKey;
             }
         }
         

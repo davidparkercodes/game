@@ -43,16 +43,16 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         {
             // First try to get the default type from registry
             var defaultType = _buildingTypeRegistry.GetDefaultType();
-            if (defaultType != null && _buildingStats.ContainsKey(defaultType.ConfigKey))
+            if (defaultType != null && _buildingStats.ContainsKey(defaultType.Value.ConfigKey))
             {
-                return _buildingStats[defaultType.ConfigKey];
+                return _buildingStats[defaultType.Value.ConfigKey];
             }
             
             // If no default, try to get the cheapest type as fallback
             var cheapestType = _buildingTypeRegistry.GetCheapestType();
-            if (cheapestType != null && _buildingStats.ContainsKey(cheapestType.ConfigKey))
+            if (cheapestType != null && _buildingStats.ContainsKey(cheapestType.Value.ConfigKey))
             {
-                return _buildingStats[cheapestType.ConfigKey];
+                return _buildingStats[cheapestType.Value.ConfigKey];
             }
         }
         else

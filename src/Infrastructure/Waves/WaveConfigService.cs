@@ -4,7 +4,6 @@ using System.Text.Json;
 using Godot;
 using Game.Domain.Enemies.Services;
 using Game.Domain.Enemies.ValueObjects;
-using Game.Infrastructure.Configuration;
 
 namespace Game.Infrastructure.Waves;
 
@@ -67,7 +66,7 @@ public class WaveConfigService : IWaveConfigService
         var waveSet = new WaveSetConfig();
         waveSet.SetName = "Default Waves";
         waveSet.Description = "Auto-generated default wave progression";
-        
+
         for (int i = 1; i <= 10; i++)
         {
             var wave = new WaveConfig();
@@ -75,7 +74,7 @@ public class WaveConfigService : IWaveConfigService
             wave.WaveName = $"Wave {i}";
             wave.BonusMoney = 25 + (i * 5);
             wave.Description = $"Standard wave {i} with {5 + i * 2} enemies";
-            
+
             var enemyGroup = new EnemySpawnGroup();
             enemyGroup.EnemyType = "Basic";
             enemyGroup.Count = 5 + (i * 2);
@@ -83,7 +82,7 @@ public class WaveConfigService : IWaveConfigService
             enemyGroup.HealthMultiplier = 1.0f + (i * 0.15f);
             enemyGroup.SpeedMultiplier = 1.0f + (i * 0.05f);
             enemyGroup.MoneyReward = 10 + (i * 2);
-            
+
             wave.EnemyGroups.Add(enemyGroup);
             waveSet.Waves.Add(wave);
         }

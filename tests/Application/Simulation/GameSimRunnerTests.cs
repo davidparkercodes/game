@@ -9,11 +9,11 @@ namespace Game.Tests.Application.Simulation;
 
 public class GameSimRunnerTests
 {
-    private readonly GameSimRunner _runner;
+    private readonly Game.Application.Simulation.GameSimRunner _runner;
 
     public GameSimRunnerTests()
     {
-        _runner = new GameSimRunner();
+        _runner = new Game.Application.Simulation.GameSimRunner();
     }
 
     [Fact]

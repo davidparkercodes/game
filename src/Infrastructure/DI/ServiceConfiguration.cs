@@ -5,7 +5,6 @@ using Game.Domain.Enemies.Services;
 using Game.Infrastructure.Stats;
 using Game.Infrastructure.Sound;
 using Game.Infrastructure.Buildings;
-using Game.Infrastructure.Waves;
 using Game.Infrastructure.Managers;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
@@ -16,8 +15,6 @@ using Game.Application.Game.Handlers;
 using Game.Application.Game.Queries;
 using Game.Application.Rounds.Commands;
 using Game.Application.Rounds.Handlers;
-using Game.Application.Waves.Commands;
-using Game.Application.Waves.Handlers;
 using Game.Application.Buildings.Services;
 
 namespace Game.Infrastructure.DI;
@@ -32,7 +29,7 @@ public static class ServiceConfiguration
         serviceLocator.RegisterFactory<IBuildingStatsProvider>(() => new StatsService());
         serviceLocator.RegisterFactory<IEnemyStatsProvider>(() => new StatsService());
         serviceLocator.RegisterFactory<ISoundService>(() => new SoundService());
-        serviceLocator.RegisterFactory<IWaveConfigService>(() => new WaveConfigService());
+        // serviceLocator.RegisterFactory<IWaveConfigService>(() => new WaveConfigService()); // Temporarily disabled
         serviceLocator.RegisterFactory<IBuildingZoneService>(() => new BuildingZoneService());
         
         // Register BuildingTypeRegistry (needs special handling since it depends on IBuildingStatsProvider)
@@ -58,8 +55,8 @@ public static class ServiceConfiguration
         serviceLocator.RegisterFactory<ICommandHandler<StartRoundCommand, StartRoundResult>>(() => 
             new StartRoundCommandHandler());
         
-        serviceLocator.RegisterFactory<ICommandHandler<StartWaveCommand, StartWaveResult>>(() => 
-            new StartWaveCommandHandler());
+        // serviceLocator.RegisterFactory<ICommandHandler<StartWaveCommand, StartWaveResult>>(() => 
+        //     new StartWaveCommandHandler()); // Temporarily disabled
         
         serviceLocator.RegisterFactory<IQueryHandler<GetTowerStatsQuery, TowerStatsResponse>>(() => 
             new GetTowerStatsQueryHandler(
