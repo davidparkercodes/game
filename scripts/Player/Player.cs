@@ -1,6 +1,6 @@
 using Godot;
 
-public class BuildingStats
+public class PlayerBuildingStats
 {
 	public int Cost { get; set; }
 	public int Damage { get; set; }
@@ -176,7 +176,7 @@ public partial class Player : CharacterBody2D
 		}
 	}
 	
-	private BuildingStats GetBuildingStats(string buildingName)
+	private PlayerBuildingStats GetBuildingStats(string buildingName)
 	{
 		PackedScene buildingScene = buildingName switch
 		{
@@ -191,7 +191,7 @@ public partial class Player : CharacterBody2D
 		var tempBuilding = buildingScene.Instantiate<Building>();
 		tempBuilding.InitializeStats(); // Configure stats before accessing them
 		
-		var stats = new BuildingStats
+		var stats = new PlayerBuildingStats
 		{
 			Cost = tempBuilding.Cost,
 			Damage = tempBuilding.Damage,
