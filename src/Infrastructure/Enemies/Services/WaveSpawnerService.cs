@@ -10,6 +10,8 @@ using Game.Infrastructure.Waves.Models;
 using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Rounds.Services;
 using Game.Infrastructure.Waves.Services;
+using Game.Presentation.Enemies;
+using Game.Presentation.Components;
 
 namespace Game.Infrastructure.Enemies.Services;
 
@@ -33,9 +35,22 @@ public class WaveSpawnerService : IWaveService
 
     public void Initialize()
     {
+        // Create timer but don't add to scene yet - will be added when needed
         _spawnTimer = new Godot.Timer();
         _spawnTimer.OneShot = true;
         _spawnTimer.Timeout += OnSpawnTimer;
+        
+        // Add timer to the main scene tree so it can be used
+        var mainScene = Godot.Engine.GetMainLoop() as Godot.SceneTree;
+        if (mainScene?.CurrentScene != null)
+        {
+            mainScene.CurrentScene.AddChild(_spawnTimer);
+            GD.Print("✅ WaveSpawnerService: Timer added to scene tree");
+        }
+        else
+        {
+            GD.PrintErr("❌ WaveSpawnerService: Could not add timer to scene tree - no current scene");
+        }
         
         LoadWaveConfiguration();
     }
@@ -282,8 +297,50 @@ public class WaveSpawnerService : IWaveService
         {
             var spawnPosition = PathService.Instance?.GetSpawnPosition() ?? Vector2.Zero;
             GD.Print($"Spawning {enemyType} at {spawnPosition}");
-
-            RoundService.Instance?.OnEnemySpawned();
+            
+            // Load and instantiate the enemy scene
+            var enemyScene = GD.Load<PackedScene>("res://scenes/Enemies/Enemy.tscn");
+            if (enemyScene == null)
+            {
+                GD.PrintErr($"WaveSpawnerService: Failed to load enemy scene at res://scenes/Enemies/Enemy.tscn");
+                return;
+            }
+            
+            var enemyInstance = enemyScene.Instantiate<Enemy>();
+            if (enemyInstance == null)
+            {
+                GD.PrintErr($"WaveSpawnerService: Failed to instantiate enemy from scene");
+                return;
+            }
+            
+            // Set enemy properties
+            enemyInstance.SetEnemyType(enemyType);
+            enemyInstance.GlobalPosition = spawnPosition;
+            
+            // Add PathFollower component for movement
+            var pathFollower = new PathFollower();
+            pathFollower.Speed = enemyInstance.Speed;
+            pathFollower.PathCompleted += () => enemyInstance.OnPathCompleted();
+            enemyInstance.AddChild(pathFollower);
+            
+            // Get the current scene tree and add the enemy to it
+            var sceneTree = Godot.Engine.GetMainLoop() as Godot.SceneTree;
+            if (sceneTree?.CurrentScene != null)
+            {
+                sceneTree.CurrentScene.AddChild(enemyInstance);
+                GD.Print($"✅ Enemy {enemyType} added to scene tree at {spawnPosition}");
+                
+                // Connect enemy signals for cleanup
+                enemyInstance.EnemyKilled += OnEnemyKilled;
+                enemyInstance.EnemyReachedEnd += OnEnemyReachedEnd;
+                
+                RoundService.Instance?.OnEnemySpawned();
+            }
+            else
+            {
+                GD.PrintErr($"WaveSpawnerService: Could not add enemy to scene tree - no current scene available");
+                enemyInstance?.QueueFree();
+            }
         }
         catch (Exception exception)
         {
@@ -433,4 +490,14 @@ public class WaveSpawnerService : IWaveService
     }
 
     public int CurrentWaveIndex => CurrentWave;
+    
+    private void OnEnemyKilled()
+    {
+        GD.Print("WaveSpawnerService: Enemy killed");
+    }
+    
+    private void OnEnemyReachedEnd()
+    {
+        GD.Print("WaveSpawnerService: Enemy reached end");
+    }
 }

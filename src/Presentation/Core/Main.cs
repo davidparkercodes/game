@@ -124,26 +124,26 @@ public partial class Main : Node
 	{
 		TileMapLayer? foundLayer = null;
 		
-		// Try to get the GroundLayer node - it should be a TileMapLayer itself
-		var groundLayerNode = GetNodeOrNull("GroundLayer");
+		// Try to get the Level01 node - it should be a TileMapLayer itself
+		var groundLayerNode = GetNodeOrNull("Level01");
 		if (groundLayerNode == null)
 		{
-			GD.PrintErr("❌ GroundLayer node not found in scene");
+			GD.PrintErr("❌ Level01 node not found in scene");
 			return;
 		}
 		
-		GD.Print($"🔍 Found GroundLayer node: {groundLayerNode.GetType().Name}");
+		GD.Print($"🔍 Found Level01 node: {groundLayerNode.GetType().Name}");
 		
-		// The GroundLayer should be a TileMapLayer directly since Level01.tscn's root is TileMapLayer
+		// The Level01 should be a TileMapLayer directly since Level01.tscn's root is TileMapLayer
 		if (groundLayerNode is TileMapLayer directLayer)
 		{
 			foundLayer = directLayer;
-			GD.Print("✅ GroundLayer is directly a TileMapLayer");
+			GD.Print("✅ Level01 is directly a TileMapLayer");
 		}
 		else
 		{
 			// Fallback: search for TileMapLayer children
-			GD.Print($"🔍 GroundLayer is {groundLayerNode.GetType().Name}, searching for TileMapLayer children...");
+			GD.Print($"🔍 Level01 is {groundLayerNode.GetType().Name}, searching for TileMapLayer children...");
 			
 			// Look for TileMapLayer in immediate children
 			foreach (Node child in groundLayerNode.GetChildren())
@@ -176,7 +176,7 @@ public partial class Main : Node
 		else
 		{
 			GD.PrintErr("❌ Could not find any TileMapLayer - building placement will not work");
-			GD.PrintErr("💡 Make sure the GroundLayer scene contains a TileMapLayer node");
+			GD.PrintErr("💡 Make sure the Level01 scene contains a TileMapLayer node");
 		}
 	}
 
@@ -237,7 +237,8 @@ public partial class Main : Node
 	private void InitializeWaveManager()
 	{
 		// Initialize Wave Manager and set initial button state
-		WaveManager.Instance.Reset(); // This will set up the initial wave button state
+		WaveManager.Initialize();
+		WaveManager.Instance?.Reset(); // This will set up the initial wave button state
 		GD.Print("🌊 Wave Manager initialized");
 	}
 

@@ -26,9 +26,25 @@ public class MockWaveService : IWaveService
 
     public MockWaveService()
     {
-        Console.WriteLine("DEBUG: MockWaveService constructor starting");
+        Godot.GD.Print("🌊 MockWaveService constructor starting");
+
+        // Initialize fields
+        _waves = null;
+        _totalWaves = 0;
+        _currentWaveSetName = "Unknown";
+
+        Godot.GD.Print("🌊 MockWaveService: About to load wave configuration");
         LoadWaveConfiguration();
-        Console.WriteLine($"DEBUG: MockWaveService initialized with {_waves?.Count ?? 0} waves");
+
+        Godot.GD.Print($"🌊 MockWaveService constructor finished: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
+
+        // Double-check that waves were loaded
+        if (_waves == null || _waves.Count == 0 || _totalWaves == 0)
+        {
+            Godot.GD.PrintErr("❌ MockWaveService: Wave loading failed completely! Forcing fallback creation...");
+            CreateFallbackConfiguration();
+            Godot.GD.Print($"🔧 After forced fallback: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
+        }
     }
 
     public void StartWave(int waveNumber)
@@ -39,7 +55,7 @@ public class MockWaveService : IWaveService
             Console.WriteLine("DEBUG: No waves loaded, creating fallback configuration");
             CreateFallbackConfiguration();
         }
-        
+
         if (_waves == null || waveNumber <= 0 || waveNumber > _waves.Count)
         {
             Console.WriteLine($"DEBUG: Invalid wave setup - waves count: {_waves?.Count ?? 0}, requested wave: {waveNumber}");
@@ -50,7 +66,7 @@ public class MockWaveService : IWaveService
         _isWaveActive = true;
         _isWaveComplete = false;
         _currentEnemyGroupIndex = 0;
-        
+
         var currentWave = _waves[waveNumber - 1];
         var baseEnemyCount = currentWave.EnemyGroups.Sum(group => group.Count);
         _remainingEnemies = (int)(baseEnemyCount * _enemyCountMultiplier);
@@ -85,7 +101,7 @@ public class MockWaveService : IWaveService
 
         var currentWave = _waves[_currentWaveNumber - 1];
         var totalEnemies = currentWave.EnemyGroups.Sum(group => group.Count);
-        
+
         if (totalEnemies == 0)
             return 1f;
 
@@ -100,16 +116,16 @@ public class MockWaveService : IWaveService
         }
 
         var currentWave = _waves[_currentWaveNumber - 1];
-        
+
         // Cycle through enemy groups to provide variety
         if (currentWave.EnemyGroups.Count == 0)
         {
             return EnemyStats.CreateDefault();
         }
-        
+
         var groupIndex = _currentEnemyGroupIndex % currentWave.EnemyGroups.Count;
         var selectedGroup = currentWave.EnemyGroups[groupIndex];
-        
+
         // Move to next group for next enemy
         _currentEnemyGroupIndex++;
 
@@ -133,10 +149,10 @@ public class MockWaveService : IWaveService
         var difficulty = levelConfiguration.DifficultyRating switch
         {
             < 1.0f => "easy",
-            > 2.0f => "hard", 
+            > 2.0f => "hard",
             _ => "default"
         };
-        
+
         LoadWaveSet(difficulty);
     }
 
@@ -158,7 +174,7 @@ public class MockWaveService : IWaveService
         _remainingEnemies = 0;
         _currentEnemyGroupIndex = 0;
     }
-    
+
     public void SetEnemyCountMultiplier(float multiplier)
     {
         _enemyCountMultiplier = multiplier;
@@ -194,7 +210,16 @@ public class MockWaveService : IWaveService
 
     public void Initialize()
     {
-        LoadWaveConfiguration();
+        // Only reload if we don't already have waves loaded
+        if (_waves == null || _waves.Count == 0 || _totalWaves == 0)
+        {
+            Godot.GD.Print("🌊 MockWaveService.Initialize(): No waves loaded, reloading...");
+            LoadWaveConfiguration();
+        }
+        else
+        {
+            Godot.GD.Print($"🌊 MockWaveService.Initialize(): Already have {_totalWaves} waves loaded, skipping reload");
+        }
     }
 
     public void OnEnemyKilled()
@@ -202,7 +227,7 @@ public class MockWaveService : IWaveService
         if (_remainingEnemies > 0)
         {
             _remainingEnemies--;
-            
+
             if (_remainingEnemies == 0)
             {
                 _isWaveActive = false;
@@ -213,39 +238,40 @@ public class MockWaveService : IWaveService
 
     private void LoadWaveConfiguration(string difficulty = "default")
     {
-        Console.WriteLine($"DEBUG: Loading wave configuration for difficulty: {difficulty}");
+        Godot.GD.Print($"🌊 MockWaveService: Loading wave configuration for difficulty: {difficulty}");
         try
         {
             var configPath = GetWaveConfigPath(difficulty);
-            Console.WriteLine($"DEBUG: Attempting to load config from: {configPath}");
+            Godot.GD.Print($"🌊 MockWaveService: Attempting to load config from: {configPath}");
             var configContent = System.IO.File.ReadAllText(configPath);
-            
+
             _currentWaveSet = JsonSerializer.Deserialize<SimulationWaveSetConfiguration>(configContent);
-            
+
             if (_currentWaveSet?.Waves != null)
             {
                 _waves = _currentWaveSet.Waves;
                 _totalWaves = _waves.Count;
                 _currentWaveSetName = _currentWaveSet.SetName ?? difficulty;
+                Godot.GD.Print($"✅ MockWaveService: Loaded {_totalWaves} waves from config");
             }
             else
             {
-                Console.WriteLine("DEBUG: Wave set loaded but no waves found, creating fallback");
+                Godot.GD.Print("⚠️ MockWaveService: Wave set loaded but no waves found, creating fallback");
                 CreateFallbackConfiguration();
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"DEBUG: Failed to load wave configuration: {ex.Message}");
+            Godot.GD.Print($"⚠️ MockWaveService: Failed to load wave configuration: {ex.Message}");
             CreateFallbackConfiguration();
         }
     }
 
     private void CreateFallbackConfiguration()
     {
-        Console.WriteLine("DEBUG: Creating fallback wave configuration");
+        Godot.GD.Print("🔧 MockWaveService: Creating fallback wave configuration");
         _waves = new List<SimulationWaveConfiguration>();
-        
+
         // Create 15 fallback waves to support typical simulation scenarios
         for (int waveNum = 1; waveNum <= 15; waveNum++)
         {
@@ -279,7 +305,7 @@ public class MockWaveService : IWaveService
         return difficulty switch
         {
             "balance-testing" => $"{basePath}/wave-configs-balance.json",
-            "easy" => $"{basePath}/wave-configs-easy.json", 
+            "easy" => $"{basePath}/wave-configs-easy.json",
             "hard" => $"{basePath}/wave-configs-hard.json",
             _ => $"{basePath}/wave-configs.json"
         };

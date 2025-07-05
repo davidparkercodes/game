@@ -12,6 +12,8 @@ namespace Game.Domain.Enemies.Services
 	[Export] public LevelDataResource? CurrentLevel { get; set; }
 		private readonly List<OrderedPathPoint> _pathPoints;
 		private readonly float _pathTolerance;
+		private Color _pathColor = Colors.Yellow;
+		private float _pathWidth = 5.0f;
 
 		public PathManager()
 		{
@@ -19,23 +21,30 @@ namespace Game.Domain.Enemies.Services
 			_pathTolerance = 10.0f;
 		}
 
-		public override void _Ready()
+	public override void _Ready()
+	{
+		if (CurrentLevel != null)
 		{
-			if (CurrentLevel != null)
-			{
-				LoadPathFromLevel(CurrentLevel.ToLevelData());
-			}
+			LoadPathFromLevel(CurrentLevel.ToLevelData());
+			QueueRedraw(); // Trigger drawing of the path
 		}
+	}
 
-		public void LoadPathFromLevel(LevelData levelData)
+	public void LoadPathFromLevel(LevelData levelData)
+	{
+		_pathPoints.Clear();
+		for (int i = 0; i < levelData.PathPoints.Count; i++)
 		{
-			_pathPoints.Clear();
-			for (int i = 0; i < levelData.PathPoints.Count; i++)
-			{
-				var levelPoint = levelData.PathPoints[i];
-				_pathPoints.Add(new OrderedPathPoint(levelPoint.X, levelPoint.Y, i));
-			}
+			var levelPoint = levelData.PathPoints[i];
+			_pathPoints.Add(new OrderedPathPoint(levelPoint.X, levelPoint.Y, i));
 		}
+		
+		// Use default yellow path color
+		_pathColor = Colors.Yellow;
+		
+		GD.Print($"🛤️ PathManager loaded {_pathPoints.Count} path points");
+		QueueRedraw(); // Trigger redraw when path is loaded
+	}
 
     public void AddPathPoint(float x, float y, int order = -1)
     {
@@ -168,6 +177,41 @@ namespace Game.Domain.Enemies.Services
         
         if (float.IsInfinity(x) || float.IsInfinity(y))
             throw new ArgumentException("Position cannot be infinite");
+    }
+    
+    public override void _Draw()
+    {
+        if (_pathPoints.Count < 2)
+            return;
+            
+        // Draw lines between consecutive path points
+        for (int i = 0; i < _pathPoints.Count - 1; i++)
+        {
+            var fromPoint = _pathPoints[i];
+            var toPoint = _pathPoints[i + 1];
+            
+            var from = new Vector2(fromPoint.X, fromPoint.Y);
+            var to = new Vector2(toPoint.X, toPoint.Y);
+            
+            // Draw the path line
+            DrawLine(from, to, _pathColor, _pathWidth);
+        }
+        
+        // Draw circles at each path point for visibility
+        foreach (var point in _pathPoints)
+        {
+            var position = new Vector2(point.X, point.Y);
+            DrawCircle(position, 8.0f, _pathColor);
+            
+            // Draw order number
+            var font = ThemeDB.FallbackFont;
+            var text = point.Order.ToString();
+            var textSize = font.GetStringSize(text, HorizontalAlignment.Center, -1, 12);
+            var textPos = position - textSize / 2;
+            DrawString(font, textPos, text, HorizontalAlignment.Center, -1, 12, Colors.Black);
+        }
+        
+        GD.Print($"🎨 PathManager drew path with {_pathPoints.Count} points");
     }
 }
 

@@ -32,7 +32,8 @@ public partial class Player : CharacterBody2D
 			Speed = 200f;
 		
 		CurrentBuildingScene = null!;
-		UpdateSelectedBuildingDisplay("None");
+		// Don't update display immediately - HudManager might not be ready
+		// UpdateSelectedBuildingDisplay("None");
 
 		_movement = new PlayerMovement(this);
 		_buildingBuilder = new PlayerBuildingBuilder(this);
