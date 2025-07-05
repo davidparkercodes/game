@@ -1,10 +1,11 @@
 using Godot;
 
+namespace Game.Presentation.Components;
+
 public partial class HpLabel : Label
 {
 	public override void _Ready()
 	{
-		// Try to find StatsComponent anywhere under the parent (recursive)
 		var stats = GetParent().GetNodeOrNull<StatsComponent>("../Damageable/StatsComponent");
 
 		if (stats == null)

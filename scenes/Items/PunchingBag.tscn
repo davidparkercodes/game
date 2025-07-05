@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/Items/PunchingBag.cs" id="1_ja4ap"]
 [ext_resource type="Texture2D" path="res://assets/sprites/basic_colors_tilesheet.png" id="2_snidt"]
-[ext_resource type="Script" path="res://scripts/Components/HpLabel.cs" id="3_ynywr"]
-[ext_resource type="Script" path="res://scripts/Components/Damageable.cs" id="4_i8opx"]
-[ext_resource type="Script" path="res://scripts/Components/StatsComponent.cs" id="5_ai8jg"]
+[ext_resource type="Script" path="res://src/Presentation/Components/HpLabel.cs" id="3_ynywr"]
+[ext_resource type="Script" path="res://src/Presentation/Components/Damageable.cs" id="4_i8opx"]
+[ext_resource type="Script" path="res://src/Presentation/Components/StatsComponent.cs" id="5_ai8jg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bjd11"]
 size = Vector2(32, 33)

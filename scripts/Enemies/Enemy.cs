@@ -1,4 +1,5 @@
 using Godot;
+using Game.Presentation.Components;
 
 public partial class Enemy : Area2D
 {

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://src/Presentation/Player/Player.cs" id="1_kpjcp"]
 [ext_resource type="Texture2D" path="res://assets/sprites/basic_colors_tilesheet_16x16.png" id="2_3li8b"]
-[ext_resource type="Script" path="res://scripts/Components/Hitbox.cs" id="3_3li8b"]
+[ext_resource type="Script" path="res://src/Presentation/Components/Hitbox.cs" id="3_3li8b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kpjcp"]
 size = Vector2(16, 16)

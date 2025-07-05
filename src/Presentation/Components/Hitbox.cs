@@ -1,6 +1,8 @@
 using Godot;
 using System.Collections.Generic;
 
+namespace Game.Presentation.Components;
+
 public partial class Hitbox : Area2D
 {
 	[Export] public int Damage = 10;

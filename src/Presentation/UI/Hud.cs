@@ -1,5 +1,7 @@
 using Godot;
 
+namespace Game.Presentation.UI;
+
 public partial class Hud : CanvasLayer
 {
 	[Export] public Label MoneyLabel;
@@ -7,7 +9,6 @@ public partial class Hud : CanvasLayer
 	[Export] public Label WaveLabel;
 	[Export] public Button SkipButton;
 	
-	// Turret stats panel
 	[Export] public Panel TurretStatsPanel;
 	[Export] public Label TurretNameLabel;
 	[Export] public Label CostLabel;
@@ -17,13 +18,11 @@ public partial class Hud : CanvasLayer
 
 	public override void _Ready()
 	{
-		// Fallback if the export slots were left empty in the Inspector
 		MoneyLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/MoneyLabel");
 		LivesLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/LivesLabel");
 		WaveLabel  ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/WaveLabel");
 		SkipButton ??= GetNodeOrNull<Button>("SidebarPanel/VBoxContainer/SkipButton");
 		
-		// Turret stats panel nodes
 		TurretStatsPanel ??= GetNodeOrNull<Panel>("TurretStatsPanel");
 		TurretNameLabel ??= GetNodeOrNull<Label>("TurretStatsPanel/VBoxContainer/TurretNameLabel");
 		CostLabel ??= GetNodeOrNull<Label>("TurretStatsPanel/VBoxContainer/CostLabel");
@@ -31,7 +30,6 @@ public partial class Hud : CanvasLayer
 		RangeLabel ??= GetNodeOrNull<Label>("TurretStatsPanel/VBoxContainer/RangeLabel");
 		FireRateLabel ??= GetNodeOrNull<Label>("TurretStatsPanel/VBoxContainer/FireRateLabel");
 		
-		// Connect Skip button
 		if (SkipButton != null)
 		{
 			SkipButton.Pressed += OnSkipButtonPressed;
@@ -42,7 +40,6 @@ public partial class Hud : CanvasLayer
 			GD.PrintErr("❌ SkipButton not found in HUD");
 		}
 		
-		// Force show button for initial testing
 		CallDeferred(nameof(TestButtonVisibility));
 	}
 	

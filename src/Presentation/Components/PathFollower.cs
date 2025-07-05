@@ -1,5 +1,7 @@
 using Godot;
 
+namespace Game.Presentation.Components;
+
 public partial class PathFollower : Node
 {
 	[Export] public float Speed = 60.0f;
@@ -51,23 +53,19 @@ public partial class PathFollower : Node
 		if (!_isFollowingPath || _pathManager == null || _body == null)
 			return;
 
-		// Calculate distance to move this frame
 		float pathLength = _pathManager.GetPathLength();
 		if (pathLength <= 0) return;
 
 		float distanceToMove = Speed * (float)delta;
 		float progressDelta = distanceToMove / pathLength;
 		
-		// Update progress
 		_pathProgress += progressDelta;
 		
-		// Check if we've reached the end
 		if (_pathProgress >= 1.0f)
 		{
 			_pathProgress = 1.0f;
 			_isFollowingPath = false;
 			
-			// Move to final position
 			_body.GlobalPosition = _pathManager.GetPathPosition(_pathProgress);
 			
 			EmitSignal(SignalName.PathCompleted);
@@ -75,15 +73,11 @@ public partial class PathFollower : Node
 			return;
 		}
 		
-		// Get current position and direction from path
 		Vector2 targetPosition = _pathManager.GetPathPosition(_pathProgress);
 		Vector2 direction = _pathManager.GetPathDirection(_pathProgress);
 		
-		// Move directly to target position without collision detection
-		// This allows enemies to pass through each other in tower defense style
 		_body.GlobalPosition = targetPosition;
 		
-		// Emit progress signal
 		EmitSignal(SignalName.PathProgressChanged, _pathProgress);
 	}
 
@@ -98,7 +92,6 @@ public partial class PathFollower : Node
 		_pathProgress = startProgress;
 		_isFollowingPath = true;
 		
-		// Set initial position
 		if (_body != null)
 		{
 			_body.GlobalPosition = _pathManager.GetPathPosition(_pathProgress);

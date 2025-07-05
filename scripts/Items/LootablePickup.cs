@@ -1,4 +1,5 @@
 using Godot;
+using Game.Presentation.Inventory;
 
 public partial class LootablePickup : Area2D
 {

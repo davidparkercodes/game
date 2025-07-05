@@ -114,7 +114,7 @@ public partial class Main : Node2D
             child.QueueFree();
         }
 
-        foreach (var item in Inventory.GetItems())
+        foreach (var item in Game.Presentation.Inventory.Inventory.GetItems())
         {
             var label = new Label();
             label.Text = $"{item.Key}: {item.Value}";

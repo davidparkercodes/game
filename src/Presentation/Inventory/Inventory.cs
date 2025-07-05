@@ -1,6 +1,8 @@
 using Godot;
 using System.Collections.Generic;
 
+namespace Game.Presentation.Inventory;
+
 public partial class Inventory : Node
 {
 	private static Dictionary<string, int> _items = new();
