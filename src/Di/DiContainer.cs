@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace Game.Infrastructure.DI;
+namespace Game.Di;
 
-public class ServiceLocator
+public class DiContainer
 {
-    private static ServiceLocator? _instance;
+    private static DiContainer? _instance;
     private readonly Dictionary<Type, object> _services = new();
     private readonly Dictionary<Type, Func<object>> _serviceFactories = new();
 
-    public static ServiceLocator Instance => _instance ??= new ServiceLocator();
+    public static DiContainer Instance => _instance ??= new DiContainer();
 
     public void RegisterSingleton<TInterface, TImplementation>(TImplementation implementation)
         where TImplementation : class, TInterface

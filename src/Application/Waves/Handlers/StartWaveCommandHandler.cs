@@ -28,9 +28,7 @@ public class StartWaveCommandHandler : ICommandHandler<StartWaveCommand, StartWa
 
         try
         {
-            // Create a basic wave config
-            var waveConfig = new WaveConfig(command.WaveIndex + 1, $"Wave {command.WaveIndex + 1}");
-            waveSpawner.StartWave(waveConfig);
+            waveSpawner.StartWave(command.WaveIndex + 1);
             var waveName = $"Wave {command.WaveIndex + 1}";
             var totalEnemies = waveSpawner.TotalEnemiesInWave;
 

@@ -7,6 +7,7 @@ using Game.Application.Simulation.ValueObjects;
 using Game.Application.Simulation.Services;
 using Game.Domain.Shared.ValueObjects;
 using Game.Domain.Buildings.Services;
+using Game.Application.Buildings.Services;
 
 namespace Game.Application.Simulation;
 
@@ -22,7 +23,7 @@ public class GameSimRunner
     {
         _buildingStatsProvider = new MockBuildingStatsProvider();
         _enemyStatsProvider = new MockEnemyStatsProvider();
-        _buildingTypeRegistry = new Game.Application.Buildings.Services.BuildingTypeRegistry(_buildingStatsProvider);
+        _buildingTypeRegistry = new BuildingTypeRegistry(_buildingStatsProvider);
         _placementStrategyProvider = new PlacementStrategyProvider(_buildingTypeRegistry);
         _random = new Random();
     }

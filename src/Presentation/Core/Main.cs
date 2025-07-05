@@ -1,9 +1,11 @@
 using Godot;
-using Game.Infrastructure.DI;
+using Game.Di;
 using Game.Infrastructure.Managers;
 using Game.Application.Shared.Cqrs;
 using Game.Infrastructure.Sound;
 using Game.Presentation.Systems;
+using Game.Application.Shared.Services;
+using static Game.Di.DiConfiguration;
 
 namespace Game.Presentation.Core;
 
@@ -11,7 +13,7 @@ public partial class Main : Node
 {
 	private Panel _inventoryPanel;
 	private VBoxContainer _inventoryList;
-	private ServiceLocator _serviceLocator;
+	private DiContainer _diContainer;
 	private IMediator _mediator;
 
 	public override void _Ready()
@@ -25,12 +27,11 @@ public partial class Main : Node
 
 	private void InitializeDependencyContainer()
 	{
-		_serviceLocator = new ServiceLocator();
+		// Temporary workaround - directly use DiContainer
+		_diContainer = new DiContainer();
+		RegisterServices(_diContainer);
 		
-		ServiceConfiguration.RegisterServices(_serviceLocator);
-		ServiceConfiguration.RegisterSingletonsFromGodot(_serviceLocator);
-		
-		_mediator = _serviceLocator.Resolve<IMediator>();
+		_mediator = _diContainer.Resolve<IMediator>();
 		
 		GD.Print("🔧 DI Container initialized with mediator");
 
@@ -124,7 +125,7 @@ public partial class Main : Node
 
 	private void PerformStartupValidation()
 	{
-		var validationService = _serviceLocator.Resolve<StartupValidationService>();
+		var validationService = _diContainer.Resolve<StartupValidationService>();
 		if (validationService != null)
 		{
 			bool isValid = validationService.ValidateOnStartup();
@@ -135,6 +136,6 @@ public partial class Main : Node
 		}
 	}
 
-	public ServiceLocator GetServiceLocator() => _serviceLocator;
+	public DiContainer GetDiContainer() => _diContainer;
 	public IMediator GetMediator() => _mediator;
 }

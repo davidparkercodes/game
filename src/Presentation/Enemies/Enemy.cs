@@ -1,5 +1,5 @@
 using Godot;
-using Game.Infrastructure.DI;
+using Game.Di;
 using Game.Domain.Enemies.ValueObjects;
 using Game.Infrastructure.Managers;
 

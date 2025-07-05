@@ -4,7 +4,8 @@ using Game.Application.Game.Commands;
 using Game.Application.Game.Queries;
 using Game.Application.Rounds.Commands;
 using Game.Infrastructure.Managers;
-using Game.Infrastructure.DI;
+using Game.Di;
+using static Game.Di.DiConfiguration;
 
 namespace Game.Application.Game;
 
@@ -21,7 +22,10 @@ public class GameApplicationService
 
     public static void Initialize()
     {
-        var mediator = ServiceLocator.Instance.Resolve<IMediator>();
+        // Temporary workaround - directly use DiContainer
+        var diContainer = new DiContainer();
+        RegisterServices(diContainer);
+        var mediator = diContainer.Resolve<IMediator>();
         Instance = new GameApplicationService(mediator);
     }
 

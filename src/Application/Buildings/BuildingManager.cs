@@ -2,7 +2,8 @@ using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
 using Game.Domain.Shared.ValueObjects;
-using Game.Infrastructure.DI;
+using Game.Di;
+using static Game.Di.DiConfiguration;
 
 namespace Game.Application.Buildings;
 
@@ -19,7 +20,10 @@ public class BuildingManager
 
     public static void Initialize()
     {
-        var mediator = ServiceLocator.Instance.Resolve<IMediator>();
+        // Temporary workaround - directly use DiContainer
+        var diContainer = new DiContainer();
+        RegisterServices(diContainer);
+        var mediator = diContainer.Resolve<IMediator>();
         Instance = new BuildingManager(mediator);
     }
 

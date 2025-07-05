@@ -11,14 +11,14 @@ public class WaveConfigService : IWaveConfigService
 {
     public WaveConfiguration LoadWaveSet(string configPath)
     {
-        if (string.IsNullOrEmpty(configPath) || !IsInGodotRuntime() || !FileAccess.FileExists(configPath))
+        if (string.IsNullOrEmpty(configPath) || !IsInGodotRuntime() || !Godot.FileAccess.FileExists(configPath))
         {
             return CreateDefaultWaveSet();
         }
 
         try
         {
-            var file = FileAccess.Open(configPath, FileAccess.ModeFlags.Read);
+            var file = Godot.FileAccess.Open(configPath, Godot.FileAccess.ModeFlags.Read);
             if (file == null)
             {
                 return CreateDefaultWaveSet();
@@ -61,15 +61,15 @@ public class WaveConfigService : IWaveConfigService
         return new WaveConfiguration("Default Waves", 10, "{\"waves\": []}");
     }
 
-    private WaveSetConfig CreateDefaultWaveSetInternal()
+    private WaveSetConfigurationInternal CreateDefaultWaveSetInternal()
     {
-        var waveSet = new WaveSetConfig();
+        var waveSet = new WaveSetConfigurationInternal();
         waveSet.SetName = "Default Waves";
         waveSet.Description = "Auto-generated default wave progression";
 
         for (int i = 1; i <= 10; i++)
         {
-            var wave = new WaveConfig();
+            var wave = new WaveConfigurationInternal();
             wave.WaveNumber = i;
             wave.WaveName = $"Wave {i}";
             wave.BonusMoney = 25 + (i * 5);
@@ -90,9 +90,9 @@ public class WaveConfigService : IWaveConfigService
         return waveSet;
     }
 
-    private static WaveSetConfig ParseWaveSetFromJson(Godot.Collections.Dictionary jsonData)
+    private static WaveSetConfigurationInternal ParseWaveSetFromJson(Godot.Collections.Dictionary jsonData)
     {
-        var waveSet = new WaveSetConfig();
+        var waveSet = new WaveSetConfigurationInternal();
         waveSet.SetName = jsonData.GetValueOrDefault("setName", "Unknown Wave Set").AsString();
         waveSet.Description = jsonData.GetValueOrDefault("description", "").AsString();
 
@@ -110,9 +110,9 @@ public class WaveConfigService : IWaveConfigService
         return waveSet;
     }
 
-    private static WaveConfig ParseWaveFromJson(Godot.Collections.Dictionary waveData)
+    private static WaveConfigurationInternal ParseWaveFromJson(Godot.Collections.Dictionary waveData)
     {
-        var wave = new WaveConfig();
+        var wave = new WaveConfigurationInternal();
         wave.WaveNumber = waveData.GetValueOrDefault("waveNumber", 1).AsInt32();
         wave.WaveName = waveData.GetValueOrDefault("waveName", "Wave").AsString();
         wave.Description = waveData.GetValueOrDefault("description", "").AsString();
@@ -147,7 +147,7 @@ public class WaveConfigService : IWaveConfigService
         return group;
     }
 
-    private WaveConfiguration ConvertToWaveConfiguration(WaveSetConfig waveSetConfig)
+    private WaveConfiguration ConvertToWaveConfiguration(WaveSetConfigurationInternal waveSetConfig)
     {
         var serializedData = JsonSerializer.Serialize(waveSetConfig);
         return new WaveConfiguration(

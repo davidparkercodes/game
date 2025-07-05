@@ -1,5 +1,5 @@
 using Godot;
-using Game.Infrastructure.DI;
+using Game.Di;
 
 namespace Game.Presentation.Buildings;
 
@@ -19,7 +19,7 @@ public partial class Building : StaticBody2D
 
 	public override void _Ready()
 	{
-		_fireTimer = GetNode<Timer>("Timer");
+		_fireTimer = GetNode<Godot.Timer>("Timer");
 		_rangeArea = GetNode<Area2D>("Area2D");
 		_rangeCollision = _rangeArea.GetNode<CollisionShape2D>("CollisionShape2D");
 		

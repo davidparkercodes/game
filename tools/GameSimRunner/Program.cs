@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Game.Application.Simulation.ValueObjects;
 using Game.Application.Shared.Services;
-using Game.Infrastructure.DI;
+using Game.Di;
 using Spectre.Console;
 
 #nullable enable
@@ -74,10 +74,10 @@ public class Program
         AnsiConsole.WriteLine();
 
         // Initialize DI container and perform startup validation
-        var serviceLocator = new ServiceLocator();
-        SimpleServiceConfiguration.RegisterServices(serviceLocator);
+        var diContainer = new DiContainer();
+        SimpleServiceConfiguration.RegisterServices(diContainer);
         
-        var validationService = serviceLocator.Resolve<StartupValidationService>();
+        var validationService = diContainer.Resolve<StartupValidationService>();
         if (validationService != null)
         {
             bool isValid = validationService.ValidateOnStartup();

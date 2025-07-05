@@ -1,6 +1,6 @@
 using System;
 using Game.Application.Shared.Services;
-using Game.Infrastructure.DI;
+using Game.Di;
 
 namespace GameSimRunner;
 
@@ -10,10 +10,10 @@ public static class TestDebugCommands
     {
         Console.WriteLine("=== Debug Commands Test ===");
         
-        var serviceLocator = new ServiceLocator();
-        SimpleServiceConfiguration.RegisterServices(serviceLocator);
+        var diContainer = new DiContainer();
+        SimpleServiceConfiguration.RegisterServices(diContainer);
         
-        var debugCommands = serviceLocator.Resolve<DebugCommands>();
+        var debugCommands = diContainer.Resolve<DebugCommands>();
         
         if (debugCommands != null)
         {
@@ -36,7 +36,7 @@ public static class TestDebugCommands
         }
         else
         {
-            Console.WriteLine("❌ Failed to resolve DebugCommands from service locator");
+            Console.WriteLine("❌ Failed to resolve DebugCommands from DI container");
         }
         
         Console.WriteLine("=== Debug Commands Test Complete ===");

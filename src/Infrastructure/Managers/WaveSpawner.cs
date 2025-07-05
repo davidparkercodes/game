@@ -1,4 +1,6 @@
+using System;
 using Godot;
+using Game.Infrastructure.Waves;
 
 namespace Game.Infrastructure.Managers;
 
@@ -12,7 +14,7 @@ public class WaveSpawner
     public int TotalEnemiesInWave { get; private set; } = 0;
 
     private Godot.Timer _spawnTimer;
-    private WaveConfig _currentWaveConfig;
+    private WaveConfigurationInternal _currentWaveConfiguration;
 
     static WaveSpawner()
     {
@@ -21,24 +23,24 @@ public class WaveSpawner
 
     public void Initialize()
     {
-        _spawnTimer = new Timer();
+        _spawnTimer = new Godot.Timer();
         _spawnTimer.OneShot = true;
         _spawnTimer.Timeout += OnSpawnTimer;
     }
 
-    public void StartWave(WaveConfig waveConfig)
+    public void StartWave(int waveNumber)
     {
-        if (waveConfig == null)
+        if (waveNumber <= 0)
         {
-            GD.PrintErr("Cannot start wave: WaveConfig is null");
+            GD.PrintErr($"Cannot start wave: Invalid wave number {waveNumber}");
             return;
         }
 
-        _currentWaveConfig = waveConfig;
-        CurrentWave = waveConfig.WaveNumber;
+        _currentWaveConfiguration = CreateWaveConfiguration(waveNumber);
+        CurrentWave = waveNumber;
         IsSpawning = true;
         EnemiesSpawned = 0;
-        TotalEnemiesInWave = CalculateTotalEnemies(waveConfig);
+        TotalEnemiesInWave = CalculateTotalEnemies(_currentWaveConfiguration);
 
         GD.Print($"Starting wave {CurrentWave} with {TotalEnemiesInWave} enemies");
 
@@ -61,7 +63,7 @@ public class WaveSpawner
 
     public void ResumeWave()
     {
-        if (IsSpawning && _currentWaveConfig != null)
+        if (IsSpawning && _currentWaveConfiguration != null)
         {
             SpawnNextGroup();
             GD.Print($"Wave {CurrentWave} resumed");
@@ -70,11 +72,11 @@ public class WaveSpawner
 
     private void SpawnNextGroup()
     {
-        if (!IsSpawning || _currentWaveConfig == null)
+        if (!IsSpawning || _currentWaveConfiguration == null)
             return;
 
         // Find the next group to spawn
-        foreach (var group in _currentWaveConfig.EnemyGroups)
+        foreach (var group in _currentWaveConfiguration.EnemyGroups)
         {
             if (group.Count > 0)
             {
@@ -130,16 +132,16 @@ public class WaveSpawner
         GD.Print($"Wave {CurrentWave} completed! Spawned {EnemiesSpawned} enemies");
 
         // Award wave completion bonus
-        if (_currentWaveConfig != null)
+        if (_currentWaveConfiguration != null)
         {
-            GameManager.Instance?.AddMoney(_currentWaveConfig.BonusMoney);
+            GameManager.Instance?.AddMoney(_currentWaveConfiguration.BonusMoney);
         }
     }
 
-    private int CalculateTotalEnemies(WaveConfig waveConfig)
+    private int CalculateTotalEnemies(WaveConfigurationInternal waveConfiguration)
     {
         int total = 0;
-        foreach (var group in waveConfig.EnemyGroups)
+        foreach (var group in waveConfiguration.EnemyGroups)
         {
             total += group.Count;
         }
@@ -148,10 +150,10 @@ public class WaveSpawner
 
     private bool HasMoreEnemies()
     {
-        if (_currentWaveConfig == null)
+        if (_currentWaveConfiguration == null)
             return false;
 
-        foreach (var group in _currentWaveConfig.EnemyGroups)
+        foreach (var group in _currentWaveConfiguration.EnemyGroups)
         {
             if (group.Count > 0)
                 return true;
@@ -173,7 +175,7 @@ public class WaveSpawner
         CurrentWave = 0;
         EnemiesSpawned = 0;
         TotalEnemiesInWave = 0;
-        _currentWaveConfig = null;
+        _currentWaveConfiguration = null;
     }
 
     public int GetTotalWaves()
@@ -183,4 +185,28 @@ public class WaveSpawner
     }
 
     public int CurrentWaveIndex => CurrentWave;
+
+    private WaveConfigurationInternal CreateWaveConfiguration(int waveNumber)
+    {
+        var waveConfiguration = new WaveConfigurationInternal
+        {
+            WaveNumber = waveNumber,
+            WaveName = $"Wave {waveNumber}",
+            Description = $"Standard wave {waveNumber} with {5 + waveNumber * 2} enemies",
+            BonusMoney = 25 + (waveNumber * 5)
+        };
+
+        var enemyGroup = new EnemySpawnGroup
+        {
+            EnemyType = "Basic",
+            Count = 5 + (waveNumber * 2),
+            SpawnInterval = Math.Max(0.5f, 2.0f - (waveNumber * 0.1f)),
+            HealthMultiplier = 1.0f + (waveNumber * 0.15f),
+            SpeedMultiplier = 1.0f + (waveNumber * 0.05f),
+            MoneyReward = 10 + (waveNumber * 2)
+        };
+
+        waveConfiguration.EnemyGroups.Add(enemyGroup);
+        return waveConfiguration;
+    }
 }
