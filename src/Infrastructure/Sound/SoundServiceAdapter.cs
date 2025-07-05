@@ -1,7 +1,7 @@
 using Godot;
 using Game.Domain.Audio.Services;
 using Game.Domain.Shared.ValueObjects;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Audio.Services;
 using Game.Domain.Audio.Enums;
 using Game.Domain.Audio.ValueObjects;
 
@@ -9,23 +9,23 @@ namespace Game.Infrastructure.Sound;
 
 public class SoundServiceAdapter : ISoundService
 {
-    private readonly SoundManager _soundManager;
+    private readonly SoundManagerService _soundManagerService;
 
-    public SoundServiceAdapter(SoundManager soundManager)
+    public SoundServiceAdapter(SoundManagerService soundManagerService)
     {
-        _soundManager = soundManager ?? throw new System.ArgumentNullException(nameof(soundManager));
+        _soundManagerService = soundManagerService ?? throw new System.ArgumentNullException(nameof(soundManagerService));
     }
 
     public void PlaySound(string soundKey, SoundCategory category = SoundCategory.SFX, float volumeDb = 0.0f)
     {
-        _soundManager.PlaySound(soundKey, category, volumeDb);
+        _soundManagerService.PlaySound(soundKey, category, volumeDb);
     }
 
     public void PlaySoundAtPosition(string soundKey, Position position, Position listenerPosition, float maxDistance = 500.0f)
     {
         var godotPosition = new Vector2(position.X, position.Y);
         var godotListener = new Vector2(listenerPosition.X, listenerPosition.Y);
-        _soundManager.PlaySoundAtPosition(soundKey, godotPosition, godotListener, maxDistance);
+        _soundManagerService.PlaySoundAtPosition(soundKey, godotPosition, godotListener, maxDistance);
     }
 
     public void PlaySound(SoundRequest request)
@@ -42,21 +42,21 @@ public class SoundServiceAdapter : ISoundService
 
     public void SetMasterVolume(float volume)
     {
-        _soundManager.SetMasterVolume(volume);
+        _soundManagerService.SetMasterVolume(volume);
     }
 
     public void SetCategoryVolume(SoundCategory category, float volume)
     {
-        _soundManager.SetCategoryVolume(category, volume);
+        _soundManagerService.SetCategoryVolume(category, volume);
     }
 
     public void StopAllSounds()
     {
-        _soundManager.StopAllSounds();
+        _soundManagerService.StopAllSounds();
     }
 
     public void StopMusic()
     {
-        _soundManager.StopMusic();
+        _soundManagerService.StopMusic();
     }
 }

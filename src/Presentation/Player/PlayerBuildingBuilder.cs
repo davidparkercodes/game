@@ -1,7 +1,7 @@
 using Godot;
 using Game.Presentation.Buildings;
 using Game.Presentation.Systems;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Validators;
 
 namespace Game.Presentation.Player;
@@ -108,16 +108,16 @@ public class PlayerBuildingBuilder
 			return;
 		}
 
-		if (GameManager.Instance == null)
+		if (GameService.Instance == null)
 		{
-			GD.PrintErr("❌ GameManager not available!");
+			GD.PrintErr("❌ GameService not available!");
 			return;
 		}
 		
 		int cost = _currentPreview.GetBuildingCost();
-		if (!GameManager.Instance.SpendMoney(cost))
+		if (!GameService.Instance.SpendMoney(cost))
 		{
-			GD.Print($"💰 Not enough money! Need ${cost}, but have ${GameManager.Instance.Money}");
+			GD.Print($"💰 Not enough money! Need ${cost}, but have ${GameService.Instance.Money}");
 			_currentPreview.FlashRed();
 			return;
 		}

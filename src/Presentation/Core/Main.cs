@@ -1,6 +1,6 @@
 using Godot;
 using Game.Di;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Audio.Services;
 using Game.Application.Shared.Cqrs;
 using Game.Infrastructure.Sound;
 using Game.Presentation.Systems;
@@ -41,8 +41,8 @@ public partial class Main : Node
 
 	private void InitializeInfrastructure()
 	{
-		// SoundManager is a singleton, just ensure it's initialized
-		var soundManager = SoundManager.Instance;
+		// SoundManagerService is a singleton, just ensure it's initialized
+		var soundManagerService = SoundManagerService.Instance;
 		
 		GD.Print("🔊 Sound infrastructure initialized");
 	}

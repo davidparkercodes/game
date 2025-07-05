@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Game.Commands;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Game.Services;
 
 namespace Game.Application.Game.Handlers;
 
@@ -20,7 +20,7 @@ public class SpendMoneyCommandHandler : ICommandHandler<SpendMoneyCommand, Spend
         if (currentMoney < command.Amount)
             return Task.FromResult(SpendMoneyResult.Failed($"Insufficient funds. Need: {command.Amount}, Have: {currentMoney}", currentMoney));
 
-        var success = GameManager.Instance?.SpendMoney(command.Amount) ?? false;
+        var success = GameService.Instance?.SpendMoney(command.Amount) ?? false;
         if (!success)
             return Task.FromResult(SpendMoneyResult.Failed("Failed to spend money", currentMoney));
 
@@ -30,6 +30,6 @@ public class SpendMoneyCommandHandler : ICommandHandler<SpendMoneyCommand, Spend
 
     private int GetCurrentMoney()
     {
-        return GameManager.Instance?.Money ?? 0;
+        return GameService.Instance?.Money ?? 0;
     }
 }

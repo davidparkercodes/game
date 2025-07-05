@@ -1,5 +1,5 @@
 using Godot;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Rounds.Services;
 
 namespace Game.Presentation.UI;
 
@@ -59,7 +59,7 @@ public partial class Hud : CanvasLayer
 
 	public void UpdateMoney(int amount) { if (MoneyLabel != null) MoneyLabel.Text = $"Money: ${amount}"; }
 	public void UpdateLives(int lives) { if (LivesLabel != null) LivesLabel.Text = $"Lives: {lives}"; }
-	public void UpdateWave(int wave) { if (WaveLabel != null) WaveLabel.Text = $"Wave: {wave}/{RoundManager.Instance?.TotalRounds ?? 5}"; }
+	public void UpdateWave(int wave) { if (WaveLabel != null) WaveLabel.Text = $"Wave: {wave}/{RoundService.Instance?.TotalRounds ?? 5}"; }
 	
 	public void ShowTowerStats(string towerName, int cost, int damage, float range, float fireRate)
 	{
@@ -126,9 +126,9 @@ public partial class Hud : CanvasLayer
 	
 	private void OnSkipButtonPressed()
 	{
-		if (RoundManager.Instance != null)
+		if (RoundService.Instance != null)
 		{
-			RoundManager.Instance.ForceStartDefendPhase();
+			RoundService.Instance.ForceStartDefendPhase();
 		}
 	}
 }

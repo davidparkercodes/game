@@ -1,20 +1,20 @@
 using Godot;
 
-namespace Game.Infrastructure.Managers;
+namespace Game.Infrastructure.Game.Services;
 
-public class GameManager
+public class GameService
 {
-    public static GameManager Instance { get; private set; }
+    public static GameService Instance { get; private set; }
 
     public int Money { get; private set; } = 500;
     public int Lives { get; private set; } = 20;
     public int Score { get; private set; } = 0;
     public bool IsGameActive { get; private set; } = false;
-    public object Hud { get; set; } // TODO: Replace with proper Hud type
+    public object Hud { get; set; }
 
-    static GameManager()
+    static GameService()
     {
-        Instance = new GameManager();
+        Instance = new GameService();
     }
 
     public void StartGame()
@@ -82,7 +82,6 @@ public class GameManager
 
     public bool IsGameWon()
     {
-        // TODO: Define win conditions
         return false;
     }
 }

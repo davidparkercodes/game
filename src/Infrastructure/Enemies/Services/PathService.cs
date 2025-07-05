@@ -1,31 +1,28 @@
 using Godot;
 
-namespace Game.Infrastructure.Managers;
+namespace Game.Infrastructure.Enemies.Services;
 
-public class PathManager
+public class PathService
 {
-    public static PathManager Instance { get; private set; }
+    public static PathService Instance { get; private set; }
 
-    static PathManager()
+    static PathService()
     {
-        Instance = new PathManager();
+        Instance = new PathService();
     }
 
     public Vector2 GetSpawnPosition()
     {
-        // TODO: Implement proper spawn position logic
         return new Vector2(100, -50);
     }
 
     public Vector2 GetEndPosition()
     {
-        // TODO: Implement proper end position logic
         return new Vector2(300, 750);
     }
 
     public Vector2[] GetPathPoints()
     {
-        // TODO: Implement proper path points logic
         return new Vector2[]
         {
             new Vector2(100, -50),

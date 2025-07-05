@@ -1,6 +1,7 @@
 using Godot;
+using Game.Infrastructure.Game.Services;
 
-namespace Game.Infrastructure.Managers;
+namespace Game.Infrastructure.Rounds.Services;
 
 public enum RoundPhase
 {
@@ -11,9 +12,9 @@ public enum RoundPhase
     Paused
 }
 
-public class RoundManager
+public class RoundService
 {
-    public static RoundManager Instance { get; private set; }
+    public static RoundService Instance { get; private set; }
 
     public int CurrentRound { get; private set; } = 1;
     public RoundPhase CurrentPhase { get; private set; } = RoundPhase.Preparation;
@@ -21,9 +22,9 @@ public class RoundManager
     public int TotalEnemies { get; private set; } = 0;
     public float TimeRemaining { get; private set; } = 0f;
 
-    static RoundManager()
+    static RoundService()
     {
-        Instance = new RoundManager();
+        Instance = new RoundService();
     }
 
     public void StartRound(int roundNumber)
@@ -42,9 +43,8 @@ public class RoundManager
         CurrentPhase = RoundPhase.Complete;
         GD.Print($"Round {CurrentRound} completed!");
         
-        // Award completion bonus
         int bonus = CurrentRound * 25;
-        GameManager.Instance?.AddMoney(bonus);
+        GameService.Instance?.AddMoney(bonus);
     }
 
     public void PauseRound()
@@ -61,7 +61,6 @@ public class RoundManager
 
     public void OnEnemySpawned()
     {
-        // Enemy spawned, no change to remaining count yet
         GD.Print($"Enemy spawned. {EnemiesRemaining} remaining in round {CurrentRound}");
     }
 
@@ -84,7 +83,6 @@ public class RoundManager
             if (TimeRemaining <= 0)
             {
                 TimeRemaining = 0;
-                // Could trigger time-based events here
             }
         }
     }
@@ -100,12 +98,12 @@ public class RoundManager
 
     private int CalculateEnemiesForRound(int roundNumber)
     {
-        return 5 + (roundNumber * 3); // Base 5 enemies + 3 per round
+        return 5 + (roundNumber * 3);
     }
 
     private float CalculateTimeForRound(int roundNumber)
     {
-        return 60f + (roundNumber * 10f); // Base 60 seconds + 10 per round
+        return 60f + (roundNumber * 10f);
     }
 
     public bool IsRoundActive()

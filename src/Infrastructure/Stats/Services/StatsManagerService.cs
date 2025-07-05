@@ -1,15 +1,15 @@
 using Game.Domain.Enemies.ValueObjects;
 using Game.Domain.Buildings.ValueObjects;
 
-namespace Game.Infrastructure.Managers;
+namespace Game.Infrastructure.Stats.Services;
 
-public class StatsManager
+public class StatsManagerService
 {
-    public static StatsManager Instance { get; private set; }
+    public static StatsManagerService Instance { get; private set; }
 
-    static StatsManager()
+    static StatsManagerService()
     {
-        Instance = new StatsManager();
+        Instance = new StatsManagerService();
     }
 
     public EnemyStatsData GetEnemyStats(string enemyType)
@@ -56,6 +56,5 @@ public class StatsManager
 
     public void ReloadConfigurations()
     {
-        // TODO: Implement configuration reloading
     }
 }

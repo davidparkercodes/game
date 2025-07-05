@@ -5,7 +5,8 @@ using Game.Domain.Enemies.Services;
 using Game.Infrastructure.Stats;
 using Game.Infrastructure.Sound;
 using Game.Infrastructure.Buildings;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Stats.Services;
+using Game.Infrastructure.Audio.Services;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Buildings.Commands;
 using Game.Application.Buildings.Handlers;
@@ -92,18 +93,18 @@ public static class DiConfiguration
         if (diContainer == null)
             throw new System.ArgumentNullException(nameof(diContainer));
 
-        var statsManager = StatsManager.Instance;
-        if (statsManager != null)
+        var statsManagerService = StatsManagerService.Instance;
+        if (statsManagerService != null)
         {
-            var statsAdapter = new StatsServiceAdapter(statsManager);
+            var statsAdapter = new StatsServiceAdapter(statsManagerService);
             diContainer.RegisterSingleton<IBuildingStatsProvider>(statsAdapter);
             diContainer.RegisterSingleton<IEnemyStatsProvider>(statsAdapter);
         }
 
-        var soundManager = SoundManager.Instance;
-        if (soundManager != null)
+        var soundManagerService = SoundManagerService.Instance;
+        if (soundManagerService != null)
         {
-            diContainer.RegisterSingleton<ISoundService>(new SoundServiceAdapter(soundManager));
+            diContainer.RegisterSingleton<ISoundService>(new SoundServiceAdapter(soundManagerService));
         }
     }
 }

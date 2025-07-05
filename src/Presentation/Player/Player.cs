@@ -1,6 +1,5 @@
 using Godot;
 using Game.Presentation.Buildings;
-using Game.Infrastructure.Managers;
 
 namespace Game.Presentation.Player;
 

@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Rounds.Commands;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Rounds.Services;
 
 namespace Game.Application.Rounds.Handlers;
 
@@ -13,27 +13,27 @@ public class StartRoundCommandHandler : ICommandHandler<StartRoundCommand, Start
         if (command == null)
             return Task.FromResult(StartRoundResult.Failed("Command cannot be null"));
 
-        var roundManager = RoundManager.Instance;
-        if (roundManager == null)
-            return Task.FromResult(StartRoundResult.Failed("RoundManager is not available"));
+        var roundService = RoundService.Instance;
+        if (roundService == null)
+            return Task.FromResult(StartRoundResult.Failed("RoundService is not available"));
 
-        if (command.ForceStart && roundManager.CurrentPhase == RoundPhase.Build)
+        if (command.ForceStart && roundService.CurrentPhase == RoundPhase.Build)
         {
-            roundManager.ForceStartDefendPhase();
-            return Task.FromResult(StartRoundResult.Successful(roundManager.CurrentRound, "Defend"));
+            roundService.ForceStartDefendPhase();
+            return Task.FromResult(StartRoundResult.Successful(roundService.CurrentRound, "Defend"));
         }
 
-        if (command.RoundNumber > 0 && command.RoundNumber != roundManager.CurrentRound)
+        if (command.RoundNumber > 0 && command.RoundNumber != roundService.CurrentRound)
         {
-            return Task.FromResult(StartRoundResult.Failed($"Cannot start round {command.RoundNumber}. Current round is {roundManager.CurrentRound}"));
+            return Task.FromResult(StartRoundResult.Failed($"Cannot start round {command.RoundNumber}. Current round is {roundService.CurrentRound}"));
         }
 
-        if (roundManager.IsRoundActive())
+        if (roundService.IsRoundActive())
         {
-            return Task.FromResult(StartRoundResult.Failed($"Round {roundManager.CurrentRound} is already active"));
+            return Task.FromResult(StartRoundResult.Failed($"Round {roundService.CurrentRound} is already active"));
         }
 
-        roundManager.StartRound(command.RoundNumber > 0 ? command.RoundNumber : roundManager.CurrentRound);
-        return Task.FromResult(StartRoundResult.Successful(roundManager.CurrentRound, roundManager.CurrentPhase.ToString()));
+        roundService.StartRound(command.RoundNumber > 0 ? command.RoundNumber : roundService.CurrentRound);
+        return Task.FromResult(StartRoundResult.Successful(roundService.CurrentRound, roundService.CurrentPhase.ToString()));
     }
 }

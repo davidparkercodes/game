@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Game.Application.Shared.Cqrs;
 using Game.Application.Waves.Commands;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Enemies.Services;
 
 namespace Game.Application.Waves.Handlers;
 
@@ -16,21 +16,21 @@ public class StartWaveCommandHandler : ICommandHandler<StartWaveCommand, StartWa
         if (command.WaveIndex < 0)
             return Task.FromResult(StartWaveResult.Failed("Wave index cannot be negative"));
 
-        var waveSpawner = WaveSpawner.Instance;
-        if (waveSpawner == null)
-            return Task.FromResult(StartWaveResult.Failed("WaveSpawner is not available"));
+        var waveSpawnerService = WaveSpawnerService.Instance;
+        if (waveSpawnerService == null)
+            return Task.FromResult(StartWaveResult.Failed("WaveSpawnerService is not available"));
 
-        if (command.WaveIndex >= waveSpawner.GetTotalWaves())
-            return Task.FromResult(StartWaveResult.Failed($"Wave index {command.WaveIndex} is out of range. Total waves: {waveSpawner.GetTotalWaves()}"));
+        if (command.WaveIndex >= waveSpawnerService.GetTotalWaves())
+            return Task.FromResult(StartWaveResult.Failed($"Wave index {command.WaveIndex} is out of range. Total waves: {waveSpawnerService.GetTotalWaves()}"));
 
-        if (waveSpawner.IsSpawning)
-            return Task.FromResult(StartWaveResult.Failed($"Wave {waveSpawner.CurrentWaveIndex} is already active"));
+        if (waveSpawnerService.IsSpawning)
+            return Task.FromResult(StartWaveResult.Failed($"Wave {waveSpawnerService.CurrentWaveIndex} is already active"));
 
         try
         {
-            waveSpawner.StartWave(command.WaveIndex + 1);
+            waveSpawnerService.StartWave(command.WaveIndex + 1);
             var waveName = $"Wave {command.WaveIndex + 1}";
-            var totalEnemies = waveSpawner.TotalEnemiesInWave;
+            var totalEnemies = waveSpawnerService.TotalEnemiesInWave;
 
             return Task.FromResult(StartWaveResult.Successful(command.WaveIndex, totalEnemies, waveName));
         }

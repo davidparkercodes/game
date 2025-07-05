@@ -1,7 +1,8 @@
 using Godot;
 using Game.Di;
 using Game.Domain.Enemies.ValueObjects;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Stats.Services;
+using Game.Infrastructure.Game.Services;
 
 namespace Game.Presentation.Enemies;
 
@@ -35,14 +36,14 @@ public partial class Enemy : Area2D
 	
 	private void LoadStatsFromConfig()
 	{
-		if (StatsManager.Instance != null)
+		if (StatsManagerService.Instance != null)
 		{
-			_stats = StatsManager.Instance.GetEnemyStats(EnemyType);
+			_stats = StatsManagerService.Instance.GetEnemyStats(EnemyType);
 		}
 		else
 		{
 			_stats = new EnemyStatsData();
-			GD.PrintErr($"⚠️ StatsManager not available, using default stats for enemy {Name}");
+			GD.PrintErr($"⚠️ StatsManagerService not available, using default stats for enemy {Name}");
 		}
 		
 		MaxHealth = _stats.max_health;
@@ -81,9 +82,9 @@ public partial class Enemy : Area2D
 		
 		EmitSignal(SignalName.EnemyReachedEnd);
 		
-		if (GameManager.Instance != null)
+		if (GameService.Instance != null)
 		{
-			GameManager.Instance.OnEnemyReachedEnd();
+			GameService.Instance.OnEnemyReachedEnd();
 		}
 		
 		QueueFree();

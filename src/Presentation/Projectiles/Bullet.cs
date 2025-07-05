@@ -1,5 +1,5 @@
 using Godot;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Audio.Services;
 using Game.Presentation.Enemies;
 
 namespace Game.Presentation.Projectiles;
@@ -44,9 +44,9 @@ public partial class Bullet : Area2D
 				enemy.TakeDamage(Damage);
 			}
 
-			if (SoundManager.Instance != null)
+			if (SoundManagerService.Instance != null)
 			{
-				SoundManager.Instance.PlaySound(_impactSoundKey);
+				SoundManagerService.Instance.PlaySound(_impactSoundKey);
 			}
 
 			QueueFree();

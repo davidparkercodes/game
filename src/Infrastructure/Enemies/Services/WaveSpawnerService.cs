@@ -1,12 +1,14 @@
 using System;
 using Godot;
 using Game.Infrastructure.Waves;
+using Game.Infrastructure.Game.Services;
+using Game.Infrastructure.Rounds.Services;
 
-namespace Game.Infrastructure.Managers;
+namespace Game.Infrastructure.Enemies.Services;
 
-public class WaveSpawner
+public class WaveSpawnerService
 {
-    public static WaveSpawner Instance { get; private set; }
+    public static WaveSpawnerService Instance { get; private set; }
 
     public bool IsSpawning { get; private set; } = false;
     public int CurrentWave { get; private set; } = 0;
@@ -16,9 +18,9 @@ public class WaveSpawner
     private Godot.Timer _spawnTimer;
     private WaveConfigurationInternal _currentWaveConfiguration;
 
-    static WaveSpawner()
+    static WaveSpawnerService()
     {
-        Instance = new WaveSpawner();
+        Instance = new WaveSpawnerService();
     }
 
     public void Initialize()
@@ -44,7 +46,6 @@ public class WaveSpawner
 
         GD.Print($"Starting wave {CurrentWave} with {TotalEnemiesInWave} enemies");
 
-        // Start spawning the first group
         SpawnNextGroup();
     }
 
@@ -75,7 +76,6 @@ public class WaveSpawner
         if (!IsSpawning || _currentWaveConfiguration == null)
             return;
 
-        // Find the next group to spawn
         foreach (var group in _currentWaveConfiguration.EnemyGroups)
         {
             if (group.Count > 0)
@@ -85,7 +85,6 @@ public class WaveSpawner
             }
         }
 
-        // No more groups to spawn
         CompleteWave();
     }
 
@@ -94,12 +93,10 @@ public class WaveSpawner
         if (group.Count <= 0)
             return;
 
-        // Spawn one enemy from this group
         SpawnEnemy(group.EnemyType);
         group.Count--;
         EnemiesSpawned++;
 
-        // Schedule next spawn
         if (IsSpawning && HasMoreEnemies())
         {
             _spawnTimer.WaitTime = group.SpawnInterval;
@@ -113,12 +110,10 @@ public class WaveSpawner
 
     private void SpawnEnemy(string enemyType)
     {
-        // TODO: Implement actual enemy spawning
-        var spawnPosition = PathManager.Instance?.GetSpawnPosition() ?? Vector2.Zero;
+        var spawnPosition = PathService.Instance?.GetSpawnPosition() ?? Vector2.Zero;
         GD.Print($"Spawning {enemyType} at {spawnPosition}");
 
-        // Notify round manager
-        RoundManager.Instance?.OnEnemySpawned();
+        RoundService.Instance?.OnEnemySpawned();
     }
 
     private void OnSpawnTimer()
@@ -131,10 +126,9 @@ public class WaveSpawner
         IsSpawning = false;
         GD.Print($"Wave {CurrentWave} completed! Spawned {EnemiesSpawned} enemies");
 
-        // Award wave completion bonus
         if (_currentWaveConfiguration != null)
         {
-            GameManager.Instance?.AddMoney(_currentWaveConfiguration.BonusMoney);
+            GameService.Instance?.AddMoney(_currentWaveConfiguration.BonusMoney);
         }
     }
 
@@ -180,7 +174,6 @@ public class WaveSpawner
 
     public int GetTotalWaves()
     {
-        // TODO: Get this from configuration
         return 10;
     }
 

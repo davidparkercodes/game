@@ -3,7 +3,7 @@ using Game.Application.Shared.Cqrs;
 using Game.Application.Game.Commands;
 using Game.Application.Game.Queries;
 using Game.Application.Rounds.Commands;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Game.Services;
 using Game.Di;
 using static Game.Di.DiConfiguration;
 
@@ -61,6 +61,6 @@ public class GameApplicationService
 
     private int GetCurrentMoney()
     {
-        return GameManager.Instance?.Money ?? 0;
+        return GameService.Instance?.Money ?? 0;
     }
 }

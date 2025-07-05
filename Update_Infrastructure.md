@@ -62,14 +62,15 @@ src/Infrastructure/
 - **Remaining references**: Only in old files within the directory itself and documentation
 - **Action needed**: Remove `src/Infrastructure/DI/` directory completely
 
-### Phase 2: Feature-Centric Manager Reorganization
-- [ ] Move `src/Infrastructure/Managers/GameManager.cs` → `src/Infrastructure/Game/Services/GameService.cs`
-- [ ] Move `src/Infrastructure/Managers/RoundManager.cs` → `src/Infrastructure/Rounds/Services/RoundService.cs`
-- [ ] Move `src/Infrastructure/Managers/SoundManager.cs` → `src/Infrastructure/Audio/Services/SoundManagerService.cs`
-- [ ] Move `src/Infrastructure/Managers/StatsManager.cs` → `src/Infrastructure/Stats/Services/StatsManagerService.cs`
-- [ ] Move `src/Infrastructure/Managers/PathManager.cs` → `src/Infrastructure/Enemies/Services/PathService.cs`
-- [ ] Move `src/Infrastructure/Managers/WaveSpawner.cs` → `src/Infrastructure/Enemies/Services/WaveSpawnerService.cs`
-- [ ] Delete empty `src/Infrastructure/Managers/` directory
+### Phase 2: Feature-Centric Manager Reorganization ✅ COMPLETE
+- [x] Move `src/Infrastructure/Managers/GameManager.cs` → `src/Infrastructure/Game/Services/GameService.cs`
+- [x] Move `src/Infrastructure/Managers/RoundManager.cs` → `src/Infrastructure/Rounds/Services/RoundService.cs`
+- [x] Move `src/Infrastructure/Managers/SoundManager.cs` → `src/Infrastructure/Audio/Services/SoundManagerService.cs`
+- [x] Move `src/Infrastructure/Managers/StatsManager.cs` → `src/Infrastructure/Stats/Services/StatsManagerService.cs`
+- [x] Move `src/Infrastructure/Managers/PathManager.cs` → `src/Infrastructure/Enemies/Services/PathService.cs`
+- [x] Move `src/Infrastructure/Managers/WaveSpawner.cs` → `src/Infrastructure/Enemies/Services/WaveSpawnerService.cs`
+- [x] Delete empty `src/Infrastructure/Managers/` directory
+- [x] Update all references to use new service names and namespaces throughout the codebase
 
 ### Phase 3: Building Infrastructure Organization
 - [ ] Move `src/Infrastructure/Buildings/BuildingZoneService.cs` → `src/Infrastructure/Buildings/Services/BuildingZoneService.cs`

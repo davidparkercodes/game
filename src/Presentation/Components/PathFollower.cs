@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using Game.Infrastructure.Managers;
+using Game.Infrastructure.Enemies.Services;
 namespace Game.Presentation.Components;
 
 public partial class PathFollower : Node
@@ -14,7 +14,7 @@ public partial class PathFollower : Node
 	private Node2D _body;
 	private float _pathProgress = 0.0f;
 	private bool _isFollowingPath = false;
-	private PathManager _pathManager;
+	private PathService _pathService;
 
 	public float PathProgress 
 	{ 
@@ -27,7 +27,7 @@ public partial class PathFollower : Node
 	public override void _Ready()
 	{
 		_body = GetParent<Node2D>();
-		_pathManager = PathManager.Instance;
+		_pathService = PathService.Instance;
 		
 		if (_body == null)
 		{
@@ -35,9 +35,9 @@ public partial class PathFollower : Node
 			return;
 		}
 
-		if (_pathManager == null)
+		if (_pathService == null)
 		{
-			GD.PrintErr("❌ PathManager instance not found");
+			GD.PrintErr("❌ PathService instance not found");
 			return;
 		}
 
@@ -51,10 +51,10 @@ public partial class PathFollower : Node
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (!_isFollowingPath || _pathManager == null || _body == null)
+		if (!_isFollowingPath || _pathService == null || _body == null)
 			return;
 
-		float pathLength = _pathManager.GetPathLength();
+		float pathLength = _pathService.GetPathLength();
 		if (pathLength <= 0) return;
 
 		float distanceToMove = Speed * (float)delta;
@@ -67,15 +67,15 @@ public partial class PathFollower : Node
 			_pathProgress = 1.0f;
 			_isFollowingPath = false;
 			
-			_body.GlobalPosition = _pathManager.GetPathPosition(_pathProgress);
+			_body.GlobalPosition = _pathService.GetPathPosition(_pathProgress);
 			
 			EmitSignal(SignalName.PathCompleted);
 			GD.Print("🏁 Path completed");
 			return;
 		}
 		
-		Vector2 targetPosition = _pathManager.GetPathPosition(_pathProgress);
-		Vector2 direction = _pathManager.GetPathDirection(_pathProgress);
+		Vector2 targetPosition = _pathService.GetPathPosition(_pathProgress);
+		Vector2 direction = _pathService.GetPathDirection(_pathProgress);
 		
 		_body.GlobalPosition = targetPosition;
 		
@@ -84,9 +84,9 @@ public partial class PathFollower : Node
 
 	public void StartFollowingPath(float startProgress = 0.0f)
 	{
-		if (_pathManager == null)
+		if (_pathService == null)
 		{
-			GD.PrintErr("❌ Cannot start following path: PathManager not available");
+			GD.PrintErr("❌ Cannot start following path: PathService not available");
 			return;
 		}
 
@@ -95,7 +95,7 @@ public partial class PathFollower : Node
 		
 		if (_body != null)
 		{
-			_body.GlobalPosition = _pathManager.GetPathPosition(_pathProgress);
+			_body.GlobalPosition = _pathService.GetPathPosition(_pathProgress);
 		}
 		
 		GD.Print($"🚀 Started following path from progress: {_pathProgress:F2}");
@@ -114,19 +114,19 @@ public partial class PathFollower : Node
 
 	public Vector2 GetCurrentPathPosition()
 	{
-		return _pathManager?.GetPathPosition(_pathProgress) ?? Vector2.Zero;
+		return _pathService?.GetPathPosition(_pathProgress) ?? Vector2.Zero;
 	}
 
 	public Vector2 GetCurrentPathDirection()
 	{
-		return _pathManager?.GetPathDirection(_pathProgress) ?? Vector2.Down;
+		return _pathService?.GetPathDirection(_pathProgress) ?? Vector2.Down;
 	}
 
 	public float GetDistanceToEnd()
 	{
-		if (_pathManager == null) return 0.0f;
+		if (_pathService == null) return 0.0f;
 		
 		float remainingProgress = 1.0f - _pathProgress;
-		return remainingProgress * _pathManager.GetPathLength();
+		return remainingProgress * _pathService.GetPathLength();
 	}
 }
