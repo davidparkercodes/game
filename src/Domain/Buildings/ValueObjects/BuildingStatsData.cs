@@ -37,15 +37,9 @@ public readonly struct BuildingStatsData
         bullet_speed = bulletSpeed;
     }
 
-    public static BuildingStatsData CreateDefault() => new(
-        cost: 100,
-        damage: 25,
-        range: 150f,
-        attackSpeed: 1.0f,
-        upgradeCost: 50,
-        description: "Basic tower",
-        bulletSpeed: 300f
-    );
+    // NO HARDCODED VALUES! All data must come from config files.
+    // Use empty/zero defaults only.
+    public static BuildingStatsData Empty => new();
 
     public override string ToString()
     {

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using Game.Domain.Buildings.Services;
 using Game.Domain.Buildings.ValueObjects;
+using Game.Infrastructure.Configuration;
 
 namespace Game.Application.Simulation.Services;
 
@@ -14,9 +16,9 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
 
     public MockBuildingStatsProvider(string configPath = null)
     {
-        var actualConfigPath = configPath ?? DEFAULT_CONFIG_PATH;
-        _config = ConfigLoader.LoadBuildingStats(actualConfigPath);
-        _buildingStats = new Dictionary<string, BuildingStats>(_config.Buildings);
+        var actualConfigPath = FindConfigFile(configPath ?? DEFAULT_CONFIG_PATH);
+        _config = LoadBuildingStatsConfig(actualConfigPath);
+        _buildingStats = ConvertToBuildingStats(_config.building_types);
     }
 
     public BuildingStats GetBuildingStats(string buildingType)
@@ -69,5 +71,89 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
                 description: stats.Description
             );
         }
+    }
+
+    private static string FindConfigFile(string relativePath)
+    {
+        // First try the relative path as-is
+        if (File.Exists(relativePath))
+        {
+            return relativePath;
+        }
+        
+        // Try looking in common directories relative to current directory
+        var searchPaths = new[]
+        {
+            relativePath,
+            Path.Combine("..", relativePath),
+            Path.Combine("..", "..", relativePath),
+            Path.Combine("..", "..", "..", relativePath),
+            Path.Combine(Environment.CurrentDirectory, relativePath),
+        };
+        
+        foreach (var searchPath in searchPaths)
+        {
+            if (File.Exists(searchPath))
+            {
+                return searchPath;
+            }
+        }
+        
+        // Return the original path if nothing found (will fail with clear error)
+        return relativePath;
+    }
+
+    private static BuildingStatsConfig LoadBuildingStatsConfig(string configPath)
+    {
+        try
+        {
+            if (!File.Exists(configPath))
+            {
+                throw new FileNotFoundException($"Building stats config file not found: {configPath}");
+            }
+
+            var jsonContent = File.ReadAllText(configPath);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true
+            };
+            
+            return JsonSerializer.Deserialize<BuildingStatsConfig>(jsonContent, options) ?? new BuildingStatsConfig();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to load building stats from {configPath}: {ex.Message}", ex);
+        }
+    }
+
+    private static Dictionary<string, BuildingStats> ConvertToBuildingStats(Dictionary<string, BuildingStatsData> rawStats)
+    {
+        var result = new Dictionary<string, BuildingStats>();
+        
+        foreach (var kvp in rawStats)
+        {
+            var raw = kvp.Value;
+            
+            // Skip invalid entries (like default_stats with zero values)
+            if (raw.range <= 0 || raw.attack_speed <= 0)
+            {
+                continue;
+            }
+            
+            result[kvp.Key] = new BuildingStats(
+                cost: raw.cost,
+                damage: raw.damage,
+                range: raw.range,
+                fireRate: raw.attack_speed,
+                bulletSpeed: raw.bullet_speed,
+                shootSound: "",
+                impactSound: "",
+                description: raw.description
+            );
+        }
+        
+        return result;
     }
 }

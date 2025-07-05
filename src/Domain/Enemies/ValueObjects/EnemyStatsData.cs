@@ -33,14 +33,9 @@ public readonly struct EnemyStatsData
         this.description = description ?? string.Empty;
     }
 
-    public static EnemyStatsData CreateDefault() => new(
-        maxHealth: 100,
-        speed: 50f,
-        damage: 10,
-        rewardGold: 10,
-        rewardXp: 5,
-        description: "Basic enemy"
-    );
+    // NO HARDCODED VALUES! All data must come from config files.
+    // Use empty/zero defaults only.
+    public static EnemyStatsData Empty => new();
 
     public override string ToString()
     {

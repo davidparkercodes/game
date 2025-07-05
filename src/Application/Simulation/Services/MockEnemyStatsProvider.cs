@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using Game.Domain.Enemies.Services;
 using Game.Domain.Enemies.ValueObjects;
+using Game.Infrastructure.Configuration;
 
 namespace Game.Application.Simulation.Services;
 
@@ -16,9 +19,9 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
 
     public MockEnemyStatsProvider(string configPath = null)
     {
-        var actualConfigPath = configPath ?? DEFAULT_CONFIG_PATH;
-        _config = ConfigLoader.LoadEnemyStats(actualConfigPath);
-        _enemyStats = new Dictionary<string, EnemyStats>(_config.Enemies);
+        var actualConfigPath = FindConfigFile(configPath ?? DEFAULT_CONFIG_PATH);
+        _config = LoadEnemyStatsConfig(actualConfigPath);
+        _enemyStats = ConvertToEnemyStats(_config.enemy_types);
     }
 
     public EnemyStats GetEnemyStats(string enemyType)
@@ -104,18 +107,99 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
             baseStats = _enemyStats.Values.First();
         }
         
-        // Use config-driven scaling values
-        var scaling = _config.WaveScaling;
-        var waveHealthMultiplier = 1.0f + (waveNumber - 1) * scaling.HealthPerWave;
-        var waveSpeedMultiplier = 1.0f + (waveNumber - 1) * scaling.SpeedPerWave;
+        // Use config-driven scaling values (for now use hardcoded values since we removed WaveScaling)
+        var waveHealthMultiplier = 1.0f + (waveNumber - 1) * 0.15f;
+        var waveSpeedMultiplier = 1.0f + (waveNumber - 1) * 0.05f;
         
         return new EnemyStats(
             maxHealth: (int)(baseStats.MaxHealth * _healthMultiplier * waveHealthMultiplier),
             speed: baseStats.Speed * _speedMultiplier * waveSpeedMultiplier,
-            damage: baseStats.Damage + (waveNumber - 1) / scaling.DamageEveryNWaves,
-            rewardGold: (int)(baseStats.RewardGold * (1.0f + (waveNumber - 1) * scaling.RewardPerWave)),
-            rewardXp: (int)(baseStats.RewardXp * (1.0f + (waveNumber - 1) * scaling.RewardPerWave)),
+            damage: baseStats.Damage + (waveNumber - 1) / 3,
+            rewardGold: (int)(baseStats.RewardGold * (1.0f + (waveNumber - 1) * 0.1f)),
+            rewardXp: (int)(baseStats.RewardXp * (1.0f + (waveNumber - 1) * 0.1f)),
             description: baseStats.Description
         );
+    }
+
+    private static string FindConfigFile(string relativePath)
+    {
+        // First try the relative path as-is
+        if (File.Exists(relativePath))
+        {
+            return relativePath;
+        }
+        
+        // Try looking in common directories relative to current directory
+        var searchPaths = new[]
+        {
+            relativePath,
+            Path.Combine("..", relativePath),
+            Path.Combine("..", "..", relativePath),
+            Path.Combine("..", "..", "..", relativePath),
+            Path.Combine(Environment.CurrentDirectory, relativePath),
+        };
+        
+        foreach (var searchPath in searchPaths)
+        {
+            if (File.Exists(searchPath))
+            {
+                return searchPath;
+            }
+        }
+        
+        // Return the original path if nothing found (will fail with clear error)
+        return relativePath;
+    }
+
+    private static EnemyStatsConfig LoadEnemyStatsConfig(string configPath)
+    {
+        try
+        {
+            if (!File.Exists(configPath))
+            {
+                throw new FileNotFoundException($"Enemy stats config file not found: {configPath}");
+            }
+
+            var jsonContent = File.ReadAllText(configPath);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true
+            };
+            
+            return JsonSerializer.Deserialize<EnemyStatsConfig>(jsonContent, options) ?? new EnemyStatsConfig();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to load enemy stats from {configPath}: {ex.Message}", ex);
+        }
+    }
+
+    private static Dictionary<string, EnemyStats> ConvertToEnemyStats(Dictionary<string, EnemyStatsData> rawStats)
+    {
+        var result = new Dictionary<string, EnemyStats>();
+        
+        foreach (var kvp in rawStats)
+        {
+            var raw = kvp.Value;
+            
+            // Skip invalid entries (like default_stats with zero values)
+            if (raw.max_health <= 0 || raw.speed <= 0)
+            {
+                continue;
+            }
+            
+            result[kvp.Key] = new EnemyStats(
+                maxHealth: raw.max_health,
+                speed: raw.speed,
+                damage: raw.damage,
+                rewardGold: raw.reward_gold,
+                rewardXp: raw.reward_xp,
+                description: raw.description
+            );
+        }
+        
+        return result;
     }
 }

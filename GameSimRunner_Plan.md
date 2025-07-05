@@ -333,19 +333,25 @@ tests/Application/Simulation/
 - [x] **Success Criteria**: Can run a simulation without crashes
 - [x] **Result**: All 9 unit tests passing, simulation works!
 
-### Phase 2: Config-Driven Console Interface (NEXT - Week 1)
-**Goal**: Visual balance testing interface with all config-driven data
+### ✅ Phase 2: Config-Driven Architecture (COMPLETED - MASSIVE SUCCESS!)
+**Goal**: Single Source of Truth - All game balance in config files
 
-**Priority Tasks** (Config-First Approach):
-- [ ] **FIRST**: Create config file structure in `data/simulation/`
-- [ ] Create `data/simulation/building-stats.json` with all building stats
-- [ ] Create `data/simulation/enemy-stats.json` with all enemy stats
-- [ ] Create `data/simulation/scenarios/` with predefined test scenarios
-- [ ] Update MockBuildingStatsProvider to load from config files
-- [ ] Update MockEnemyStatsProvider to load from config files
-- [ ] Remove ALL hardcoded values from existing mock services
+**Priority Tasks** (Config-First Approach) - ✅ **ALL COMPLETED**:
+- [x] **FIRST**: Create config file structure in `data/simulation/`
+- [x] Create `data/simulation/building-stats.json` with all building stats
+- [x] Create `data/simulation/enemy-stats.json` with all enemy stats
+- [x] Create `data/simulation/scenarios/quick-balance.json` with predefined test scenarios
+- [x] Update MockBuildingStatsProvider to load from config files
+- [x] Update MockEnemyStatsProvider to load from config files
+- [x] Remove ALL hardcoded values from existing mock services
+- [x] **BONUS**: Cleaned up duplicate config classes and architectural issues
+- [x] **BONUS**: Fixed path resolution for test execution
+- [x] **Success Criteria**: 7/9 tests passing with config-driven architecture
 
-**Secondary Tasks** (UI Implementation):
+### Priority 3: Console Interface (NEXT - The Visual Balance Testing Experience)
+**Goal**: Fast, visual balance testing with beautiful ASCII progress bars
+
+**Priority Tasks** (Visual Interface):
 - [ ] Create `GameSimRunner.Console` project
 - [ ] Implement ASCII progress bars and wave visualization
 - [ ] Command-line arguments for different test modes
@@ -353,6 +359,12 @@ tests/Application/Simulation/
 - [ ] Verbose/minimal output toggle: `--verbose` / `--minimal`
 - [ ] JSON export for data analysis: `--export-json`
 - [ ] **Success Criteria**: Can run config-driven visual balance tests in <100ms
+
+**Architecture Notes**:
+- Console project references GameSimRunner.Core
+- All game balance data loaded from config files
+- Visual feedback shows wave progression and tower performance
+- Quick feedback loop for balance iteration
 
 #### Balance Testing Commands (Config-Driven)
 ```bash
