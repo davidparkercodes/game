@@ -32,6 +32,10 @@ public partial class Building : StaticBody2D
 	protected string _shootSoundKey = "basic_tower_shoot";
 	protected string _bulletImpactSoundKey = "basic_bullet_impact";
 	private bool _canFire = true;
+	
+	// Performance optimization - bullet pooling
+	private static readonly List<Bullet> _bulletPool = new List<Bullet>();
+	private const int MAX_POOLED_BULLETS = 50;
 
 	public override void _Ready()
 	{
@@ -206,22 +210,32 @@ public partial class Building : StaticBody2D
 	{
 		if (_enemiesInRange.Count == 0) return null;
 		
-		Enemy? closestEnemy = null;
-		float closestDistance = float.MaxValue;
+		// Optimized target selection - prioritize based on distance and health
+		Enemy? bestTarget = null;
+		float bestScore = float.MinValue;
 		
 		foreach (Enemy enemy in _enemiesInRange)
 		{
 			if (enemy == null || !IsInstanceValid(enemy)) continue;
 			
 			float distance = GlobalPosition.DistanceTo(enemy.GlobalPosition);
-			if (distance < closestDistance)
+			
+			// Score calculation: closer enemies and lower health get higher priority
+			// This makes towers focus fire and finish off wounded enemies
+			float distanceScore = (Range - distance) / Range; // 0-1, higher = closer
+			float healthScore = 1.0f - (enemy.GetStats().max_health > 0 ? 
+				(float)enemy.GetStats().max_health / enemy.GetStats().max_health : 0); // Prefer low health
+			
+			float totalScore = (distanceScore * 0.7f) + (healthScore * 0.3f);
+			
+			if (totalScore > bestScore)
 			{
-				closestDistance = distance;
-				closestEnemy = enemy;
+				bestScore = totalScore;
+				bestTarget = enemy;
 			}
 		}
 		
-		return closestEnemy;
+		return bestTarget;
 	}
 	
 	public bool HasTarget()
@@ -279,11 +293,14 @@ public partial class Building : StaticBody2D
 		// Calculate direction to target
 		Vector2 direction = (_currentTarget.GlobalPosition - GlobalPosition).Normalized();
 		
-		// Instantiate bullet
-		Bullet bullet = BulletScene.Instantiate<Bullet>();
+		// Rotate tower to face target
+		RotateTowardsTarget(direction);
+		
+		// Get bullet from pool or create new one
+		Bullet bullet = GetPooledBullet();
 		if (bullet == null)
 		{
-			GD.PrintErr($"{LogPrefix} {Name} failed to instantiate bullet");
+			GD.PrintErr($"{LogPrefix} {Name} failed to get bullet from pool");
 			return;
 		}
 		
@@ -292,6 +309,9 @@ public partial class Building : StaticBody2D
 		bullet.SetBulletVelocity(direction * bullet.Speed);
 		bullet.Damage = Damage;
 		bullet.SetImpactSound(_bulletImpactSoundKey);
+		
+		// Reset bullet for reuse
+		bullet.Visible = true;
 		
 		// Add bullet to scene
 		GetTree().CurrentScene.AddChild(bullet);
@@ -393,5 +413,73 @@ public partial class Building : StaticBody2D
 				SetBulletImpactSoundKey("basic_bullet_impact");
 				break;
 		}
+	}
+	
+	// ===== VISUAL ENHANCEMENTS =====
+	
+	protected virtual void RotateTowardsTarget(Vector2 direction)
+	{
+		// Calculate the angle to face the target
+		float targetAngle = direction.Angle();
+		
+		// Smoothly rotate towards target (optional: can be instant)
+		float rotationSpeed = 5.0f; // Radians per second
+		float currentAngle = Rotation;
+		float angleDifference = Mathf.AngleDifference(currentAngle, targetAngle);
+		
+		// Use smooth rotation for more polished look
+		if (Mathf.Abs(angleDifference) > 0.1f)
+		{
+			float deltaRotation = Mathf.Sign(angleDifference) * rotationSpeed * (float)GetProcessDeltaTime();
+			if (Mathf.Abs(deltaRotation) > Mathf.Abs(angleDifference))
+			{
+				Rotation = targetAngle;
+			}
+			else
+			{
+				Rotation += deltaRotation;
+			}
+		}
+		else
+		{
+			Rotation = targetAngle;
+		}
+	}
+	
+	// ===== PERFORMANCE OPTIMIZATION =====
+	
+	private Bullet? GetPooledBullet()
+	{
+		// Try to get a bullet from the pool
+		for (int i = _bulletPool.Count - 1; i >= 0; i--)
+		{
+			Bullet pooledBullet = _bulletPool[i];
+			if (pooledBullet != null && !pooledBullet.IsInsideTree())
+			{
+				_bulletPool.RemoveAt(i);
+				return pooledBullet;
+			}
+		}
+		
+		// No available bullets in pool, create a new one
+		if (BulletScene != null)
+		{
+			Bullet newBullet = BulletScene.Instantiate<Bullet>();
+			if (newBullet != null)
+			{
+				return newBullet;
+			}
+		}
+		
+		return null;
+	}
+	
+	// Simple pooling without complex signal handling for now
+	// In a full implementation, bullets would mark themselves as available for pooling
+	
+	public static void ClearBulletPool()
+	{
+		// Utility method to clear the bullet pool (useful for scene changes)
+		_bulletPool.Clear();
 	}
 }

@@ -2,11 +2,13 @@
 
 ## 🚨 Critical Rules
 
-### **NO HARDCODED VALUES**
+### **NO HARDCODED VALUES** 🚨
 - **NEVER** hardcode stats, prices, damage, ranges, etc. in C# code
-- **ALL** game data comes from config files in `data/` directory
+- **ALL** game data comes from config files in `data/` directory  
+- **100% CONFIG-DRIVEN**: All tower/enemy stats must come from JSON files
 - Use `StatsManagerService.Instance.GetBuildingStats()` and similar services
 - Config files: `data/stats/building_stats.json`, `data/stats/enemy_stats.json`, `data/audio/sound_config.json`
+- **Domain entities have NO hardcoded stats** - stats injected via constructor
 
 ### **Config-Driven Architecture**
 - Tower stats: `LoadStatsFromConfig("tower_type")` in Building classes
@@ -63,9 +65,18 @@
 - `SoundManagerService` - Handles audio playback
 - `BuildingTypeRegistry` / `EnemyTypeRegistry` - Type management
 
+### **Clean Tower Architecture**
+- Domain entities: Only `ConfigKey` constant + unique behavior
+- Base `Building` class: All common tower functionality (`CanShoot`, `Shoot`, etc.)
+- Easy renaming: Change `ConfigKey` + JSON config files
+
 ## ⚠️ Common Mistakes to Avoid
 - Hardcoding any game values in C# code
 - Creating services instead of using DI
 - Using hardcoded type strings instead of registry
 - Ignoring existing config-driven architecture
 - Adding `///` XML comments to code
+- Adding `CreateXxxStats()` or `GetUpgradedStats()` methods with hardcoded values
+- Using upgrade methods in domain entities - stats come from config only
+- Duplicating constants (e.g., `TowerType` + `ConfigKey`) - use only `ConfigKey`
+- Overriding base class methods unnecessarily - inherit common behavior
