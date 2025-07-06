@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <!-- Coverage Configuration -->
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>json,cobertura,opencover</CoverletOutputFormat>
+    <CoverletOutput>./coverage/</CoverletOutput>
+    <Include>[Game]*</Include>
+    <Exclude>[*]*Tests*,[*]*Test*,[*]*.Migrations*,[*]*.Program,[*]*Godot*</Exclude>
+    <ExcludeByFile>**/bin/**,**/obj/**,**/.godot/**,**/tools/**,**/tests/**</ExcludeByFile>
+    <ThresholdType>line,branch,method</ThresholdType>
+    <ThresholdStat>total</ThresholdStat>
+    <Threshold>0</Threshold>
+  </PropertyGroup>
+</Project>
