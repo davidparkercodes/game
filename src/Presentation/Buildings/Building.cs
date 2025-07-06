@@ -482,6 +482,67 @@ public partial class Building : StaticBody2D
 		_bulletPool.Clear();
 	}
 	
+	public void SetPreviewMode(bool isPreview)
+	{
+		IsPreview = isPreview;
+		
+		if (isPreview)
+		{
+			// Disable all building functionality for preview mode
+			_isActive = false;
+			_canFire = false;
+			
+			// Stop and disable timer
+			if (_fireTimer != null)
+			{
+				_fireTimer.Stop();
+				_fireTimer.Paused = true;
+			}
+			
+			// Clear enemy detection lists
+			_enemiesInRange.Clear();
+			_currentTarget = null;
+			
+			// Disable collision detection for enemies (keep layers disabled)
+			SetCollisionLayerValue(1, false);
+			SetCollisionMaskValue(1, false);
+			
+			// Make sure range area doesn't detect enemies
+			if (_rangeArea != null)
+			{
+				_rangeArea.SetCollisionLayerValue(1, false);
+				_rangeArea.SetCollisionMaskValue(2, false); // Enemy layer
+			}
+			
+			GD.Print($"{LogPrefix} {Name} set to preview mode - all functionality disabled");
+		}
+		else
+		{
+			// Enable building functionality for placed buildings
+			_isActive = true;
+			_canFire = true;
+			
+			// Enable timer
+			if (_fireTimer != null)
+			{
+				_fireTimer.Paused = false;
+			}
+			
+			// Enable collision detection
+			SetCollisionLayerValue(1, true);
+			SetCollisionMaskValue(1, true);
+			
+			// Enable range area for enemy detection
+			if (_rangeArea != null)
+			{
+				_rangeArea.SetCollisionLayerValue(1, true);
+				_rangeArea.SetCollisionMaskValue(2, true); // Enemy layer
+			}
+			
+			GD.Print($"{LogPrefix} {Name} set to active mode - all functionality enabled");
+		}
+	}
+
 	public override void _ExitTree()
 	{
 		// Unregister this building from the registry when it's destroyed (but not for preview buildings)

@@ -21,15 +21,12 @@ public partial class BuildingPreview : Node2D
 		if (BuildingScene != null)
 		{
 			_previewBuilding = BuildingScene.Instantiate<Building>();
-			_previewBuilding.IsPreview = true; // Mark as preview to prevent registry registration
 			_previewBuilding.InitializeStats();
+			_previewBuilding.SetPreviewMode(true); // Properly disable all functionality
 			AddChild(_previewBuilding);
 			
 			_previewBuilding.Modulate = new Color(1, 1, 1, 0.7f);
 			_previewBuilding.ShowRange();
-			
-			_previewBuilding.SetCollisionLayerValue(1, false);
-			_previewBuilding.SetCollisionMaskValue(1, false);
 			_previewBuilding.InputPickable = false;
 		}
 	}
@@ -138,15 +135,12 @@ public partial class BuildingPreview : Node2D
 		if (BuildingScene != null)
 		{
 			_previewBuilding = BuildingScene.Instantiate<Building>();
-			_previewBuilding.IsPreview = true; // Mark as preview to prevent registry registration
 			_previewBuilding.InitializeStats();
+			_previewBuilding.SetPreviewMode(true); // Properly disable all functionality
 			AddChild(_previewBuilding);
 			
 			_previewBuilding.Modulate = new Color(1, 1, 1, 0.7f);
 			_previewBuilding.ShowRange();
-			
-			_previewBuilding.SetCollisionLayerValue(1, false);
-			_previewBuilding.SetCollisionMaskValue(1, false);
 			_previewBuilding.InputPickable = false;
 		}
 	}

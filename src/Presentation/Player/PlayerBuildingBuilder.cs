@@ -126,6 +126,7 @@ public class PlayerBuildingBuilder
 
 	var building = _currentPreview.BuildingScene!.Instantiate<Building>();
 		building.GlobalPosition = _currentPreview.GetPlacementPosition();
+		building.SetPreviewMode(false); // Ensure the placed building is fully active
 		_player.GetTree().Root.AddChild(building);
 
 		// Play construction sound

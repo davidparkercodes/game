@@ -52,32 +52,32 @@ This plan implements critical building system improvements including collision p
 ## Phase 2: Build Mode Exploit Prevention
 **Goal**: Prevent buildings in build mode from being active/shooting before placement.
 
-### [ ] 2.1 Analyze Build Mode Logic
-- [ ] Review `PlayerBuildingBuilder.cs` build mode lifecycle
-- [ ] Examine `BuildingPreview.cs` preview building creation
-- [ ] Identify when/how preview buildings become active
-- [ ] Document the keyboard selection exploit (pressing 1 for tower while moving)
+### [x] 2.1 Analyze Build Mode Logic
+- [x] Review `PlayerBuildingBuilder.cs` build mode lifecycle
+- [x] Examine `BuildingPreview.cs` preview building creation
+- [x] Identify when/how preview buildings become active
+- [x] Document the keyboard selection exploit (pressing 1 for tower while moving)
 
-### [ ] 2.2 Implement Preview Building Constraints
-- [ ] Modify `BuildingPreview._Ready()` to disable tower functionality:
-  - [ ] Set `_isActive = false` on preview buildings
-  - [ ] Disable shooting system (`_canFire = false`)
-  - [ ] Stop and disable timer
-  - [ ] Clear enemy detection lists
-- [ ] Add `SetPreviewMode(bool isPreview)` to `Building.cs`
-- [ ] Ensure preview buildings cannot detect or target enemies
+### [x] 2.2 Implement Preview Building Constraints
+- [x] Modify `BuildingPreview._Ready()` to disable tower functionality:
+  - [x] Set `_isActive = false` on preview buildings
+  - [x] Disable shooting system (`_canFire = false`)
+  - [x] Stop and disable timer
+  - [x] Clear enemy detection lists
+- [x] Add `SetPreviewMode(bool isPreview)` to `Building.cs`
+- [x] Ensure preview buildings cannot detect or target enemies
 
-### [ ] 2.3 Update Preview Visual State  
-- [ ] Modify preview building collision layers/masks to prevent enemy detection
-- [ ] Set preview building transparency to clearly indicate non-active state
-- [ ] Disable input handling on preview buildings
-- [ ] Add visual indicator that building is in preview mode
+### [x] 2.3 Update Preview Visual State  
+- [x] Modify preview building collision layers/masks to prevent enemy detection
+- [x] Set preview building transparency to clearly indicate non-active state
+- [x] Disable input handling on preview buildings
+- [x] Add visual indicator that building is in preview mode
 
-### [ ] 2.4 Validate Build Mode Separation
-- [ ] Test that preview buildings never shoot or activate
-- [ ] Verify only placed buildings become functional
-- [ ] Test rapid tower switching (1, 2 key presses) during movement
-- [ ] Ensure build mode cancellation properly cleans up preview state
+### [x] 2.4 Validate Build Mode Separation
+- [x] Test that preview buildings never shoot or activate
+- [x] Verify only placed buildings become functional
+- [x] Test rapid tower switching (1, 2 key presses) during movement
+- [x] Ensure build mode cancellation properly cleans up preview state
 
 ---
 
@@ -194,10 +194,10 @@ This plan implements critical building system improvements including collision p
 - [x] Visual feedback clearly shows valid/invalid placement
 
 ### Phase 2 Success:
-- [ ] Preview buildings in build mode never shoot or activate
-- [ ] Only placed buildings become functional
-- [ ] Build mode switching and cancellation work correctly
-- [ ] No exploits allow premature building activation
+- [x] Preview buildings in build mode never shoot or activate
+- [x] Only placed buildings become functional
+- [x] Build mode switching and cancellation work correctly
+- [x] No exploits allow premature building activation
 
 ### Phase 3 Success:
 - [ ] Rapid tower is fully functional with correct stats
