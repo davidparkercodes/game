@@ -14,7 +14,7 @@ public partial class Building : StaticBody2D
 	[Export] public int Cost { get; set; } = 10;
 	[Export] public int Damage { get; set; } = 10;
 	[Export] public float Range { get; set; } = 150.0f;
-	[Export] public float FireRate { get; set; } = 1.0f;
+	[Export] public float AttackSpeed { get; set; } = 30.0f;
 	[Export] public PackedScene? BulletScene;
 
 	protected Godot.Timer _fireTimer = null!;
@@ -47,7 +47,7 @@ public partial class Building : StaticBody2D
 		CreateRangeVisual();
 		ConnectSignals();
 		
-		GD.Print($"{LogPrefix} {Name} ready - Range: {Range}, Damage: {Damage}, FireRate: {FireRate}");
+		GD.Print($"{LogPrefix} {Name} ready - Range: {Range}, Damage: {Damage}, AttackSpeed: {AttackSpeed}");
 	}
 	
 	private void ConnectSignals()
@@ -84,7 +84,7 @@ public partial class Building : StaticBody2D
 		
 		if (_fireTimer != null)
 		{
-			_fireTimer.WaitTime = 1.0f / FireRate;
+			_fireTimer.WaitTime = 30.0f / AttackSpeed;
 		}
 	}
 
@@ -368,12 +368,12 @@ public partial class Building : StaticBody2D
 			Cost = stats.cost;
 			Damage = stats.damage;
 			Range = stats.range;
-			FireRate = stats.fire_rate;
+			AttackSpeed = stats.attack_speed;
 			
 			// Set sound keys based on tower type
 			SetSoundKeysForTowerType(towerType);
 			
-			GD.Print($"{LogPrefix} {Name} loaded config for {towerType}: Cost={Cost}, Damage={Damage}, Range={Range}, FireRate={FireRate}");
+			GD.Print($"{LogPrefix} {Name} loaded config for {towerType}: Cost={Cost}, Damage={Damage}, Range={Range}, AttackSpeed={AttackSpeed}");
 		}
 		else
 		{

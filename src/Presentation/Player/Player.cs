@@ -1,6 +1,7 @@
 using Godot;
 using Game.Presentation.Buildings;
 using Game.Presentation.UI;
+using Game.Infrastructure.Stats.Services;
 
 namespace Game.Presentation.Player;
 
@@ -9,7 +10,7 @@ public class PlayerBuildingStats
 	public int Cost { get; set; }
 	public int Damage { get; set; }
 	public float Range { get; set; }
-	public float FireRate { get; set; }
+	public float AttackSpeed { get; set; }
 }
 
 public partial class Player : CharacterBody2D
@@ -167,42 +168,50 @@ public partial class Player : CharacterBody2D
 		var stats = GetBuildingStats(buildingName);
 		if (stats != null)
 		{
-			ShowBuildingStats(buildingName, stats.Cost, stats.Damage, stats.Range, stats.FireRate);
+			ShowBuildingStats(buildingName, stats.Cost, stats.Damage, stats.Range, stats.AttackSpeed);
 		}
 	}
 	
 	private PlayerBuildingStats? GetBuildingStats(string buildingName)
 	{
-		PackedScene? buildingScene = buildingName switch
+		// Map display names to config keys
+		string? configKey = buildingName switch
 		{
-			"Basic" => BasicTowerScene,
-			"Sniper" => SniperTowerScene,
+			"Basic" => "basic_tower",
+			"Sniper" => "sniper_tower",
 			_ => null
 		};
 		
-		if (buildingScene == null) return null;
+		if (configKey == null) return null;
 		
-		var tempBuilding = buildingScene.Instantiate<Game.Presentation.Buildings.Building>();
-		tempBuilding.InitializeStats();
-		
-		var stats = new PlayerBuildingStats
+		// Get stats directly from the configuration service
+		if (StatsManagerService.Instance != null)
 		{
-			Cost = tempBuilding.Cost,
-			Damage = tempBuilding.Damage,
-			Range = tempBuilding.Range,
-			FireRate = tempBuilding.FireRate
-		};
-		
-		tempBuilding.QueueFree();
-		return stats;
+			var configStats = StatsManagerService.Instance.GetBuildingStats(configKey);
+			
+			GD.Print($"🔧 Loading stats for {buildingName} ({configKey}): Cost=${configStats.cost}, Damage={configStats.damage}, Range={configStats.range}, AttackSpeed={configStats.attack_speed}");
+			
+			return new PlayerBuildingStats
+			{
+				Cost = configStats.cost,
+				Damage = configStats.damage,
+				Range = configStats.range,
+				AttackSpeed = configStats.attack_speed
+			};
+		}
+		else
+		{
+			GD.PrintErr($"❌ StatsManagerService not available for {buildingName} stats");
+			return null;
+		}
 	}
 	
-	private void ShowBuildingStats(string buildingName, int cost, int damage, float range, float fireRate)
+	private void ShowBuildingStats(string buildingName, int cost, int damage, float range, float attackSpeed)
 	{
 		if (HudManager.Instance != null && HudManager.Instance.IsInitialized())
 		{
-			HudManager.Instance.ShowBuildingStats(buildingName, cost, damage, range, fireRate);
-			GD.Print($"🏗️ Building Stats: {buildingName} - Cost: ${cost}, Damage: {damage}, Range: {range:F1}, FireRate: {fireRate:F1}s");
+			HudManager.Instance.ShowBuildingStats(buildingName, cost, damage, range, attackSpeed);
+			GD.Print($"🏗️ Building Stats: {buildingName} - Cost: ${cost}, Damage: {damage}, Range: {range:F1}, Attack Speed: {attackSpeed:F0}");
 		}
 		else
 		{

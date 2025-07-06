@@ -305,7 +305,7 @@ public class GameSimRunner
                 position,
                 stats.Damage,
                 stats.Range,
-                stats.FireRate,
+                stats.AttackSpeed,
                 stats.Cost
             );
 

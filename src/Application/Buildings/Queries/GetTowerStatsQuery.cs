@@ -18,7 +18,7 @@ public class TowerStatsResponse
     public int Cost { get; }
     public int Damage { get; }
     public float Range { get; }
-    public float FireRate { get; }
+    public float AttackSpeed { get; }
     public float BulletSpeed { get; }
     public string Description { get; }
     public bool IsAvailable { get; }
@@ -28,7 +28,7 @@ public class TowerStatsResponse
         int cost, 
         int damage, 
         float range, 
-        float fireRate, 
+        float attackSpeed, 
         float bulletSpeed, 
         string description, 
         bool isAvailable = true)
@@ -37,7 +37,7 @@ public class TowerStatsResponse
         Cost = cost;
         Damage = damage;
         Range = range;
-        FireRate = fireRate;
+        AttackSpeed = attackSpeed;
         BulletSpeed = bulletSpeed;
         Description = description;
         IsAvailable = isAvailable;

@@ -36,7 +36,7 @@ public class GetTowerStatsQueryHandler : IQueryHandler<GetTowerStatsQuery, Tower
             buildingStats.Cost,
             buildingStats.Damage,
             buildingStats.Range,
-            buildingStats.FireRate,
+            buildingStats.AttackSpeed,
             buildingStats.BulletSpeed,
             buildingStats.Description,
             true

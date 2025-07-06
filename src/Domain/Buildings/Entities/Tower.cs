@@ -14,7 +14,7 @@ public abstract class Tower : Building
     public virtual bool CanShoot(float currentTime)
     {
         if (!IsActive) return false;
-        return currentTime - LastShotTime >= (1f / Stats.FireRate);
+        return currentTime - LastShotTime >= (30f / Stats.AttackSpeed);
     }
 
     public virtual void Shoot(float currentTime)

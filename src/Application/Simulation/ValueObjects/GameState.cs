@@ -90,16 +90,16 @@ public class SimulatedBuilding
     public Position Position { get; }
     public float Damage { get; }
     public float Range { get; }
-    public float FireRate { get; }
+    public float AttackSpeed { get; }
     public int Cost { get; }
 
-    public SimulatedBuilding(string buildingType, Position position, float damage, float range, float fireRate, int cost)
+    public SimulatedBuilding(string buildingType, Position position, float damage, float range, float attackSpeed, int cost)
     {
         BuildingType = buildingType;
         Position = position;
         Damage = damage;
         Range = range;
-        FireRate = fireRate;
+        AttackSpeed = attackSpeed;
         Cost = cost;
     }
 }

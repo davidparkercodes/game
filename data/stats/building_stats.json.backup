@@ -4,7 +4,7 @@
       "cost": 50,
       "damage": 10,
       "range": 120.0,
-      "attack_speed": 36.0,
+      "attack_speed": 1.2,
       "upgrade_cost": 25,
       "bullet_speed": 900,
       "description": "Basic tower with balanced stats"
@@ -13,35 +13,35 @@
       "cost": 75,
       "damage": 35,
       "range": 200.0,
-      "attack_speed": 12.0,
+      "attack_speed": 0.4,
       "upgrade_cost": 40,
       "bullet_speed": 1200,
-      "description": "Long range, high damage tower with slow attack speed"
+      "description": "Long range, high damage tower with slow fire rate"
     },
     "rapid_tower": {
       "cost": 75,
       "damage": 6,
       "range": 100.0,
-      "attack_speed": 75.0,
+      "attack_speed": 2.5,
       "upgrade_cost": 35,
       "bullet_speed": 800,
-      "description": "Fast attack speed tower with lower damage"
+      "description": "Fast firing tower with lower damage"
     },
     "heavy_tower": {
       "cost": 100,
       "damage": 50,
       "range": 150.0,
-      "attack_speed": 18.0,
+      "attack_speed": 0.6,
       "upgrade_cost": 75,
       "bullet_speed": 700,
-      "description": "Heavy damage tower with slow attack speed"
+      "description": "Heavy damage tower with slow fire rate"
     }
   },
   "default_stats": {
     "cost": 50,
     "damage": 10,
     "range": 150.0,
-    "attack_speed": 30.0,
+    "attack_speed": 1.0,
     "upgrade_cost": 25,
     "bullet_speed": 900,
     "description": "Default building stats"

@@ -73,7 +73,7 @@ public class StatsService : IBuildingStatsProvider, IEnemyStatsProvider
             cost: data.cost,
             damage: data.damage,
             range: data.range,
-            fireRate: data.fire_rate,
+            attackSpeed: data.attack_speed,
             bulletSpeed: data.bullet_speed,
             shootSound: "",
             impactSound: "",

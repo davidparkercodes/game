@@ -155,7 +155,7 @@ public partial class Hud : CanvasLayer
 		return true;
 	}
 	
-	public void ShowTowerStats(string towerName, int cost, int damage, float range, float fireRate)
+	public void ShowTowerStats(string towerName, int cost, int damage, float range, float attackSpeed)
 	{
 		if (!ValidateComponent(TowerStatsPanel, "TowerStatsPanel")) return;
 		
@@ -165,7 +165,7 @@ public partial class Hud : CanvasLayer
 		if (CostLabel != null) CostLabel.Text = $"Cost: ${cost}";
 		if (DamageLabel != null) DamageLabel.Text = $"Damage: {damage}";
 		if (RangeLabel != null) RangeLabel.Text = $"Range: {range:F0}";
-		if (FireRateLabel != null) FireRateLabel.Text = $"Fire Rate: {fireRate:F1}s";
+		if (FireRateLabel != null) FireRateLabel.Text = $"Attack Speed: {attackSpeed:F0}";
 		
 		GD.Print($"{LogPrefix} Showing tower stats for: {towerName}");
 	}
@@ -179,7 +179,7 @@ public partial class Hud : CanvasLayer
 		}
 	}
 	
-	public void ShowBuildingStats(string buildingName, int cost, int damage, float range, float fireRate)
+	public void ShowBuildingStats(string buildingName, int cost, int damage, float range, float attackSpeed)
 	{
 		if (!ValidateComponent(TowerStatsPanel, "TowerStatsPanel")) return;
 		
@@ -189,7 +189,7 @@ public partial class Hud : CanvasLayer
 		if (CostLabel != null) CostLabel.Text = $"Cost: ${cost}";
 		if (DamageLabel != null) DamageLabel.Text = $"Damage: {damage}";
 		if (RangeLabel != null) RangeLabel.Text = $"Range: {range:F0}";
-		if (FireRateLabel != null) FireRateLabel.Text = $"Fire Rate: {fireRate:F1}s";
+		if (FireRateLabel != null) FireRateLabel.Text = $"Attack Speed: {attackSpeed:F0}";
 		
 		GD.Print($"{LogPrefix} Showing building stats for: {buildingName}");
 	}
