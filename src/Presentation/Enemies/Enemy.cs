@@ -14,6 +14,7 @@ public partial class Enemy : Area2D
 	public int Damage { get; private set; }
 	public int RewardGold { get; private set; }
 	public int RewardXp { get; private set; }
+	public float ScaleMultiplier { get; private set; } = 1.0f;
 	
 	private int _currentHealth;
 	private EnemyStatsData _stats;
@@ -31,7 +32,9 @@ public partial class Enemy : Area2D
 		
 		AddToGroup("enemies");
 		
-		GD.Print($"👾 Enemy {Name} ({EnemyType}) ready: HP={MaxHealth}, Speed={Speed}, Damage={Damage}");
+		ApplyVisualScale();
+		
+		GD.Print($"👾 Enemy {Name} ({EnemyType}) ready: HP={MaxHealth}, Speed={Speed}, Damage={Damage}, Scale={ScaleMultiplier}x");
 	}
 	
 	private void LoadStatsFromConfig()
@@ -125,5 +128,25 @@ public partial class Enemy : Area2D
 	{
 		MaxHealth = newMaxHealth;
 		_currentHealth = MaxHealth;
+	}
+	
+	public void SetScaleMultiplier(float scale)
+	{
+		ScaleMultiplier = scale;
+		ApplyVisualScale();
+	}
+	
+	private void ApplyVisualScale()
+	{
+		if (ScaleMultiplier != 1.0f)
+		{
+			Scale = new Vector2(ScaleMultiplier, ScaleMultiplier);
+			GD.Print($"👑 {Name} scaled to {ScaleMultiplier}x size (boss enemy)");
+		}
+	}
+	
+	public bool IsBossEnemy()
+	{
+		return EnemyType == "boss_enemy" || ScaleMultiplier > 1.5f;
 	}
 }

@@ -125,8 +125,8 @@
     },
     {
       "waveNumber": 5,
-      "waveName": "Total War",
-      "description": "All enemy types unite for the final overwhelming assault",
+      "waveName": "Final Assault",
+      "description": "All enemy types unite for the final assault, culminating with a massive boss enemy",
       "preWaveDelay": 3.0,
       "postWaveDelay": 5.0,
       "bonusMoney": 100,
@@ -175,6 +175,15 @@
           "healthMultiplier": 2.0,
           "speedMultiplier": 1.3,
           "moneyReward": 20
+        },
+        {
+          "enemyType": "boss_enemy",
+          "count": 1,
+          "spawnInterval": 1.0,
+          "startDelay": 35.0,
+          "healthMultiplier": 1.0,
+          "speedMultiplier": 0.75,
+          "moneyReward": 100
         }
       ]
     }

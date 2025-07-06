@@ -31,6 +31,14 @@
       "reward_gold": 15,
       "reward_xp": 25,
       "description": "Elite enemy with balanced stats"
+    },
+    "boss_enemy": {
+      "max_health": 500,
+      "speed": 45.0,
+      "damage": 30,
+      "reward_gold": 50,
+      "reward_xp": 100,
+      "description": "Massive boss enemy with high health and devastating damage"
     }
   },
   "default_stats": {

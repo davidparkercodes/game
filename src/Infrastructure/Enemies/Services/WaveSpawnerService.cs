@@ -309,11 +309,14 @@ namespace Game.Infrastructure.Enemies.Services;
             var spawnPosition = PathService.Instance?.GetSpawnPosition() ?? Vector2.Zero;
             GD.Print($"Spawning {enemyType} at {spawnPosition}");
             
-            // Load and instantiate the enemy scene
-            var enemyScene = GD.Load<PackedScene>("res://scenes/Enemies/Enemy.tscn");
+            // Load and instantiate the appropriate enemy scene
+            var scenePath = enemyType == "boss_enemy" 
+                ? "res://scenes/Enemies/BossEnemy.tscn" 
+                : "res://scenes/Enemies/Enemy.tscn";
+            var enemyScene = GD.Load<PackedScene>(scenePath);
             if (enemyScene == null)
             {
-                GD.PrintErr($"WaveSpawnerService: Failed to load enemy scene at res://scenes/Enemies/Enemy.tscn");
+                GD.PrintErr($"WaveSpawnerService: Failed to load enemy scene at {scenePath}");
                 return;
             }
             
@@ -327,6 +330,14 @@ namespace Game.Infrastructure.Enemies.Services;
             // Set enemy properties
             enemyInstance.SetEnemyType(enemyType);
             enemyInstance.GlobalPosition = spawnPosition;
+            
+            // Apply boss scaling if this is a boss enemy
+            if (enemyType == "boss_enemy")
+            {
+                enemyInstance.SetScaleMultiplier(2.0f);
+                GD.Print($"👑 BOSS INCOMING! Massive enemy spawned with 2x scale at {spawnPosition}");
+                GD.Print($"⚠️ WARNING: Boss enemy has {enemyInstance.MaxHealth} HP and high resistance!");
+            }
             
             // Add PathFollower component for movement
             var pathFollower = new PathFollower();
