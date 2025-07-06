@@ -19,7 +19,7 @@ anchor_bottom = 0.0
 offset_left = -200.0
 offset_top = 320.0
 offset_right = -10.0
-offset_bottom = 430.0
+offset_bottom = 520.0
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_speed")
 
@@ -29,9 +29,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
-offset_top = 10.0
+offset_top = 20.0
 offset_right = -10.0
-offset_bottom = -10.0
+offset_bottom = -20.0
 theme_override_constants/separation = 5
 
 [node name="SpeedLabel" type="Label" parent="Panel/VBoxContainer"]
@@ -70,4 +70,24 @@ theme_override_colors/font_color_hover = Color(1, 1, 0, 1)
 theme_override_colors/font_color_pressed = Color(0, 1, 0, 1)
 theme_override_font_sizes/font_size = 14
 text = "4x"
+toggle_mode = true
+
+[node name="Speed10xButton" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 25)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color_hover = Color(1, 1, 0, 1)
+theme_override_colors/font_color_pressed = Color(0, 1, 0, 1)
+theme_override_font_sizes/font_size = 14
+text = "10x"
+toggle_mode = true
+
+[node name="Speed20xButton" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 25)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color_hover = Color(1, 1, 0, 1)
+theme_override_colors/font_color_pressed = Color(0, 1, 0, 1)
+theme_override_font_sizes/font_size = 14
+text = "20x"
 toggle_mode = true

@@ -8,7 +8,7 @@ public partial class TimeManager : Node
     
     private float _currentTimeScale = 1.0f;
     private int _currentSpeedIndex = 0;
-    private readonly float[] _speedOptions = { 1.0f, 2.0f, 4.0f };
+    private readonly float[] _speedOptions = { 1.0f, 2.0f, 4.0f, 10.0f, 20.0f };
     
     public delegate void SpeedChangedEventHandler(float newSpeed, int speedIndex);
     public event SpeedChangedEventHandler? SpeedChanged;
@@ -59,7 +59,9 @@ public partial class TimeManager : Node
         
         var speedText = _currentTimeScale == 1.0f ? "1x" : 
                        _currentTimeScale == 2.0f ? "2x" : 
-                       _currentTimeScale == 4.0f ? "4x" : $"{_currentTimeScale}x";
+                       _currentTimeScale == 4.0f ? "4x" : 
+                       _currentTimeScale == 10.0f ? "10x" : 
+                       _currentTimeScale == 20.0f ? "20x" : $"{_currentTimeScale}x";
         
         GD.Print($"⚡ TimeManager: Game speed set to {speedText} (Engine.TimeScale = {Engine.TimeScale})");
     }
@@ -85,24 +87,18 @@ public partial class TimeManager : Node
         SetGameSpeedByIndex(2);
     }
 
-    public override void _Input(InputEvent @event)
+    public void SetSpeedTo10x()
     {
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed)
-        {
-            switch (keyEvent.Keycode)
-            {
-                case Key.Key1:
-                    SetSpeedTo1x();
-                    break;
-                case Key.Key2:
-                    SetSpeedTo2x();
-                    break;
-                case Key.Key4:
-                    SetSpeedTo4x();
-                    break;
-            }
-        }
+        SetGameSpeedByIndex(3);
     }
+
+    public void SetSpeedTo20x()
+    {
+        SetGameSpeedByIndex(4);
+    }
+
+    // Note: Keyboard shortcuts removed to avoid conflict with building selection
+    // Speed control is handled through the UI buttons only
 
     public string GetCurrentSpeedText()
     {
@@ -111,6 +107,8 @@ public partial class TimeManager : Node
             1.0f => "1x",
             2.0f => "2x", 
             4.0f => "4x",
+            10.0f => "10x",
+            20.0f => "20x",
             _ => $"{_currentTimeScale:F1}x"
         };
     }

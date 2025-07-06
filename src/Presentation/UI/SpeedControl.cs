@@ -8,6 +8,8 @@ public partial class SpeedControl : CanvasLayer
     [Export] public Button? Speed1xButton;
     [Export] public Button? Speed2xButton;
     [Export] public Button? Speed4xButton;
+    [Export] public Button? Speed10xButton;
+    [Export] public Button? Speed20xButton;
 
     private TimeManager? _timeManager;
     private const string LogPrefix = "⚡ [SPEED-CONTROL]";
@@ -45,29 +47,35 @@ public partial class SpeedControl : CanvasLayer
         Speed1xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed1xButton");
         Speed2xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed2xButton");
         Speed4xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed4xButton");
+        Speed10xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed10xButton");
+        Speed20xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed20xButton");
         
-        // If that doesn't work, try FindChild as fallback
-        if (Speed1xButton == null)
+        // Try FindChild for any missing buttons
+        if (Speed1xButton == null || Speed2xButton == null || Speed4xButton == null || Speed10xButton == null || Speed20xButton == null)
         {
-            GD.Print($"{LogPrefix} Trying FindChild as fallback...");
-            Speed1xButton = FindChild("Speed1xButton", true, false) as Button;
-            Speed2xButton = FindChild("Speed2xButton", true, false) as Button;
-            Speed4xButton = FindChild("Speed4xButton", true, false) as Button;
+            GD.Print($"{LogPrefix} Some buttons not found with direct path, trying FindChild...");
+            if (Speed1xButton == null) Speed1xButton = FindChild("Speed1xButton", true, false) as Button;
+            if (Speed2xButton == null) Speed2xButton = FindChild("Speed2xButton", true, false) as Button;
+            if (Speed4xButton == null) Speed4xButton = FindChild("Speed4xButton", true, false) as Button;
+            if (Speed10xButton == null) Speed10xButton = FindChild("Speed10xButton", true, false) as Button;
+            if (Speed20xButton == null) Speed20xButton = FindChild("Speed20xButton", true, false) as Button;
         }
         
-        // If still not found, try direct child traversal
-        if (Speed1xButton == null)
+        // Final fallback: direct child traversal for any still missing buttons
+        if (Speed1xButton == null || Speed2xButton == null || Speed4xButton == null || Speed10xButton == null || Speed20xButton == null)
         {
-            GD.Print($"{LogPrefix} Trying direct traversal...");
+            GD.Print($"{LogPrefix} Some buttons still missing, trying direct traversal...");
             var panel = GetNode("Panel");
             if (panel != null)
             {
                 var vbox = panel.GetNode("VBoxContainer");
                 if (vbox != null)
                 {
-                    Speed1xButton = vbox.GetNode("Speed1xButton") as Button;
-                    Speed2xButton = vbox.GetNode("Speed2xButton") as Button;
-                    Speed4xButton = vbox.GetNode("Speed4xButton") as Button;
+                    if (Speed1xButton == null) Speed1xButton = vbox.GetNode("Speed1xButton") as Button;
+                    if (Speed2xButton == null) Speed2xButton = vbox.GetNode("Speed2xButton") as Button;
+                    if (Speed4xButton == null) Speed4xButton = vbox.GetNode("Speed4xButton") as Button;
+                    if (Speed10xButton == null) Speed10xButton = vbox.GetNode("Speed10xButton") as Button;
+                    if (Speed20xButton == null) Speed20xButton = vbox.GetNode("Speed20xButton") as Button;
                 }
             }
         }
@@ -77,6 +85,8 @@ public partial class SpeedControl : CanvasLayer
         GD.Print($"{LogPrefix}   Speed1xButton: {(Speed1xButton != null ? "Found" : "Not found")}");
         GD.Print($"{LogPrefix}   Speed2xButton: {(Speed2xButton != null ? "Found" : "Not found")}");
         GD.Print($"{LogPrefix}   Speed4xButton: {(Speed4xButton != null ? "Found" : "Not found")}");
+        GD.Print($"{LogPrefix}   Speed10xButton: {(Speed10xButton != null ? "Found" : "Not found")}");
+        GD.Print($"{LogPrefix}   Speed20xButton: {(Speed20xButton != null ? "Found" : "Not found")}");
         
         LogNodeStatus();
     }
@@ -126,6 +136,26 @@ public partial class SpeedControl : CanvasLayer
         {
             GD.PrintErr($"{LogPrefix} Speed4xButton not found");
         }
+
+        if (Speed10xButton != null)
+        {
+            Speed10xButton.Pressed += OnSpeed10xPressed;
+            GD.Print($"{LogPrefix} Speed10xButton connected");
+        }
+        else
+        {
+            GD.PrintErr($"{LogPrefix} Speed10xButton not found");
+        }
+
+        if (Speed20xButton != null)
+        {
+            Speed20xButton.Pressed += OnSpeed20xPressed;
+            GD.Print($"{LogPrefix} Speed20xButton connected");
+        }
+        else
+        {
+            GD.PrintErr($"{LogPrefix} Speed20xButton not found");
+        }
     }
 
     private void SetupInitialState()
@@ -157,6 +187,8 @@ public partial class SpeedControl : CanvasLayer
         GD.Print($"  ⚡ Speed1xButton: {(Speed1xButton != null ? "✅" : "❌")}");
         GD.Print($"  ⚡ Speed2xButton: {(Speed2xButton != null ? "✅" : "❌")}");
         GD.Print($"  ⚡ Speed4xButton: {(Speed4xButton != null ? "✅" : "❌")}");
+        GD.Print($"  ⚡ Speed10xButton: {(Speed10xButton != null ? "✅" : "❌")}");
+        GD.Print($"  ⚡ Speed20xButton: {(Speed20xButton != null ? "✅" : "❌")}");
     }
 
     private void OnSpeed1xPressed()
@@ -177,6 +209,18 @@ public partial class SpeedControl : CanvasLayer
         _timeManager?.SetSpeedTo4x();
     }
 
+    private void OnSpeed10xPressed()
+    {
+        GD.Print($"{LogPrefix} 10x button pressed");
+        _timeManager?.SetSpeedTo10x();
+    }
+
+    private void OnSpeed20xPressed()
+    {
+        GD.Print($"{LogPrefix} 20x button pressed");
+        _timeManager?.SetSpeedTo20x();
+    }
+
     private void OnSpeedChanged(float newSpeed, int speedIndex)
     {
         GD.Print($"{LogPrefix} Speed changed to {newSpeed}x (index {speedIndex})");
@@ -189,6 +233,8 @@ public partial class SpeedControl : CanvasLayer
         SetButtonState(Speed1xButton, false);
         SetButtonState(Speed2xButton, false);
         SetButtonState(Speed4xButton, false);
+        SetButtonState(Speed10xButton, false);
+        SetButtonState(Speed20xButton, false);
 
         // Set the active button
         switch (activeSpeedIndex)
@@ -201,6 +247,12 @@ public partial class SpeedControl : CanvasLayer
                 break;
             case 2:
                 SetButtonState(Speed4xButton, true);
+                break;
+            case 3:
+                SetButtonState(Speed10xButton, true);
+                break;
+            case 4:
+                SetButtonState(Speed20xButton, true);
                 break;
         }
     }
