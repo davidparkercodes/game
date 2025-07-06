@@ -155,7 +155,25 @@ public class WaveManager
 
     public void OnEnemyReachedEnd()
     {
-        // This is handled by GameService already, but we could add wave-specific logic here
+        GD.Print($"🏃 WaveManager.OnEnemyReachedEnd() called. Wave in progress: {_isWaveInProgress}");
+        
+        if (_isWaveInProgress)
+        {
+            // Check if wave is complete after this enemy leak
+            var remainingEnemies = _waveService.GetRemainingEnemies();
+            GD.Print($"🔢 WaveManager: Remaining enemies after leak: {remainingEnemies - 1}");
+            
+            // We need to account for this enemy that just leaked
+            if (remainingEnemies - 1 <= 0)
+            {
+                GD.Print($"🎆 WaveManager: Wave complete after enemy leak! Calling OnWaveCompleted()");
+                OnWaveCompleted();
+            }
+        }
+        else
+        {
+            GD.Print($"⚠️ WaveManager: Enemy reached end but no wave in progress");
+        }
     }
 
     public void Reset()

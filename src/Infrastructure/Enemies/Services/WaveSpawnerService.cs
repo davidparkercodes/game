@@ -22,6 +22,7 @@ namespace Game.Infrastructure.Enemies.Services;
         public int EnemiesSpawned { get; private set; } = 0;
         public int TotalEnemiesInWave { get; private set; } = 0;
         public int EnemiesKilled { get; private set; } = 0;
+        public int EnemiesLeaked { get; private set; } = 0;
 
         private Godot.Timer? _spawnTimer;
         private WaveModel? _currentWave;
@@ -135,6 +136,7 @@ namespace Game.Infrastructure.Enemies.Services;
             IsSpawning = true;
             EnemiesSpawned = 0;
             EnemiesKilled = 0;
+            EnemiesLeaked = 0;
             TotalEnemiesInWave = CalculateTotalEnemies(_currentWave);
 
             GD.Print($"WaveSpawnerService: Starting wave {CurrentWave} '{_currentWave.WaveName}' with {TotalEnemiesInWave} enemies");
@@ -172,8 +174,8 @@ namespace Game.Infrastructure.Enemies.Services;
         if (_currentWave == null || !IsSpawning)
             return 0;
             
-        // Calculate remaining enemies: total spawned minus killed
-        var spawnedAlive = EnemiesSpawned - EnemiesKilled;
+        // Calculate remaining enemies: spawned alive (not killed or leaked) + waiting to spawn
+        var spawnedAlive = EnemiesSpawned - EnemiesKilled - EnemiesLeaked;
         
         // Add enemies still waiting to be spawned
         int waitingToSpawn = 0;
@@ -182,7 +184,9 @@ namespace Game.Infrastructure.Enemies.Services;
             waitingToSpawn += group.Count;
         }
         
-        return Math.Max(0, spawnedAlive + waitingToSpawn);
+        var remaining = Math.Max(0, spawnedAlive + waitingToSpawn);
+        GD.Print($"GetRemainingEnemies: spawned={EnemiesSpawned}, killed={EnemiesKilled}, leaked={EnemiesLeaked}, waiting={waitingToSpawn}, remaining={remaining}");
+        return remaining;
     }
     
     public EnemyStats GetNextEnemyType()
@@ -410,6 +414,7 @@ namespace Game.Infrastructure.Enemies.Services;
         CurrentWave = 0;
         EnemiesSpawned = 0;
         EnemiesKilled = 0;
+        EnemiesLeaked = 0;
         TotalEnemiesInWave = 0;
         _currentWave = null;
     }
@@ -519,6 +524,17 @@ namespace Game.Infrastructure.Enemies.Services;
     
     private void OnEnemyReachedEnd()
     {
-        GD.Print("WaveSpawnerService: Enemy reached end");
+        if (IsSpawning)
+        {
+            EnemiesLeaked++;
+            GD.Print($"WaveSpawnerService: Enemy reached end! Leaked count: {EnemiesLeaked}, Killed: {EnemiesKilled}, Spawned: {EnemiesSpawned}");
+            
+            // Check if wave is complete (all enemies spawned and all processed - either killed or leaked)
+            if (GetRemainingEnemies() <= 0 && !HasMoreEnemies())
+            {
+                GD.Print($"🎉 Wave {CurrentWave} complete! {EnemiesKilled} enemies killed, {EnemiesLeaked} enemies leaked, all enemies processed.");
+                CompleteWave();
+            }
+        }
     }
 }
