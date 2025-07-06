@@ -4,6 +4,7 @@ using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Rounds.Services;
 using Game.Infrastructure.Audio.Services;
 using Game.Presentation.UI;
+using Game.Presentation.Enemies;
 
 namespace Game.Infrastructure.Waves.Services;
 
@@ -61,6 +62,8 @@ public class WaveManager
 
     public void StartNextWave()
     {
+        GD.Print($"🌊 DEBUG: StartNextWave called. Current state - WaveNumber: {_currentWaveNumber}, InProgress: {_isWaveInProgress}");
+        
         if (_isWaveInProgress)
         {
             GD.Print("⚠️ Cannot start new wave - wave already in progress");
@@ -68,11 +71,13 @@ public class WaveManager
         }
 
         _currentWaveNumber++;
+        GD.Print($"🌊 DEBUG: About to start wave {_currentWaveNumber}");
 
         try
         {
             _waveService.StartWave(_currentWaveNumber);
             _isWaveInProgress = true;
+            GD.Print($"🌊 DEBUG: Wave {_currentWaveNumber} started, _isWaveInProgress set to {_isWaveInProgress}");
 
             // Update round service
             RoundService.Instance?.StartRound(_currentWaveNumber);
@@ -100,12 +105,16 @@ public class WaveManager
 
     public void OnWaveCompleted()
     {
+        GD.Print($"🌊 DEBUG: OnWaveCompleted called. Current state - WaveNumber: {_currentWaveNumber}, InProgress: {_isWaveInProgress}");
+        
         if (!_isWaveInProgress)
         {
+            GD.Print($"⚠️ DEBUG: OnWaveCompleted called but no wave in progress!");
             return;
         }
 
         _isWaveInProgress = false;
+        GD.Print($"🌊 DEBUG: Setting _isWaveInProgress to false for wave {_currentWaveNumber}");
 
         // Complete the wave in the wave service
         _waveService.StopCurrentWave();
@@ -143,6 +152,18 @@ public class WaveManager
             
             if (remainingEnemies <= 0)
             {
+                // Special check for wave 5 (boss wave) - ensure boss is actually dead
+                if (_currentWaveNumber == 5)
+                {
+                    var bossesInScene = GetBossEnemiesInScene();
+                    if (bossesInScene > 0)
+                    {
+                        GD.Print($"⚠️ WaveManager: Boss wave not complete - {bossesInScene} boss enemies still alive!");
+                        return;
+                    }
+                    GD.Print($"🎆 WaveManager: Boss wave complete! Boss defeated!");
+                }
+                
                 GD.Print($"🎆 WaveManager: Wave complete! Calling OnWaveCompleted()");
                 OnWaveCompleted();
             }
@@ -285,6 +306,12 @@ public class WaveManager
     private void OnAllWavesCompleted()
     {
         GD.Print("🎉 All waves completed! Player wins!");
+        
+        // Stop boss battle music if it's playing
+        StopBossBattleMusic();
+        
+        // Play victory celebration
+        PlayVictoryCelebration();
 
         // Mark game as won in GameService
         // GameService would need a method for this
@@ -303,5 +330,50 @@ public class WaveManager
         {
             GD.PrintErr("⚠️ SoundManagerService not available for round start sound");
         }
+    }
+    
+    private void StopBossBattleMusic()
+    {
+        if (SoundManagerService.Instance != null)
+        {
+            SoundManagerService.Instance.StopMusic();
+            GD.Print("🎵 Stopped boss battle music");
+        }
+        else
+        {
+            GD.PrintErr("⚠️ SoundManagerService not available to stop boss music");
+        }
+    }
+    
+    private void PlayVictoryCelebration()
+    {
+        // Display victory message
+        GD.Print("🏆 VICTORY! All enemies defeated!");
+        GD.Print("🎉 The kingdom is safe! Well done, commander!");
+        
+        // Could add victory sound/music here if we had one
+        // For now, just log the celebration
+        GD.Print("🎆 Victory celebration complete!");
+    }
+    
+    private int GetBossEnemiesInScene()
+    {
+        var sceneTree = Godot.Engine.GetMainLoop() as Godot.SceneTree;
+        if (sceneTree?.CurrentScene == null)
+            return 0;
+            
+        var bossCount = 0;
+        var enemies = sceneTree.GetNodesInGroup("enemies");
+        
+        foreach (Node node in enemies)
+        {
+            if (node is Enemy enemy && enemy.IsBossEnemy())
+            {
+                bossCount++;
+            }
+        }
+        
+        GD.Print($"👑 WaveManager: Found {bossCount} boss enemies in scene");
+        return bossCount;
     }
 }

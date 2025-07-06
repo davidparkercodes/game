@@ -3,6 +3,7 @@ using Game.Di;
 using Game.Domain.Enemies.ValueObjects;
 using Game.Infrastructure.Stats.Services;
 using Game.Infrastructure.Game.Services;
+using Game.Infrastructure.Audio.Services;
 
 namespace Game.Presentation.Enemies;
 
@@ -18,6 +19,7 @@ public partial class Enemy : Area2D
 	
 	private int _currentHealth;
 	private EnemyStatsData _stats;
+	private ProgressBar? _healthBar;
 	
 	[Signal]
 	public delegate void EnemyKilledEventHandler();
@@ -33,6 +35,9 @@ public partial class Enemy : Area2D
 		AddToGroup("enemies");
 		
 		ApplyVisualScale();
+		
+		// Initialize health bar if it exists
+		InitializeHealthBar();
 		
 		GD.Print($"👾 Enemy {Name} ({EnemyType}) ready: HP={MaxHealth}, Speed={Speed}, Damage={Damage}, Scale={ScaleMultiplier}x");
 	}
@@ -60,6 +65,9 @@ public partial class Enemy : Area2D
 	{
 		_currentHealth -= amount;
 		GD.Print($"{Name} took {amount} damage, remaining: {_currentHealth}");
+		
+		// Update health bar
+		UpdateHealthBar();
 
 		if (_currentHealth <= 0)
 		{
@@ -70,6 +78,12 @@ public partial class Enemy : Area2D
 	private void Die()
 	{
 		GD.Print($"{Name} died!");
+		
+		// Stop boss music if this is a boss enemy
+		if (IsBossEnemy())
+		{
+			StopBossMusic();
+		}
 		
 		RemoveFromGroup("enemies");
 		
@@ -148,5 +162,51 @@ public partial class Enemy : Area2D
 	public bool IsBossEnemy()
 	{
 		return EnemyType == "boss_enemy" || ScaleMultiplier > 1.5f;
+	}
+	
+	private void InitializeHealthBar()
+	{
+		_healthBar = GetNodeOrNull<ProgressBar>("HealthBar");
+		if (_healthBar != null)
+		{
+			_healthBar.MinValue = 0;
+			_healthBar.MaxValue = MaxHealth;
+			_healthBar.Value = _currentHealth;
+			_healthBar.Visible = IsBossEnemy(); // Only show for boss enemies
+			
+			// Style the health bar with red fill
+			if (IsBossEnemy())
+			{
+				_healthBar.Modulate = new Color(1.0f, 0.2f, 0.2f, 1.0f); // Red tint
+			}
+			
+			GD.Print($"🏥 Health bar initialized for {Name}: {_currentHealth}/{MaxHealth}");
+		}
+		else if (IsBossEnemy())
+		{
+			GD.PrintErr($"⚠️ Boss enemy {Name} missing health bar!");
+		}
+	}
+	
+	private void UpdateHealthBar()
+	{
+		if (_healthBar != null && _healthBar.Visible)
+		{
+			_healthBar.Value = _currentHealth;
+			GD.Print($"🏥 Updated health bar: {_currentHealth}/{MaxHealth} ({(_currentHealth / (float)MaxHealth * 100):F1}%)");
+		}
+	}
+	
+	private void StopBossMusic()
+	{
+		if (SoundManagerService.Instance != null)
+		{
+			SoundManagerService.Instance.StopMusic();
+			GD.Print("🎵 Boss defeated! Stopped boss battle music.");
+		}
+		else
+		{
+			GD.PrintErr("⚠️ SoundManagerService not available to stop boss music");
+		}
 	}
 }

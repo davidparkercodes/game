@@ -2,6 +2,8 @@ using Godot;
 using Game.Presentation.Buildings;
 using Game.Presentation.Systems;
 using Game.Infrastructure.Game.Services;
+using Game.Infrastructure.Audio.Services;
+using Game.Domain.Audio.Enums;
 using PresentationValidator = Game.Presentation.Systems.BuildingZoneValidator;
 
 namespace Game.Presentation.Player;
@@ -104,7 +106,7 @@ public class PlayerBuildingBuilder
 		
 		if (!_currentPreview.CanPlaceBuilding())
 		{
-			GD.PrintErr("❌ Cannot place building at this location!");
+			GD.Print("⚠️ Cannot place building at this location!");
 			return;
 		}
 
@@ -126,9 +128,39 @@ public class PlayerBuildingBuilder
 		building.GlobalPosition = _currentPreview.GetPlacementPosition();
 		_player.GetTree().Root.AddChild(building);
 
+		// Play construction sound
+		PlayConstructionSound(building);
+
 		// TODO: Register building with building manager
 		// buildingManager?.AddBuilding(building);
 
 		GD.Print($"🔧 Built building at {building.GlobalPosition} for ${cost}");
+	}
+	
+	private void PlayConstructionSound(Building building)
+	{
+		if (SoundManagerService.Instance == null)
+		{
+			GD.PrintErr("⚠️ SoundManagerService not available for construction sound");
+			return;
+		}
+		
+		// Determine sound key based on building type
+		string soundKey;
+		if (building.Name == "BasicTower")
+		{
+			soundKey = "basic_tower_build";
+		}
+		else if (building.Name == "SniperTower")
+		{
+			soundKey = "sniper_tower_build";
+		}
+		else
+		{
+			soundKey = "basic_tower_build"; // fallback to basic tower sound
+		}
+		
+		GD.Print($"🔨 Playing construction sound: {soundKey} for building {building.Name}");
+		SoundManagerService.Instance.PlaySound(soundKey, SoundCategory.SFX);
 	}
 }

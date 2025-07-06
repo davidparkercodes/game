@@ -10,8 +10,10 @@ using Game.Infrastructure.Waves.Models;
 using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Rounds.Services;
 using Game.Infrastructure.Waves.Services;
+using Game.Infrastructure.Audio.Services;
 using Game.Presentation.Enemies;
 using Game.Presentation.Components;
+using Game.Domain.Audio.Enums;
 
 namespace Game.Infrastructure.Enemies.Services;
 
@@ -23,6 +25,7 @@ namespace Game.Infrastructure.Enemies.Services;
         public int TotalEnemiesInWave { get; private set; } = 0;
         public int EnemiesKilled { get; private set; } = 0;
         public int EnemiesLeaked { get; private set; } = 0;
+        private bool _bossSpawnedThisWave = false;
 
         private Godot.Timer? _spawnTimer;
         private WaveModel? _currentWave;
@@ -137,6 +140,7 @@ namespace Game.Infrastructure.Enemies.Services;
             EnemiesSpawned = 0;
             EnemiesKilled = 0;
             EnemiesLeaked = 0;
+            _bossSpawnedThisWave = false;
             TotalEnemiesInWave = CalculateTotalEnemies(_currentWave);
 
             GD.Print($"WaveSpawnerService: Starting wave {CurrentWave} '{_currentWave.WaveName}' with {TotalEnemiesInWave} enemies");
@@ -186,6 +190,14 @@ namespace Game.Infrastructure.Enemies.Services;
         
         var remaining = Math.Max(0, spawnedAlive + waitingToSpawn);
         GD.Print($"GetRemainingEnemies: spawned={EnemiesSpawned}, killed={EnemiesKilled}, leaked={EnemiesLeaked}, waiting={waitingToSpawn}, remaining={remaining}");
+        
+        // Special handling: If we have more than 0 remaining but waiting is 0, 
+        // make sure we don't complete prematurely while boss is alive
+        if (waitingToSpawn == 0 && spawnedAlive > 0)
+        {
+            GD.Print($"⚠️ DEBUG: All enemies spawned but {spawnedAlive} still alive (including potential boss)");
+        }
+        
         return remaining;
     }
     
@@ -334,9 +346,20 @@ namespace Game.Infrastructure.Enemies.Services;
             // Apply boss scaling if this is a boss enemy
             if (enemyType == "boss_enemy")
             {
+                GD.Print($"👑 DEBUG: Boss enemy detected! Enemy type: {enemyType}");
+                _bossSpawnedThisWave = true;
                 enemyInstance.SetScaleMultiplier(2.0f);
                 GD.Print($"👑 BOSS INCOMING! Massive enemy spawned with 2x scale at {spawnPosition}");
                 GD.Print($"⚠️ WARNING: Boss enemy has {enemyInstance.MaxHealth} HP and high resistance!");
+                
+                // Play boss battle music
+                GD.Print($"🎵 DEBUG: About to call PlayBossBattleMusic()");
+                PlayBossBattleMusic();
+                GD.Print($"🎵 DEBUG: PlayBossBattleMusic() call completed");
+            }
+            else
+            {
+                GD.Print($"👾 DEBUG: Regular enemy spawned. Enemy type: {enemyType}");
             }
             
             // Add PathFollower component for movement
@@ -525,9 +548,27 @@ namespace Game.Infrastructure.Enemies.Services;
             GD.Print($"WaveSpawnerService: Enemy killed! {EnemiesKilled}/{EnemiesSpawned} enemies killed, remaining: {GetRemainingEnemies()}");
             
             // Check if wave is complete (all enemies spawned and all killed)
-            if (GetRemainingEnemies() <= 0 && !HasMoreEnemies())
+            // Special case: If boss spawned this wave, ensure it's actually dead before completing
+            var remainingEnemies = GetRemainingEnemies();
+            var hasMoreEnemies = HasMoreEnemies();
+            
+            if (remainingEnemies <= 0 && !hasMoreEnemies)
             {
-                GD.Print($"🎉 Wave {CurrentWave} complete! All {EnemiesKilled} enemies killed.");
+                if (_bossSpawnedThisWave)
+                {
+                    // Extra check: count actual boss enemies in scene to ensure boss is dead
+                    var bossesInScene = GetBossEnemiesInScene();
+                    if (bossesInScene > 0)
+                    {
+                        GD.Print($"⚠️ Boss wave not complete - {bossesInScene} boss enemies still alive");
+                        return;
+                    }
+                    GD.Print($"🎉 Wave {CurrentWave} complete! Boss defeated! All {EnemiesKilled} enemies killed.");
+                }
+                else
+                {
+                    GD.Print($"🎉 Wave {CurrentWave} complete! All {EnemiesKilled} enemies killed.");
+                }
                 CompleteWave();
             }
         }
@@ -541,11 +582,76 @@ namespace Game.Infrastructure.Enemies.Services;
             GD.Print($"WaveSpawnerService: Enemy reached end! Leaked count: {EnemiesLeaked}, Killed: {EnemiesKilled}, Spawned: {EnemiesSpawned}");
             
             // Check if wave is complete (all enemies spawned and all processed - either killed or leaked)
-            if (GetRemainingEnemies() <= 0 && !HasMoreEnemies())
+            var remainingEnemies = GetRemainingEnemies();
+            var hasMoreEnemies = HasMoreEnemies();
+            
+            if (remainingEnemies <= 0 && !hasMoreEnemies)
             {
-                GD.Print($"🎉 Wave {CurrentWave} complete! {EnemiesKilled} enemies killed, {EnemiesLeaked} enemies leaked, all enemies processed.");
+                if (_bossSpawnedThisWave)
+                {
+                    // Extra check: count actual boss enemies in scene to ensure boss is dead
+                    var bossesInScene = GetBossEnemiesInScene();
+                    if (bossesInScene > 0)
+                    {
+                        GD.Print($"⚠️ Boss wave not complete - {bossesInScene} boss enemies still alive (reached end)");
+                        return;
+                    }
+                    GD.Print($"🎉 Wave {CurrentWave} complete! Boss defeated! {EnemiesKilled} enemies killed, {EnemiesLeaked} enemies leaked.");
+                }
+                else
+                {
+                    GD.Print($"🎉 Wave {CurrentWave} complete! {EnemiesKilled} enemies killed, {EnemiesLeaked} enemies leaked, all enemies processed.");
+                }
                 CompleteWave();
             }
         }
+    }
+    
+    private void PlayBossBattleMusic()
+    {
+        GD.Print("🎵 DEBUG: PlayBossBattleMusic() method started");
+        
+        if (SoundManagerService.Instance != null)
+        {
+            GD.Print("🎵 DEBUG: SoundManagerService.Instance is available");
+            GD.Print("🎵 Starting boss battle music!");
+            
+            try
+            {
+                SoundManagerService.Instance.PlaySound("boss_battle", SoundCategory.Music);
+                GD.Print("🎵 DEBUG: PlaySound call completed successfully");
+            }
+            catch (System.Exception ex)
+            {
+                GD.PrintErr($"❌ DEBUG: Exception in PlaySound: {ex.Message}");
+            }
+        }
+        else
+        {
+            GD.PrintErr("⚠️ SoundManagerService not available for boss battle music");
+        }
+        
+        GD.Print("🎵 DEBUG: PlayBossBattleMusic() method completed");
+    }
+    
+    private int GetBossEnemiesInScene()
+    {
+        var sceneTree = Godot.Engine.GetMainLoop() as Godot.SceneTree;
+        if (sceneTree?.CurrentScene == null)
+            return 0;
+            
+        var bossCount = 0;
+        var enemies = sceneTree.GetNodesInGroup("enemies");
+        
+        foreach (Node node in enemies)
+        {
+            if (node is Enemy enemy && enemy.IsBossEnemy())
+            {
+                bossCount++;
+            }
+        }
+        
+        GD.Print($"👑 DEBUG: Found {bossCount} boss enemies in scene");
+        return bossCount;
     }
 }

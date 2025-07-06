@@ -36,9 +36,30 @@
         "description": "Round start sound"
       }
     },
+    "building": {
+      "basic_tower_build": {
+        "file": "res://assets/audio/towers/basic_tower_build.mp3",
+        "category": "SFX",
+        "volume": -6.0,
+        "description": "Basic tower construction sound"
+      },
+      "sniper_tower_build": {
+        "file": "res://assets/audio/towers/sniper_tower_build.mp3",
+        "category": "SFX",
+        "volume": -6.0,
+        "description": "Sniper tower construction sound"
+      }
+    },
     "ui": {},
     "enemies": {},
-    "music": {}
+    "music": {
+      "boss_battle": {
+        "file": "res://assets/audio/music/boss_battle_music_heartbeat_sound.wav",
+        "category": "Music",
+        "volume": -8.0,
+        "description": "Intense boss battle music with heartbeat rhythm"
+      }
+    }
   },
   "categories": {
     "SFX": {

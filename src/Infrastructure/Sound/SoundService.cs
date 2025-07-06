@@ -51,9 +51,12 @@ public class SoundService : ISoundService
 
     public void PlaySound(string soundKey, SoundCategory category = SoundCategory.SFX, float volumeDb = 0.0f)
     {
+        GD.Print($"🔊 DEBUG: PlaySound called - soundKey: {soundKey}, category: {category}");
+        
         if (!_sounds.ContainsKey(soundKey))
         {
             GD.PrintErr($"❌ Sound not found: {soundKey}");
+            GD.Print($"🔊 DEBUG: Available sounds: {string.Join(", ", _sounds.Keys)}");
             return;
         }
         
@@ -74,6 +77,31 @@ public class SoundService : ISoundService
         
         player.Stream = _sounds[soundKey];
         player.VolumeDb = finalVolume;
+        
+        // Set looping for music category
+        if (category == SoundCategory.Music)
+        {
+            if (player.Stream is AudioStreamOggVorbis oggStream)
+            {
+                oggStream.Loop = true;
+                GD.Print($"🎵 Set OGG loop for music: {soundKey}");
+            }
+            else if (player.Stream is AudioStreamWav wavStream)
+            {
+                wavStream.LoopMode = AudioStreamWav.LoopModeEnum.Forward;
+                GD.Print($"🎵 Set WAV loop for music: {soundKey}");
+            }
+            else if (player.Stream is AudioStreamMP3 mp3Stream)
+            {
+                mp3Stream.Loop = true;
+                GD.Print($"🎵 Set MP3 loop for music: {soundKey}");
+            }
+            else
+            {
+                GD.PrintErr($"⚠️ Unknown audio format for music looping: {player.Stream.GetType().Name}");
+            }
+        }
+        
         player.Play();
     }
 

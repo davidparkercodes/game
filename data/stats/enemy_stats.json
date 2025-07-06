@@ -33,7 +33,7 @@
       "description": "Elite enemy with balanced stats"
     },
     "boss_enemy": {
-      "max_health": 500,
+      "max_health": 5000,
       "speed": 45.0,
       "damage": 30,
       "reward_gold": 50,
