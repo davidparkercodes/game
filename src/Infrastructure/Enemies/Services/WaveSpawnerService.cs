@@ -288,7 +288,10 @@ namespace Game.Infrastructure.Enemies.Services;
             }
         }
 
-        CompleteWave();
+        // All enemy groups are exhausted - spawning phase is complete
+        // But do NOT complete the wave until all enemies are defeated
+        IsSpawning = false;
+        GD.Print($"Wave {CurrentWave} spawning completed! All enemy groups exhausted - waiting for enemies to be defeated");
     }
 
     private void SpawnEnemyGroup(EnemySpawnGroup group)
@@ -310,7 +313,10 @@ namespace Game.Infrastructure.Enemies.Services;
         }
         else
         {
-            CompleteWave();
+            // All remaining enemies have been spawned - spawning phase is complete
+            // But do NOT complete the wave until all enemies are defeated
+            IsSpawning = false;
+            GD.Print($"Wave {CurrentWave} spawning completed! Spawned {EnemiesSpawned} enemies - waiting for enemies to be defeated");
         }
     }
 
@@ -352,10 +358,11 @@ namespace Game.Infrastructure.Enemies.Services;
                 GD.Print($"👑 BOSS INCOMING! Massive enemy spawned with 2x scale at {spawnPosition}");
                 GD.Print($"⚠️ WARNING: Boss enemy has {enemyInstance.MaxHealth} HP and high resistance!");
                 
+                // Play dramatic announcement sounds before boss music
+                PlayBossAnnouncementSounds();
+                
                 // Play boss battle music
-                GD.Print($"🎵 DEBUG: About to call PlayBossBattleMusic()");
                 PlayBossBattleMusic();
-                GD.Print($"🎵 DEBUG: PlayBossBattleMusic() call completed");
             }
             else
             {
@@ -607,31 +614,33 @@ namespace Game.Infrastructure.Enemies.Services;
         }
     }
     
-    private void PlayBossBattleMusic()
+    private void PlayBossAnnouncementSounds()
     {
-        GD.Print("🎵 DEBUG: PlayBossBattleMusic() method started");
-        
         if (SoundManagerService.Instance != null)
         {
-            GD.Print("🎵 DEBUG: SoundManagerService.Instance is available");
-            GD.Print("🎵 Starting boss battle music!");
+            GD.Print("📢 Playing dramatic boss announcement sounds!");
             
-            try
-            {
-                SoundManagerService.Instance.PlaySound("boss_battle", SoundCategory.Music);
-                GD.Print("🎵 DEBUG: PlaySound call completed successfully");
-            }
-            catch (System.Exception ex)
-            {
-                GD.PrintErr($"❌ DEBUG: Exception in PlaySound: {ex.Message}");
-            }
+            // Play round_start sound twice for dramatic effect
+            SoundManagerService.Instance.PlaySound("round_start", SoundCategory.SFX);
+            SoundManagerService.Instance.PlaySound("round_start", SoundCategory.SFX);
+        }
+        else
+        {
+            GD.PrintErr("⚠️ SoundManagerService not available for boss announcement sounds");
+        }
+    }
+    
+    private void PlayBossBattleMusic()
+    {
+        if (SoundManagerService.Instance != null)
+        {
+            GD.Print("🎵 Starting boss battle music!");
+            SoundManagerService.Instance.PlaySound("boss_battle", SoundCategory.Music);
         }
         else
         {
             GD.PrintErr("⚠️ SoundManagerService not available for boss battle music");
         }
-        
-        GD.Print("🎵 DEBUG: PlayBossBattleMusic() method completed");
     }
     
     private int GetBossEnemiesInScene()

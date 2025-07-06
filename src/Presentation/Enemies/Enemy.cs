@@ -79,10 +79,11 @@ public partial class Enemy : Area2D
 	{
 		GD.Print($"{Name} died!");
 		
-		// Stop boss music if this is a boss enemy
+		// Do NOT stop boss music here - let WaveManager handle it when the entire wave is complete
+		// This prevents music from stopping when regular enemies die in boss waves
 		if (IsBossEnemy())
 		{
-			StopBossMusic();
+			GD.Print($"🎵 Boss enemy {Name} died! Boss music will be stopped by WaveManager when wave completes.");
 		}
 		
 		RemoveFromGroup("enemies");

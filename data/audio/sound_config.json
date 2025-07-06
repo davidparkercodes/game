@@ -4,13 +4,13 @@
       "basic_tower_shoot": {
         "file": "res://assets/audio/towers/basic_tower_shoot.mp3",
         "category": "SFX",
-        "volume": -8.0,
+        "volume": -2.0,
         "description": "Basic tower firing sound"
       },
       "sniper_tower_shoot": {
         "file": "res://assets/audio/towers/sniper_tower_shoot.mp3",
         "category": "SFX",
-        "volume": -6.0,
+        "volume": -2.0,
         "description": "Sniper tower firing sound"
       }
     },
@@ -18,13 +18,13 @@
       "basic_bullet_impact": {
         "file": "res://assets/audio/projectiles/basic_bullet_impact.mp3",
         "category": "SFX",
-        "volume": -10.0,
+        "volume": -2.0,
         "description": "Basic bullet impact sound"
       },
       "sniper_bullet_impact": {
         "file": "res://assets/audio/projectiles/sniper_bullet_impact.mp3",
         "category": "SFX",
-        "volume": -8.0,
+        "volume": -2.0,
         "description": "Sniper bullet impact sound"
       }
     },
@@ -32,7 +32,7 @@
       "round_start": {
         "file": "res://assets/audio/game/round_start.mp3",
         "category": "SFX",
-        "volume": -4.0,
+        "volume": -2.0,
         "description": "Round start sound"
       }
     },
@@ -40,13 +40,13 @@
       "basic_tower_build": {
         "file": "res://assets/audio/towers/basic_tower_build.mp3",
         "category": "SFX",
-        "volume": -6.0,
+        "volume": -2.0,
         "description": "Basic tower construction sound"
       },
       "sniper_tower_build": {
         "file": "res://assets/audio/towers/sniper_tower_build.mp3",
         "category": "SFX",
-        "volume": -6.0,
+        "volume": -2.0,
         "description": "Sniper tower construction sound"
       }
     },
@@ -54,9 +54,9 @@
     "enemies": {},
     "music": {
       "boss_battle": {
-        "file": "res://assets/audio/music/boss_battle_music_heartbeat_sound.wav",
+        "file": "res://assets/audio/music/boss_battle_music_heartbeat_sound.mp3",
         "category": "Music",
-        "volume": -8.0,
+        "volume": 4.0,
         "description": "Intense boss battle music with heartbeat rhythm"
       }
     }
