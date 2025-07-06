@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://djtqj24w8j6ee" path="res://src/Presentation/Buildings/BasicTower.cs" id="1_dtl24"]
 [ext_resource type="PackedScene" path="res://scenes/Projectiles/Bullet.tscn" id="2_tbwx1"]
-[ext_resource type="Texture2D" uid="uid://4lncw5fj4845" path="res://assets/sprites/basic_shapes_vaporwave_tilesheet_16x16.png" id="3_2tpgm"]
+[ext_resource type="Texture2D" uid="uid://d4gd73l1r0eya" path="res://assets/sprites/shapes_basic_palette_tilemap.png" id="3_2tpgm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_76wwe"]
 size = Vector2(16, 16)

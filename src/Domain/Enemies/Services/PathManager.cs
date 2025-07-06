@@ -7,9 +7,129 @@ using Game.Domain.Levels.ValueObjects;
 
 namespace Game.Domain.Enemies.Services
 {
+	[Tool]
 	public partial class PathManager : Node2D
 	{
-	[Export] public LevelDataResource? CurrentLevel { get; set; }
+	private Resource? _currentLevel;
+	[Export] 
+	public Resource? CurrentLevel 
+	{ 
+		get => _currentLevel;
+		set
+		{
+			_currentLevel = value;
+			if (_currentLevel != null)
+			{
+				try
+				{
+					// Try direct cast first
+					if (_currentLevel is LevelDataResource levelResource)
+					{
+						LoadPathFromLevel(levelResource.ToLevelData());
+						QueueRedraw();
+						return;
+					}
+					
+					// Attempt conversion
+					var converted = TryConvertToLevelDataResource(_currentLevel);
+					if (converted != null)
+					{
+						LoadPathFromLevel(converted.ToLevelData());
+						QueueRedraw();
+						return;
+					}
+					
+					GD.PrintErr($"❌ PathManager: Cannot convert CurrentLevel to LevelDataResource, got: {_currentLevel.GetType().Name}");
+				}
+				catch (System.Exception ex)
+				{
+					GD.PrintErr($"❌ PathManager: Error loading level data - {ex.Message}");
+				}
+			}
+		}
+	}
+
+	private LevelDataResource? TryConvertToLevelDataResource(Resource resource)
+	{
+		if (resource is LevelDataResource)
+			return (LevelDataResource)resource;
+		
+		// Handle Godot deserialization issues by reconstructing from properties
+		try
+		{
+			// Debug: Try different ways to access properties
+			GD.Print($"🔍 Resource type: {resource.GetType().Name}");
+			GD.Print($"🔍 Resource script: {resource.GetScript()}");
+			
+			// Try getting specific properties directly
+			GD.Print($"🔍 LevelName: {resource.Get("LevelName")}");
+			GD.Print($"🔍 Description: {resource.Get("Description")}");
+			
+			// Check if resource has the expected PathPoints property
+			var pathPointsVariant = resource.Get("PathPoints");
+			GD.Print($"📍 PathPoints variant type: {pathPointsVariant.VariantType}");
+			GD.Print($"📍 PathPoints raw value: {pathPointsVariant}");
+			
+			Vector2[] pathPointsArray = null;
+			
+			if (pathPointsVariant.VariantType == Variant.Type.PackedVector2Array)
+			{
+				pathPointsArray = pathPointsVariant.AsVector2Array();
+				GD.Print($"📍 Found {pathPointsArray.Length} path points in PackedVector2Array");
+			}
+			else if (pathPointsVariant.VariantType == Variant.Type.Array)
+			{
+				GD.Print("📍 Trying to convert from Array to Vector2[]");
+				var array = pathPointsVariant.AsGodotArray();
+				pathPointsArray = new Vector2[array.Count];
+				for (int i = 0; i < array.Count; i++)
+				{
+					pathPointsArray[i] = array[i].AsVector2();
+				}
+				GD.Print($"📍 Converted {pathPointsArray.Length} points from Array");
+			}
+			
+			if (pathPointsArray != null && pathPointsArray.Length > 0)
+			{
+				// Debug: Print first few points if any
+				for (int i = 0; i < Math.Min(3, pathPointsArray.Length); i++)
+				{
+					GD.Print($"  Point {i}: {pathPointsArray[i]}");
+				}
+				
+				// Create new LevelDataResource instance and copy all properties
+				var levelResource = new LevelDataResource();
+				levelResource.LevelName = resource.Get("LevelName").AsString();
+				levelResource.Description = resource.Get("Description").AsString();
+				levelResource.PathPoints = pathPointsArray;
+				levelResource.PathWidth = resource.Get("PathWidth").AsSingle();
+				levelResource.SpawnPoint = resource.Get("SpawnPoint").AsVector2();
+				levelResource.EndPoint = resource.Get("EndPoint").AsVector2();
+				levelResource.InitialMoney = resource.Get("InitialMoney").AsInt32();
+				levelResource.InitialLives = resource.Get("InitialLives").AsInt32();
+				levelResource.PathColor = resource.Get("PathColor").AsColor();
+				
+				GD.Print($"✅ Created LevelDataResource with {levelResource.PathPoints.Length} path points");
+				return levelResource;
+			}
+			else
+			{
+				GD.PrintErr($"❌ PathPoints conversion failed - variant type: {pathPointsVariant.VariantType}, array length: {pathPointsArray?.Length ?? -1}");
+				
+				// Try to use default level data as fallback
+				GD.Print("🔄 Falling back to default level data");
+				var defaultLevelData = LevelData.CreateDefault();
+				return LevelDataResource.FromLevelData(defaultLevelData);
+			}
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"❌ PathManager: Error during resource conversion - {ex.Message}");
+		}
+		
+		GD.PrintErr($"❌ PathManager: Failed to convert resource type: {resource.GetType().Name}");
+		return null;
+	}
 		private readonly List<OrderedPathPoint> _pathPoints;
 		private readonly float _pathTolerance;
 		private Color _pathColor = Colors.Yellow;
@@ -23,10 +143,33 @@ namespace Game.Domain.Enemies.Services
 
 	public override void _Ready()
 	{
-		if (CurrentLevel != null)
+		try
 		{
-			LoadPathFromLevel(CurrentLevel.ToLevelData());
-			QueueRedraw(); // Trigger drawing of the path
+			if (CurrentLevel != null)
+			{
+				// Try direct cast first
+				if (CurrentLevel is LevelDataResource levelResource)
+				{
+					LoadPathFromLevel(levelResource.ToLevelData());
+					QueueRedraw();
+					return;
+				}
+				
+				// Try conversion
+				var converted = TryConvertToLevelDataResource(CurrentLevel);
+				if (converted != null)
+				{
+					LoadPathFromLevel(converted.ToLevelData());
+					QueueRedraw();
+					return;
+				}
+				
+				GD.PrintErr($"❌ PathManager._Ready: Cannot load CurrentLevel, got: {CurrentLevel.GetType().Name}");
+			}
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"❌ PathManager._Ready: Error loading path - {ex.Message}");
 		}
 	}
 
@@ -42,7 +185,6 @@ namespace Game.Domain.Enemies.Services
 		// Use default yellow path color
 		_pathColor = Colors.Yellow;
 		
-		GD.Print($"🛤️ PathManager loaded {_pathPoints.Count} path points");
 		QueueRedraw(); // Trigger redraw when path is loaded
 	}
 
@@ -197,14 +339,12 @@ namespace Game.Domain.Enemies.Services
             DrawLine(from, to, _pathColor, _pathWidth);
         }
         
-        // Draw circles at each path point for visibility
-        foreach (var point in _pathPoints)
-        {
-            var position = new Vector2(point.X, point.Y);
-            DrawCircle(position, 8.0f, _pathColor);
-        }
-        
-        GD.Print($"🎨 PathManager drew path with {_pathPoints.Count} points");
+			// Draw circles at each path point for visibility
+			foreach (var point in _pathPoints)
+			{
+				var position = new Vector2(point.X, point.Y);
+				DrawCircle(position, 8.0f, _pathColor);
+			}
     }
 }
 

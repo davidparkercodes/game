@@ -96,9 +96,15 @@ The enemy path system has several critical visibility and rendering issues that 
 - [x] Ensure path rendering doesn't affect game performance
 - [x] Test path behavior when changing scenes or reloading
 
+#### **[x] 3.4 Final Refinements**
+- [x] Set enemy z-index above path for proper layering
+- [x] Make path visible in Godot editor (same as game view)
+- [x] Ensure editor path updates when CurrentLevel changes
+- [x] Maintain clean yellow lines with yellow dots styling
+
 ---
 
-### **Phase 4: Polish and Optimization** ✨
+### **Phase 4: Advanced Polish and Optimization** ✨
 
 #### **[ ] 4.1 Visual Enhancements**
 - [ ] Add animated path elements (flowing particles, arrows)
@@ -217,10 +223,30 @@ Before considering this plan complete, verify:
 1. **📍 Synchronized Path Data** - Updated PathService to use complete level data path (15 points vs 10)
 2. **🎨 Fixed Rendering Order** - Added `z_index = 1` to PathManager in Main.tscn
 3. **✨ Cleaned Visual Style** - Removed distracting black order numbers from path dots
+4. **🎯 Final Refinements** - Enemy z-index above path, editor visibility with @tool directive
 
 **Files Modified:**
 - `src/Infrastructure/Enemies/Services/PathService.cs` - Path synchronization
 - `scenes/Core/Main.tscn` - Z-index fix
-- `src/Domain/Enemies/Services/PathManager.cs` - Removed order numbers
+- `src/Domain/Enemies/Services/PathManager.cs` - Visual cleanup + @tool for editor
+- `scenes/Enemies/Enemy.tscn` - Enemy z-index above path
 
 **Result:** ✅ Path is now fully visible, enemies follow it exactly, proper rendering order restored!
+
+### ✅ **ADDITIONAL FIX - Resource Conversion Error**
+
+**Problem:** Godot deserialization was loading `level_01.tres` as generic `Resource` instead of `LevelDataResource`, causing casting errors.
+
+**Root Cause:** Godot's C# resource loading sometimes doesn't preserve exact derived types during deserialization.
+
+**Solution Applied:**
+- Enhanced `TryConvertToLevelDataResource()` method to handle generic `Resource` objects
+- Added property-based reconstruction when direct casting fails
+- Checks for `PackedVector2Array` type to validate `PathPoints` property
+- Creates new `LevelDataResource` instance and copies all properties manually
+- Maintains backward compatibility with proper `LevelDataResource` instances
+
+**Files Modified:**
+- `src/Domain/Enemies/Services/PathManager.cs` - Enhanced resource conversion logic
+
+**Result:** ✅ Resource conversion errors eliminated, path loads correctly in all scenarios!

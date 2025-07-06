@@ -6,7 +6,7 @@
 script = ExtResource("1")
 LevelName = "Training Grounds"
 Description = "A simple zigzag path to learn the basics"
-PathPoints = Array[Vector2]([Vector2(100, -50), Vector2(100, 150), Vector2(400, 150), Vector2(400, 300), Vector2(150, 300), Vector2(150, 450), Vector2(500, 450), Vector2(500, 600), Vector2(300, 600), Vector2(300, 750), Vector2(800, 750), Vector2(800, 350), Vector2(600, 350), Vector2(600, 50), Vector2(1000, 50)])
+PathPoints = PackedVector2Array(100, -50, 100, 150, 400, 150, 400, 300, 150, 300, 150, 450, 500, 450, 500, 600, 300, 600, 300, 750, 800, 750, 800, 350, 600, 350, 600, 50, 1000, 50)
 PathWidth = 64.0
 SpawnPoint = Vector2(100, -50)
 EndPoint = Vector2(1000, 50)

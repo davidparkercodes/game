@@ -1,12 +1,13 @@
 [gd_scene load_steps=4 format=3 uid="uid://dtrqffq12t5q4"]
 
 [ext_resource type="Script" uid="uid://cy3tp26pxihyt" path="res://src/Presentation/Enemies/Enemy.cs" id="1_55jtl"]
-[ext_resource type="Texture2D" uid="uid://4lncw5fj4845" path="res://assets/sprites/basic_shapes_vaporwave_tilesheet_16x16.png" id="2_gonmn"]
+[ext_resource type="Texture2D" uid="uid://d4gd73l1r0eya" path="res://assets/sprites/shapes_basic_palette_tilemap.png" id="2_gonmn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mpr68"]
 size = Vector2(16, 16)
 
 [node name="Enemy" type="Area2D" groups=["enemies"]]
+z_index = 2
 script = ExtResource("1_55jtl")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -15,4 +16,5 @@ region_enabled = true
 region_rect = Rect2(16, 16, 16, 16)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("RectangleShape2D_mpr68")
