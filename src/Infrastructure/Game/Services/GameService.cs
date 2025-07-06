@@ -81,10 +81,11 @@ public class GameService
         AddMoney(reward);
         Score += reward * 10;
         
-        // Notify wave manager
-        WaveManager.Instance?.OnEnemyKilled();
+        GD.Print($"💰 GameService: Enemy killed! Reward: {reward}, New score: {Score}");
         
-        GD.Print($"Enemy killed! Score: {Score}");
+        // Notify wave manager
+        GD.Print($"📡 GameService: Notifying WaveManager about enemy kill");
+        WaveManager.Instance?.OnEnemyKilled();
     }
 
     public void Reset()

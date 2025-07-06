@@ -51,18 +51,16 @@ public class SoundService : ISoundService
 
     public void PlaySound(string soundKey, SoundCategory category = SoundCategory.SFX, float volumeDb = 0.0f)
     {
-        GD.Print($"🎵 SoundService.PlaySound called: {soundKey}");
-        
         if (!_sounds.ContainsKey(soundKey))
         {
-            GD.PrintErr($"❌ Sound not found in loaded sounds: {soundKey}. Available sounds: {string.Join(", ", _sounds.Keys)}");
+            GD.PrintErr($"❌ Sound not found: {soundKey}");
             return;
         }
         
         AudioStreamPlayer player = GetPlayerForCategory(category);
         if (player == null)
         {
-            GD.PrintErr($"❌ No audio player available for category: {category}");
+            GD.PrintErr($"❌ No audio player for category: {category}");
             return;
         }
         
@@ -76,9 +74,6 @@ public class SoundService : ISoundService
         
         player.Stream = _sounds[soundKey];
         player.VolumeDb = finalVolume;
-        
-        GD.Print($"🎵 Playing {soundKey} on {player.Name} at volume {finalVolume}dB (inTree: {player.IsInsideTree()})");
-        
         player.Play();
     }
 

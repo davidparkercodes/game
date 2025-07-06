@@ -70,6 +70,15 @@ public partial class Enemy : Area2D
 		
 		RemoveFromGroup("enemies");
 		
+		// Notify GameService about the enemy death for money/score
+		if (GameService.Instance != null)
+		{
+			GameService.Instance.OnEnemyKilled(RewardGold);
+			GD.Print($"💰 Enemy {Name} gave {RewardGold} gold reward");
+		}
+		
+		// Emit signal for any other listeners (like WaveSpawnerService)
+		GD.Print($"📡 Enemy {Name} emitting EnemyKilled signal");
 		EmitSignal(SignalName.EnemyKilled);
 		QueueFree();
 	}

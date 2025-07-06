@@ -23,7 +23,6 @@ public class SoundManagerService
 
     public void PlaySound(string soundKey, SoundCategory category = SoundCategory.SFX, float volumeDb = 0.0f)
     {
-        GD.Print($"🔊 Playing sound: {soundKey} (Category: {category}, Volume: {volumeDb})");
         _soundService.PlaySound(soundKey, category, volumeDb);
     }
 

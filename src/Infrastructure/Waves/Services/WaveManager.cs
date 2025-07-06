@@ -126,16 +126,26 @@ public class WaveManager
 
     public void OnEnemyKilled()
     {
+        GD.Print($"🎯 WaveManager.OnEnemyKilled() called. Wave in progress: {_isWaveInProgress}");
+        
         if (_isWaveInProgress)
         {
             // Update round service
             RoundService.Instance?.OnEnemyDefeated();
 
             // Check if wave is complete
-            if (_waveService.GetRemainingEnemies() <= 0)
+            var remainingEnemies = _waveService.GetRemainingEnemies();
+            GD.Print($"🔢 WaveManager: Remaining enemies: {remainingEnemies}");
+            
+            if (remainingEnemies <= 0)
             {
+                GD.Print($"🎆 WaveManager: Wave complete! Calling OnWaveCompleted()");
                 OnWaveCompleted();
             }
+        }
+        else
+        {
+            GD.Print($"⚠️ WaveManager: Enemy killed but no wave in progress");
         }
     }
 

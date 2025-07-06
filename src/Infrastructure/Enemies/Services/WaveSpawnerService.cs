@@ -15,18 +15,19 @@ using Game.Presentation.Components;
 
 namespace Game.Infrastructure.Enemies.Services;
 
-public class WaveSpawnerService : IWaveService
-{
-    public bool IsSpawning { get; private set; } = false;
-    public int CurrentWave { get; private set; } = 0;
-    public int EnemiesSpawned { get; private set; } = 0;
-    public int TotalEnemiesInWave { get; private set; } = 0;
+    public class WaveSpawnerService : IWaveService
+    {
+        public bool IsSpawning { get; private set; } = false;
+        public int CurrentWave { get; private set; } = 0;
+        public int EnemiesSpawned { get; private set; } = 0;
+        public int TotalEnemiesInWave { get; private set; } = 0;
+        public int EnemiesKilled { get; private set; } = 0;
 
-    private Godot.Timer? _spawnTimer;
-    private WaveModel? _currentWave;
-    private readonly IWaveConfigurationService _waveConfigurationService;
-    private WaveConfiguration _loadedWaveSet;
-    private List<WaveModel>? _waves;
+        private Godot.Timer? _spawnTimer;
+        private WaveModel? _currentWave;
+        private readonly IWaveConfigurationService _waveConfigurationService;
+        private WaveConfiguration _loadedWaveSet;
+        private List<WaveModel>? _waves;
 
     public WaveSpawnerService(IWaveConfigurationService waveConfigurationService)
     {
@@ -133,6 +134,7 @@ public class WaveSpawnerService : IWaveService
             CurrentWave = waveNumber;
             IsSpawning = true;
             EnemiesSpawned = 0;
+            EnemiesKilled = 0;
             TotalEnemiesInWave = CalculateTotalEnemies(_currentWave);
 
             GD.Print($"WaveSpawnerService: Starting wave {CurrentWave} '{_currentWave.WaveName}' with {TotalEnemiesInWave} enemies");
@@ -167,15 +169,20 @@ public class WaveSpawnerService : IWaveService
     
     public int GetRemainingEnemies()
     {
-        if (_currentWave == null)
+        if (_currentWave == null || !IsSpawning)
             return 0;
             
-        int remaining = 0;
+        // Calculate remaining enemies: total spawned minus killed
+        var spawnedAlive = EnemiesSpawned - EnemiesKilled;
+        
+        // Add enemies still waiting to be spawned
+        int waitingToSpawn = 0;
         foreach (var group in _currentWave.EnemyGroups)
         {
-            remaining += group.Count;
+            waitingToSpawn += group.Count;
         }
-        return remaining;
+        
+        return Math.Max(0, spawnedAlive + waitingToSpawn);
     }
     
     public EnemyStats GetNextEnemyType()
@@ -331,8 +338,10 @@ public class WaveSpawnerService : IWaveService
                 GD.Print($"✅ Enemy {enemyType} added to scene tree at {spawnPosition}");
                 
                 // Connect enemy signals for cleanup
+                GD.Print($"🔗 WaveSpawnerService: Connecting signals for enemy {enemyInstance.Name}");
                 enemyInstance.EnemyKilled += OnEnemyKilled;
                 enemyInstance.EnemyReachedEnd += OnEnemyReachedEnd;
+                GD.Print($"✅ WaveSpawnerService: Signal connections established for enemy {enemyInstance.Name}");
                 
                 RoundService.Instance?.OnEnemySpawned();
             }
@@ -400,6 +409,7 @@ public class WaveSpawnerService : IWaveService
         StopWave();
         CurrentWave = 0;
         EnemiesSpawned = 0;
+        EnemiesKilled = 0;
         TotalEnemiesInWave = 0;
         _currentWave = null;
     }
@@ -493,7 +503,18 @@ public class WaveSpawnerService : IWaveService
     
     private void OnEnemyKilled()
     {
-        GD.Print("WaveSpawnerService: Enemy killed");
+        if (IsSpawning)
+        {
+            EnemiesKilled++;
+            GD.Print($"WaveSpawnerService: Enemy killed! {EnemiesKilled}/{EnemiesSpawned} enemies killed, remaining: {GetRemainingEnemies()}");
+            
+            // Check if wave is complete (all enemies spawned and all killed)
+            if (GetRemainingEnemies() <= 0 && !HasMoreEnemies())
+            {
+                GD.Print($"🎉 Wave {CurrentWave} complete! All {EnemiesKilled} enemies killed.");
+                CompleteWave();
+            }
+        }
     }
     
     private void OnEnemyReachedEnd()

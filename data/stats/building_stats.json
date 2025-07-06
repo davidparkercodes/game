@@ -2,7 +2,7 @@
   "building_types": {
     "basic_tower": {
       "cost": 50,
-      "damage": 10,
+      "damage": 100,
       "range": 120.0,
       "attack_speed": 1.2,
       "upgrade_cost": 25,

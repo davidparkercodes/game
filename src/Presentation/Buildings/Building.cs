@@ -141,9 +141,8 @@ public partial class Building : StaticBody2D
 			if (!_enemiesInRange.Contains(enemy))
 			{
 				_enemiesInRange.Add(enemy);
-				GD.Print($"{LogPrefix} {Name} detected enemy: {enemy.Name} (Total in range: {_enemiesInRange.Count})");
 				
-			if (_currentTarget == null)
+				if (_currentTarget == null)
 				{
 					UpdateTarget();
 				}
@@ -160,7 +159,6 @@ public partial class Building : StaticBody2D
 			if (_enemiesInRange.Contains(enemy))
 			{
 				_enemiesInRange.Remove(enemy);
-				GD.Print($"{LogPrefix} {Name} lost enemy: {enemy.Name} (Total in range: {_enemiesInRange.Count})");
 				
 				if (_currentTarget == enemy)
 				{
@@ -180,7 +178,6 @@ public partial class Building : StaticBody2D
 		if (_enemiesInRange.Count == 0)
 		{
 			_currentTarget = null;
-			GD.Print($"{LogPrefix} {Name} no targets available");
 			return;
 		}
 		
@@ -188,10 +185,6 @@ public partial class Building : StaticBody2D
 		if (newTarget != _currentTarget)
 		{
 			_currentTarget = newTarget;
-			if (_currentTarget != null)
-				{
-					GD.Print($"{LogPrefix} {Name} targeting: {_currentTarget.Name}");
-				}
 		}
 	}
 	
@@ -319,19 +312,14 @@ public partial class Building : StaticBody2D
 		// Play shooting sound
 		PlayShootSound();
 		
-		GD.Print($"{LogPrefix} {Name} fired at {_currentTarget.Name} (Damage: {Damage})");
+		// Bullet fired successfully
 	}
 	
 	protected virtual void PlayShootSound()
 	{
 		if (SoundManagerService.Instance != null)
 		{
-			GD.Print($"{LogPrefix} {Name} playing shoot sound: {_shootSoundKey}");
 			SoundManagerService.Instance.PlaySound(_shootSoundKey);
-		}
-		else
-		{
-			GD.PrintErr($"{LogPrefix} {Name} SoundManagerService not available for shoot sound");
 		}
 	}
 	
@@ -342,7 +330,6 @@ public partial class Building : StaticBody2D
 		if (_fireTimer != null && _fireTimer.IsStopped())
 		{
 			_fireTimer.Start();
-			GD.Print($"{LogPrefix} {Name} started firing");
 		}
 	}
 	
@@ -359,7 +346,6 @@ public partial class Building : StaticBody2D
 		if (_fireTimer != null && !_fireTimer.IsStopped())
 		{
 			_fireTimer.Stop();
-			GD.Print($"{LogPrefix} {Name} stopped firing");
 		}
 	}
 	
