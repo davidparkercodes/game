@@ -254,6 +254,68 @@ public class WaveManager
     {
         return _waveService.GetWaveProgress();
     }
+    
+    // DEBUG: Wave jump methods for testing
+    public void JumpToWave(int targetWave)
+    {
+        if (targetWave < 1 || targetWave > GetTotalWaves())
+        {
+            GD.PrintErr($"🚫 DEBUG: Cannot jump to wave {targetWave}. Valid range: 1-{GetTotalWaves()}");
+            return;
+        }
+        
+        if (_isWaveInProgress)
+        {
+            GD.Print($"⏸️ DEBUG: Stopping current wave {_currentWaveNumber} to jump to wave {targetWave}");
+            _waveService.StopCurrentWave();
+        }
+        
+        GD.Print($"🚀 DEBUG: Jumping to wave {targetWave}!");
+        
+        // Reset current state
+        Reset();
+        
+        // Set wave number to target - 1 (since StartNextWave increments)
+        _currentWaveNumber = targetWave - 1;
+        
+        // Start the target wave
+        StartNextWave();
+        
+        GD.Print($"✅ DEBUG: Successfully jumped to wave {targetWave}");
+    }
+    
+    public void CompleteCurrentWaveInstantly()
+    {
+        if (!_isWaveInProgress)
+        {
+            GD.Print($"⚠️ DEBUG: No wave in progress to complete. Current wave: {_currentWaveNumber}");
+            return;
+        }
+        
+        GD.Print($"⚡ DEBUG: Instantly completing wave {_currentWaveNumber}!");
+        
+        // Stop the current wave spawning
+        _waveService.StopCurrentWave();
+        
+        // Force complete the wave
+        OnWaveCompleted();
+        
+        GD.Print($"✅ DEBUG: Wave {_currentWaveNumber} completed instantly!");
+    }
+    
+    public void JumpToNextWave()
+    {
+        int nextWave = _currentWaveNumber + 1;
+        
+        if (nextWave > GetTotalWaves())
+        {
+            GD.Print($"🏁 DEBUG: Already at final wave ({_currentWaveNumber}). Cannot jump to next wave.");
+            return;
+        }
+        
+        GD.Print($"⏭️ DEBUG: Jumping to next wave: {nextWave}");
+        JumpToWave(nextWave);
+    }
 
     private void UpdateWaveButtonState()
     {
