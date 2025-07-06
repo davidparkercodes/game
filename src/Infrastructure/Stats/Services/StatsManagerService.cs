@@ -134,7 +134,7 @@ public class StatsManagerService
                     }
                 }
                 
-                _defaultBuildingStats = config?.default_stats ?? new BuildingStatsData(50, 10, 150f, 1.0f, 900, "Default building");
+                _defaultBuildingStats = config?.default_stats ?? new BuildingStatsData(50, 10, 150f, 1.0f, 25, "Default building", 900, 12.0f);
                 
                 GD.Print($"✅ StatsManagerService: Loaded {_buildingStats.Count} building types from config");
             }
@@ -153,11 +153,11 @@ public class StatsManagerService
     
     private void LoadFallbackBuildingStats()
     {
-        _defaultBuildingStats = new BuildingStatsData(50, 10, 150f, 1.0f, 900, "Default building");
-        _buildingStats["basic_tower"] = new BuildingStatsData(50, 10, 120f, 1.2f, 900, "Basic tower with balanced stats");
-        _buildingStats["sniper_tower"] = new BuildingStatsData(75, 35, 200f, 2.5f, 1200, "Long range, high damage tower with slow fire rate");
-        _buildingStats["rapid_tower"] = new BuildingStatsData(75, 6, 100f, 0.4f, 800, "Fast firing tower with lower damage");
-        _buildingStats["heavy_tower"] = new BuildingStatsData(75, 50, 150f, 3.0f, 700, "Heavy damage tower with slow fire rate");
+        _defaultBuildingStats = new BuildingStatsData(50, 10, 150f, 1.0f, 25, "Default building", 900, 12.0f);
+        _buildingStats["basic_tower"] = new BuildingStatsData(50, 10, 120f, 1.2f, 25, "Basic tower with balanced stats", 900, 12.0f);
+        _buildingStats["sniper_tower"] = new BuildingStatsData(75, 35, 200f, 2.5f, 40, "Long range, high damage tower with slow fire rate", 1200, 12.0f);
+        _buildingStats["rapid_tower"] = new BuildingStatsData(75, 6, 100f, 0.4f, 35, "Fast firing tower with lower damage", 800, 12.0f);
+        _buildingStats["heavy_tower"] = new BuildingStatsData(100, 50, 150f, 3.0f, 75, "Heavy damage tower with slow fire rate", 700, 16.0f);
     }
 
     public BuildingStatsData GetBuildingStats(string buildingType)

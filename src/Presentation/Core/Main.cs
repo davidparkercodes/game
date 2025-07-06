@@ -10,6 +10,7 @@ using Game.Infrastructure.Waves.Services;
 using Game.Application.Game.Services;
 using Game.Infrastructure.Map.Services;
 using Game.Infrastructure.Map.Extensions;
+using Game.Presentation.Buildings;
 using static Game.Di.DiConfiguration;
 
 namespace Game.Presentation.Core;
@@ -136,6 +137,10 @@ public partial class Main : Node
 
 	private void InitializeBuildingSystem()
 	{
+		// Clear any previous buildings from the registry
+		BuildingRegistry.Instance.ClearAllBuildings();
+		GD.Print("🧹 BuildingRegistry cleared for fresh start");
+		
 		TileMapLayer? foundLayer = null;
 		
 		// Try to get the Level01 node - it should be a TileMapLayer itself

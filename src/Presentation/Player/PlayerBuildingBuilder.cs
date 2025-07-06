@@ -95,14 +95,14 @@ public class PlayerBuildingBuilder
 		return;
 	}
 		
-		// TODO: Implement proper building manager integration
-		// var buildingManager = _player.GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;
-		// if (buildingManager != null && buildingManager.IsPositionOccupied(buildPosition, 16.0f))
-		// {
-		// 	var existingBuilding = buildingManager.GetBuildingAt(buildPosition, 16.0f);
-		// 	GD.Print($"🏭 Cannot place building - overlapping with existing {existingBuilding?.GetType().Name ?? "building"} at {buildPosition}");
-		// 	return;
-		// }
+		// Additional collision check using BuildingRegistry (already checked in preview, but double-check here)
+		float collisionRadius = _currentPreview.GetBuildingCost() > 100 ? 40.0f : BuildingRegistry.DefaultCollisionRadius; // Larger buildings need more space
+		if (BuildingRegistry.Instance.IsPositionOccupied(buildPosition, collisionRadius))
+		{
+			var existingBuilding = BuildingRegistry.Instance.GetBuildingAt(buildPosition, collisionRadius);
+			GD.Print($"🏭 Cannot place building - overlapping with existing {existingBuilding?.Name ?? "building"} at {buildPosition}");
+			return;
+		}
 		
 		if (!_currentPreview.CanPlaceBuilding())
 		{
@@ -131,8 +131,7 @@ public class PlayerBuildingBuilder
 		// Play construction sound
 		PlayConstructionSound(building);
 
-		// TODO: Register building with building manager
-		// buildingManager?.AddBuilding(building);
+		// Building is automatically registered with BuildingRegistry in Building._Ready()
 
 		GD.Print($"🔧 Built building at {building.GlobalPosition} for ${cost}");
 	}

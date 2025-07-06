@@ -12,6 +12,7 @@ radius = 112.0
 
 [node name="StaticBody2D2" type="StaticBody2D"]
 script = ExtResource("1_ih2c0")
+CollisionRadius = 32.0
 BulletScene = ExtResource("2_jfomq")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

@@ -15,7 +15,9 @@ public partial class Building : StaticBody2D
 	[Export] public int Damage { get; set; } = 10;
 	[Export] public float Range { get; set; } = 150.0f;
 	[Export] public float AttackSpeed { get; set; } = 30.0f;
+	[Export] public float CollisionRadius { get; set; } = BuildingRegistry.DefaultCollisionRadius;
 	[Export] public PackedScene? BulletScene;
+	[Export] public bool IsPreview { get; set; } = false;
 
 	protected Godot.Timer _fireTimer = null!;
 	protected Area2D _rangeArea = null!;
@@ -47,7 +49,17 @@ public partial class Building : StaticBody2D
 		CreateRangeVisual();
 		ConnectSignals();
 		
-		GD.Print($"{LogPrefix} {Name} ready - Range: {Range}, Damage: {Damage}, AttackSpeed: {AttackSpeed}");
+		// Register this building with the registry for collision detection (but not for preview buildings)
+		if (!IsPreview)
+		{
+			BuildingRegistry.Instance.RegisterBuilding(this);
+		}
+		else
+		{
+			GD.Print($"{LogPrefix} {Name} is a preview building - skipping registry registration");
+		}
+		
+		GD.Print($"{LogPrefix} {Name} ready - Range: {Range}, Damage: {Damage}, AttackSpeed: {AttackSpeed}, CollisionRadius: {CollisionRadius}");
 	}
 	
 	private void ConnectSignals()
@@ -369,11 +381,12 @@ public partial class Building : StaticBody2D
 			Damage = stats.damage;
 			Range = stats.range;
 			AttackSpeed = stats.attack_speed;
+			CollisionRadius = stats.collision_radius;
 			
 			// Set sound keys based on tower type
 			SetSoundKeysForTowerType(towerType);
 			
-			GD.Print($"{LogPrefix} {Name} loaded config for {towerType}: Cost={Cost}, Damage={Damage}, Range={Range}, AttackSpeed={AttackSpeed}");
+			GD.Print($"{LogPrefix} {Name} loaded config for {towerType}: Cost={Cost}, Damage={Damage}, Range={Range}, AttackSpeed={AttackSpeed}, CollisionRadius={CollisionRadius}");
 		}
 		else
 		{
@@ -467,5 +480,15 @@ public partial class Building : StaticBody2D
 	{
 		// Utility method to clear the bullet pool (useful for scene changes)
 		_bulletPool.Clear();
+	}
+	
+	public override void _ExitTree()
+	{
+		// Unregister this building from the registry when it's destroyed (but not for preview buildings)
+		if (!IsPreview)
+		{
+			BuildingRegistry.Instance.UnregisterBuilding(this);
+		}
+		base._ExitTree();
 	}
 }

@@ -21,6 +21,7 @@ public partial class BuildingPreview : Node2D
 		if (BuildingScene != null)
 		{
 			_previewBuilding = BuildingScene.Instantiate<Building>();
+			_previewBuilding.IsPreview = true; // Mark as preview to prevent registry registration
 			_previewBuilding.InitializeStats();
 			AddChild(_previewBuilding);
 			
@@ -115,15 +116,15 @@ public partial class BuildingPreview : Node2D
 	
     private bool IsOverlappingWithBuildings(Vector2 position)
     {
-        // TODO: Implement proper building collision detection
-        // var buildingManager = GetTree().GetFirstNodeInGroup("building_manager") as BuildingManager;
-        // if (buildingManager == null)
-        // {
-        //     return false;
-        // }
-        // 
-        // return buildingManager.IsPositionOccupied(position, 16.0f);
-        return false;
+        // Use BuildingRegistry to check for collisions with existing buildings
+        float collisionRadius = _previewBuilding?.CollisionRadius ?? BuildingRegistry.DefaultCollisionRadius;
+        
+        bool isOccupied = BuildingRegistry.Instance.IsPositionOccupied(position, collisionRadius);
+        
+        // Only log on significant changes to avoid spam
+        // The visual feedback is enough for the player
+        
+        return isOccupied;
     }
 	
 	public void UpdateBuildingScene(PackedScene newBuildingScene)
@@ -137,6 +138,7 @@ public partial class BuildingPreview : Node2D
 		if (BuildingScene != null)
 		{
 			_previewBuilding = BuildingScene.Instantiate<Building>();
+			_previewBuilding.IsPreview = true; // Mark as preview to prevent registry registration
 			_previewBuilding.InitializeStats();
 			AddChild(_previewBuilding);
 			

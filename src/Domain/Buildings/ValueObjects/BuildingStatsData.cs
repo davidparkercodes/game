@@ -12,6 +12,7 @@ public readonly struct BuildingStatsData
     public string description { get; init; }
     public float fire_rate => attack_speed;
     public float bullet_speed { get; init; }
+    public float collision_radius { get; init; }
 
     public BuildingStatsData(
         int cost = 0,
@@ -20,7 +21,8 @@ public readonly struct BuildingStatsData
         float attackSpeed = 0f,
         int upgradeCost = 0,
         string description = "",
-        float bulletSpeed = 300f)
+        float bulletSpeed = 300f,
+        float collisionRadius = 12.0f)
     {
         if (cost < 0) throw new ArgumentException("Cost cannot be negative", nameof(cost));
         if (damage < 0) throw new ArgumentException("Damage cannot be negative", nameof(damage));
@@ -35,6 +37,7 @@ public readonly struct BuildingStatsData
         upgrade_cost = upgradeCost;
         this.description = description ?? string.Empty;
         bullet_speed = bulletSpeed;
+        collision_radius = collisionRadius;
     }
 
     // NO HARDCODED VALUES! All data must come from config files.
