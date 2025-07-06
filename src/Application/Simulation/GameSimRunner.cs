@@ -9,6 +9,7 @@ using Game.Domain.Shared.ValueObjects;
 using Game.Domain.Buildings.Services;
 using Game.Domain.Enemies.Services;
 using Game.Application.Buildings.Services;
+using Game.Domain.Common.Services;
 
 namespace Game.Application.Simulation;
 
@@ -20,13 +21,15 @@ public class GameSimRunner
     private readonly IBuildingTypeRegistry _buildingTypeRegistry;
     private readonly IPlacementStrategyProvider _placementStrategyProvider;
     private readonly IWaveMetricsCollector _metricsCollector;
+    private readonly ILogger _logger;
     private Random _random;
 
-    public GameSimRunner()
+    public GameSimRunner(ILogger? logger = null)
     {
-        _buildingStatsProvider = new MockBuildingStatsProvider();
+        _logger = logger ?? new ConsoleLogger("[GAMESIM]", LogLevel.Error); // Only show errors during tests
+        _buildingStatsProvider = new MockBuildingStatsProvider(null, null, _logger);
         _enemyStatsProvider = new MockEnemyStatsProvider();
-        _waveService = new MockWaveService();
+        _waveService = new MockWaveService(_logger);
         _buildingTypeRegistry = new BuildingTypeRegistry(_buildingStatsProvider);
         _placementStrategyProvider = new PlacementStrategyProvider(_buildingTypeRegistry);
         _metricsCollector = new WaveMetricsCollector();
@@ -39,6 +42,8 @@ public class GameSimRunner
         
         try
         {
+            _logger.LogDebug($"Starting simulation with MaxWaves: {config.MaxWaves}, WaveSetDifficulty: {config.WaveSetDifficulty}");
+            
             // Set random seed for deterministic results
             _random = new Random(config.RandomSeed);
             
@@ -51,11 +56,15 @@ public class GameSimRunner
             // Load wave configuration based on difficulty setting
             _waveService.LoadWaveSet(config.WaveSetDifficulty);
             _waveService.SetEnemyCountMultiplier(config.EnemyCountMultiplier);
+            
+            _logger.LogDebug($"Wave service loaded with {_waveService.GetTotalWaves()} total waves available");
 
             // Initialize game state and metrics
             var gameState = new GameState(config.StartingMoney, config.StartingLives);
             var waveResults = new List<WaveResult>();
             _metricsCollector.Reset();
+            
+            _logger.LogDebug($"Initialized game state - Money: {gameState.Money}, Lives: {gameState.Lives}");
 
             // Report initial progress
             progress?.Report(new SimulationProgress(0, gameState.Money, gameState.Lives));
@@ -63,14 +72,19 @@ public class GameSimRunner
             // Run simulation waves
             for (int wave = 1; wave <= config.MaxWaves && !gameState.IsGameOver; wave++)
             {
+                _logger.LogDebug($"Starting wave {wave}/{config.MaxWaves}");
                 var waveResult = RunWave(gameState, wave, config);
                 waveResults.Add(waveResult);
+                
+                _logger.LogDebug($"Wave {wave} result - Completed: {waveResult.Completed}, EnemiesKilled: {waveResult.EnemiesKilled}, LivesLost: {waveResult.LivesLost}");
+                _logger.LogDebug($"Game state after wave {wave} - Money: {gameState.Money}, Lives: {gameState.Lives}, IsGameOver: {gameState.IsGameOver}, IsVictory: {gameState.IsVictory}");
 
                 // Report progress after each wave
                 progress?.Report(new SimulationProgress(wave, gameState.Money, gameState.Lives));
 
                 if (!waveResult.Completed)
                 {
+                    _logger.LogDebug($"Wave {wave} failed to complete, ending simulation");
                     stopwatch.Stop();
                     return SimulationResult.Failure(
                         $"Failed to complete wave {wave}",
@@ -82,10 +96,14 @@ public class GameSimRunner
             }
 
             stopwatch.Stop();
+            
+            _logger.LogDebug($"Simulation loop completed. Final state - CurrentWave: {gameState.CurrentWave}, IsGameOver: {gameState.IsGameOver}, IsVictory: {gameState.IsVictory}");
+            _logger.LogDebug($"Wave results count: {waveResults.Count}");
 
             // Check final result
             if (gameState.IsVictory)
             {
+                _logger.LogDebug($"Simulation succeeded - Victory achieved!");
                 return SimulationResult.CreateSuccess(
                     finalMoney: gameState.Money,
                     finalLives: gameState.Lives,
@@ -99,6 +117,7 @@ public class GameSimRunner
             }
             else
             {
+                _logger.LogDebug($"Simulation failed - No victory condition met");
                 return SimulationResult.Failure(
                     "Game ended without victory",
                     gameState,
@@ -240,33 +259,56 @@ public class GameSimRunner
 
     private void PlaceInitialBuildings(GameState gameState, int waveNumber)
     {
+        _logger.LogDebug($"Placing initial buildings for wave {waveNumber}");
+        
         // Fully config-driven strategy using PlacementStrategyProvider
         var positions = _placementStrategyProvider.GetInitialBuildingPositions();
         var buildingCategory = _placementStrategyProvider.GetInitialBuildingCategory();
         var maxCost = _placementStrategyProvider.GetMaxCostPerBuilding();
+        
+        _logger.LogDebug($"Placement config - Category: {buildingCategory}, MaxCost: {maxCost}, Positions: {positions.Count()}");
 
         // Get buildings from the specified category
         var categoryBuildings = _buildingTypeRegistry.GetByCategory(buildingCategory).ToList();
         var initialBuildingType = categoryBuildings.Any() ? categoryBuildings.First().ConfigKey : null;
         
+        _logger.LogDebug($"Category '{buildingCategory}' has {categoryBuildings.Count} buildings available");
+        
         // Use fallback strategy if no category buildings found
         if (string.IsNullOrEmpty(initialBuildingType))
         {
+            _logger.LogDebug($"No buildings found in category '{buildingCategory}', using fallback");
             initialBuildingType = _placementStrategyProvider.GetFallbackBuildingType();
         }
+        
+        _logger.LogDebug($"Selected building type: {initialBuildingType}");
 
+        int buildingsPlaced = 0;
         foreach (var position in positions)
         {
             // Check cost constraint from strategy
             var stats = _buildingStatsProvider.GetBuildingStats(initialBuildingType);
+            _logger.LogDebug($"Trying to place {initialBuildingType} at {position} - Cost: {stats.Cost}, MaxCost: {maxCost}, GameMoney: {gameState.Money}");
+            
             if (stats.Cost <= maxCost)
             {
                 if (TryPlaceBuilding(gameState, initialBuildingType, position))
                 {
-                    // Building placed successfully
+                    buildingsPlaced++;
+                    _logger.LogDebug($"Successfully placed building {buildingsPlaced} at {position}");
+                }
+                else
+                {
+                    _logger.LogDebug($"Failed to place building at {position} - insufficient money");
                 }
             }
+            else
+            {
+                _logger.LogDebug($"Building cost {stats.Cost} exceeds max cost {maxCost}");
+            }
         }
+        
+        _logger.LogDebug($"Initial building placement complete - {buildingsPlaced} buildings placed, total buildings: {gameState.Buildings.Count}");
     }
 
     private void PlaceAdditionalBuildings(GameState gameState, int waveNumber)
@@ -322,11 +364,15 @@ public class GameSimRunner
         var enemies = new List<SimulatedEnemy>();
         var spawnPosition = new Position(0, 250); // Start position
 
+        _logger.LogDebug($"Spawning enemies for wave {waveNumber}");
+        
         // Start the wave in the wave service to get configuration
         _waveService.StartWave(waveNumber);
         
         // Get the total number of enemies from wave configuration
         var totalEnemiesInWave = _waveService.GetRemainingEnemies();
+        
+        _logger.LogDebug($"Wave {waveNumber} should spawn {totalEnemiesInWave} enemies");
         
         // Create enemies based on wave configuration
         for (int i = 0; i < totalEnemiesInWave; i++)
@@ -344,6 +390,8 @@ public class GameSimRunner
 
             enemies.Add(enemy);
         }
+        
+        _logger.LogDebug($"Successfully spawned {enemies.Count} enemies for wave {waveNumber}");
 
         return enemies;
     }

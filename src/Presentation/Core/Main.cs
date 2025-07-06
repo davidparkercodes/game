@@ -22,7 +22,7 @@ public partial class Main : Node
 	private IMediator _mediator = null!;
 	private HudManager _hudManager = null!;
 	private Hud _hud = null!;
-	private TimeManager _timeManager = null!;
+	private ITimeManager _timeManager = null!;
 	private SpeedControl _speedControl = null!;
 	private static MapBoundaryService? _mapBoundaryService = null!;
 	
@@ -260,10 +260,9 @@ public partial class Main : Node
 	{
 		try
 		{
-			// Create and initialize TimeManager
-			_timeManager = new TimeManager();
-			AddChild(_timeManager);
-			GD.Print("⚡ TimeManager created and added to tree");
+			// Get TimeManager from DI container
+			_timeManager = _diContainer.Resolve<ITimeManager>();
+			GD.Print("⚡ TimeManager resolved from DI container");
 		}
 		catch (System.Exception ex)
 		{

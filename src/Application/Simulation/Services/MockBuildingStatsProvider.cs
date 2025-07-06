@@ -5,6 +5,7 @@ using System.Text.Json;
 using Game.Domain.Buildings.Services;
 using Game.Domain.Buildings.ValueObjects;
 using Game.Application.Buildings.Configuration;
+using Game.Domain.Common.Services;
 
 namespace Game.Application.Simulation.Services;
 
@@ -13,21 +14,23 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
     private readonly Dictionary<string, BuildingStats> _buildingStats;
     private readonly BuildingStatsConfig _config;
     private readonly IBuildingTypeRegistry? _buildingTypeRegistry;
+    private readonly ILogger _logger;
     private const string DEFAULT_CONFIG_PATH = "data/simulation/building-stats.json";
 
-    public MockBuildingStatsProvider(IBuildingTypeRegistry? buildingTypeRegistry = null, string? configPath = null)
+    public MockBuildingStatsProvider(IBuildingTypeRegistry? buildingTypeRegistry = null, string? configPath = null, ILogger? logger = null)
     {
+        _logger = logger ?? new ConsoleLogger("[BUILDING-STATS]", LogLevel.Error);
         _buildingTypeRegistry = buildingTypeRegistry; // Allow null for backward compatibility
         
         var actualConfigPath = FindConfigFile(configPath ?? DEFAULT_CONFIG_PATH);
-        Console.WriteLine($"DEBUG: Loading building stats from: {actualConfigPath}");
+        _logger.LogDebug($"Loading building stats from: {actualConfigPath}");
         _config = LoadBuildingStatsConfig(actualConfigPath);
-        Console.WriteLine($"DEBUG: Loaded config with {_config.building_types?.Count ?? 0} building types");
+        _logger.LogDebug($"Loaded config with {_config.building_types?.Count ?? 0} building types");
         _buildingStats = ConvertToBuildingStats(_config.building_types ?? new Dictionary<string, BuildingStatsData>());
-        Console.WriteLine($"DEBUG: Converted to {_buildingStats.Count} building stats");
+        _logger.LogDebug($"Converted to {_buildingStats.Count} building stats");
         foreach (var key in _buildingStats.Keys)
         {
-            Console.WriteLine($"DEBUG: Available building type: {key}");
+            _logger.LogDebug($"Available building type: {key}");
         }
     }
 
@@ -155,13 +158,13 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         return relativePath;
     }
 
-    private static BuildingStatsConfig LoadBuildingStatsConfig(string configPath)
+    private BuildingStatsConfig LoadBuildingStatsConfig(string configPath)
     {
         try
         {
             if (!File.Exists(configPath))
             {
-                Console.WriteLine($"WARNING: Building stats config file not found: {configPath}. Using fallback configuration.");
+                _logger.LogWarning($"Building stats config file not found: {configPath}. Using fallback configuration.");
                 return CreateFallbackBuildingStatsConfig();
             }
 
@@ -177,7 +180,7 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"WARNING: Failed to load building stats from {configPath}: {ex.Message}. Using fallback configuration.");
+            _logger.LogWarning($"Failed to load building stats from {configPath}: {ex.Message}. Using fallback configuration.");
             return CreateFallbackBuildingStatsConfig();
         }
     }
@@ -242,19 +245,19 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         };
     }
 
-    private static Dictionary<string, BuildingStats> ConvertToBuildingStats(Dictionary<string, BuildingStatsData> rawStats)
+    private Dictionary<string, BuildingStats> ConvertToBuildingStats(Dictionary<string, BuildingStatsData> rawStats)
     {
         var result = new Dictionary<string, BuildingStats>();
         
         foreach (var kvp in rawStats)
         {
             var raw = kvp.Value;
-            Console.WriteLine($"DEBUG: Processing building '{kvp.Key}': range={raw.range}, attack_speed={raw.attack_speed}, cost={raw.cost}");
+            _logger.LogDebug($"Processing building '{kvp.Key}': range={raw.range}, attack_speed={raw.attack_speed}, cost={raw.cost}");
             
             // Skip invalid entries (like default_stats with zero values)
             if (raw.range <= 0 || raw.attack_speed <= 0)
             {
-                Console.WriteLine($"DEBUG: Skipping '{kvp.Key}' due to invalid values (range={raw.range}, attack_speed={raw.attack_speed})");
+                _logger.LogDebug($"Skipping '{kvp.Key}' due to invalid values (range={raw.range}, attack_speed={raw.attack_speed})");
                 continue;
             }
             

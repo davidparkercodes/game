@@ -5,6 +5,7 @@ using FluentAssertions;
 using Game.Application.Simulation;
 using Game.Application.Simulation.ValueObjects;
 using Game.Application.Simulation.Services;
+using Game.Domain.Common.Services;
 
 namespace Game.Tests.Application.Simulation;
 
@@ -15,8 +16,9 @@ public class WaveSystemIntegrationTests
 
     public WaveSystemIntegrationTests()
     {
-        _waveService = new MockWaveService();
-        _runner = new GameSimRunner();
+        var silentLogger = new ConsoleLogger("[TEST]", LogLevel.Error); // Only show errors during tests
+        _waveService = new MockWaveService(silentLogger);
+        _runner = new GameSimRunner(silentLogger);
     }
 
     [Fact]

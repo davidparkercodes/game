@@ -1,4 +1,3 @@
-using Godot;
 using Game.Application.Game.Services;
 using Game.Domain.Common.Services;
 
@@ -23,7 +22,6 @@ public class SpeedControlDebugCommands
         
         _logger.LogInformation($"Available speeds: {string.Join(", ", availableSpeeds)}x");
         _logger.LogInformation($"Current speed: {timeManager.GetCurrentSpeedText()}");
-        _logger.LogInformation($"Current Engine.TimeScale: {Engine.TimeScale}");
     }
 
     public static void CycleSpeedForward()
@@ -52,19 +50,19 @@ public class SpeedControlDebugCommands
         
         // Test 1x
         timeManager.SetSpeedTo1x();
-        _logger.LogInformation($"Set to 1x: Current = {timeManager.GetCurrentSpeedText()}, Engine = {Engine.TimeScale}");
+        _logger.LogInformation($"Set to 1x: Current = {timeManager.GetCurrentSpeedText()}");
         
         // Test 2x
         timeManager.SetSpeedTo2x();
-        _logger.LogInformation($"Set to 2x: Current = {timeManager.GetCurrentSpeedText()}, Engine = {Engine.TimeScale}");
+        _logger.LogInformation($"Set to 2x: Current = {timeManager.GetCurrentSpeedText()}");
         
         // Test 4x
         timeManager.SetSpeedTo4x();
-        _logger.LogInformation($"Set to 4x: Current = {timeManager.GetCurrentSpeedText()}, Engine = {Engine.TimeScale}");
+        _logger.LogInformation($"Set to 4x: Current = {timeManager.GetCurrentSpeedText()}");
         
         // Back to 1x
         timeManager.SetSpeedTo1x();
-        _logger.LogInformation($"Back to 1x: Current = {timeManager.GetCurrentSpeedText()}, Engine = {Engine.TimeScale}");
+        _logger.LogInformation($"Back to 1x: Current = {timeManager.GetCurrentSpeedText()}");
         
         _logger.LogInformation("Speed sequence test completed!");
     }
@@ -103,7 +101,6 @@ public class SpeedControlDebugCommands
         _logger.LogInformation("Current Speed Status:");
         _logger.LogInformation($"  TimeManager Speed: {timeManager.GetCurrentSpeedText()}");
         _logger.LogInformation($"  Speed Index: {timeManager.CurrentSpeedIndex}");
-        _logger.LogInformation($"  Engine.TimeScale: {Engine.TimeScale}");
         _logger.LogInformation($"  Available Options: {string.Join(", ", timeManager.AvailableSpeeds)}x");
     }
 

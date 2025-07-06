@@ -29,24 +29,24 @@ public class MockWaveService : IWaveService
     public MockWaveService(ILogger? logger = null)
     {
         _logger = logger ?? new ConsoleLogger("🌊 [WAVE-SVC]");
-        _logger.LogInformation("MockWaveService constructor starting");
+        _logger.LogDebug("MockWaveService constructor starting");
 
         // Initialize fields
         _waves = null;
         _totalWaves = 0;
         _currentWaveSetName = "Unknown";
 
-        _logger.LogInformation("About to load wave configuration");
+        _logger.LogDebug("About to load wave configuration");
         LoadWaveConfiguration();
 
-        _logger.LogInformation($"MockWaveService constructor finished: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
+        _logger.LogDebug($"MockWaveService constructor finished: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
 
         // Double-check that waves were loaded
         if (_waves == null || _waves.Count == 0 || _totalWaves == 0)
         {
             _logger.LogError("Wave loading failed completely! Forcing fallback creation...");
             CreateFallbackConfiguration();
-            _logger.LogInformation($"After forced fallback: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
+        _logger.LogDebug($"After forced fallback: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
         }
     }
 
@@ -55,13 +55,13 @@ public class MockWaveService : IWaveService
         // Ensure we have waves loaded, create fallback if needed
         if (_waves == null || _waves.Count == 0)
         {
-            Console.WriteLine("DEBUG: No waves loaded, creating fallback configuration");
+            _logger.LogDebug("No waves loaded, creating fallback configuration");
             CreateFallbackConfiguration();
         }
 
         if (_waves == null || waveNumber <= 0 || waveNumber > _waves.Count)
         {
-            Console.WriteLine($"DEBUG: Invalid wave setup - waves count: {_waves?.Count ?? 0}, requested wave: {waveNumber}");
+            _logger.LogDebug($"Invalid wave setup - waves count: {_waves?.Count ?? 0}, requested wave: {waveNumber}");
             throw new ArgumentOutOfRangeException(nameof(waveNumber), $"Invalid wave number: {waveNumber}. Available waves: {_waves?.Count ?? 0}");
         }
 
@@ -216,12 +216,12 @@ public class MockWaveService : IWaveService
         // Only reload if we don't already have waves loaded
         if (_waves == null || _waves.Count == 0 || _totalWaves == 0)
         {
-            Console.WriteLine("🌊 MockWaveService.Initialize(): No waves loaded, reloading...");
+            _logger.LogDebug("MockWaveService.Initialize(): No waves loaded, reloading...");
             LoadWaveConfiguration();
         }
         else
         {
-            Console.WriteLine($"🌊 MockWaveService.Initialize(): Already have {_totalWaves} waves loaded, skipping reload");
+            _logger.LogDebug($"MockWaveService.Initialize(): Already have {_totalWaves} waves loaded, skipping reload");
         }
     }
 
@@ -244,14 +244,14 @@ public class MockWaveService : IWaveService
         try
         {
             var configPath = GetWaveConfigPath(difficulty);
-            Console.WriteLine($"🌊 MockWaveService: Attempting to load config from: {configPath}");
+            _logger.LogDebug($"MockWaveService: Attempting to load config from: {configPath}");
             
             // Try to find the config file with multiple search paths
             var actualConfigPath = FindWaveConfigFile(configPath);
             
             if (!System.IO.File.Exists(actualConfigPath))
             {
-                Console.WriteLine($"⚠️ MockWaveService: Wave config file not found at {actualConfigPath}, creating fallback");
+                _logger.LogWarning($"MockWaveService: Wave config file not found at {actualConfigPath}, creating fallback");
                 CreateFallbackConfiguration();
                 return;
             }
@@ -271,17 +271,17 @@ public class MockWaveService : IWaveService
                 _waves = _currentWaveSet.Waves;
                 _totalWaves = _waves.Count;
                 _currentWaveSetName = _currentWaveSet.SetName ?? difficulty;
-                Console.WriteLine($"✅ MockWaveService: Loaded {_totalWaves} waves from config");
+                _logger.LogDebug($"MockWaveService: Loaded {_totalWaves} waves from config");
             }
             else
             {
-                Console.WriteLine("⚠️ MockWaveService: Wave set loaded but no waves found, creating fallback");
+                _logger.LogWarning("MockWaveService: Wave set loaded but no waves found, creating fallback");
                 CreateFallbackConfiguration();
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"⚠️ MockWaveService: Failed to load wave configuration: {ex.Message}");
+            _logger.LogWarning($"MockWaveService: Failed to load wave configuration: {ex.Message}");
             CreateFallbackConfiguration();
         }
     }
@@ -320,7 +320,7 @@ public class MockWaveService : IWaveService
 
     private void CreateFallbackConfiguration()
     {
-        Console.WriteLine("🔧 MockWaveService: Creating fallback wave configuration");
+        _logger.LogDebug("MockWaveService: Creating fallback wave configuration");
         _waves = new List<SimulationWaveConfiguration>();
 
         // Create 15 fallback waves to support typical simulation scenarios

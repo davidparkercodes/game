@@ -1,12 +1,13 @@
+using Godot;
+using Game.Application.Game.Services;
 using Game.Domain.Common.Services;
 
-namespace Game.Application.Game.Services;
+namespace Game.Infrastructure.Game;
 
-public class TimeManager : ITimeManager
+public partial class GodotTimeManager : Node, ITimeManager
 {
-    public static TimeManager? Instance { get; private set; }
-    
     private readonly ILogger _logger;
+    
     private float _currentTimeScale = 1.0f;
     private int _currentSpeedIndex = 0;
     private readonly float[] _speedOptions = { 1.0f, 2.0f, 4.0f, 10.0f, 20.0f };
@@ -17,10 +18,13 @@ public class TimeManager : ITimeManager
     public int CurrentSpeedIndex => _currentSpeedIndex;
     public float[] AvailableSpeeds => _speedOptions;
 
-    public TimeManager(ILogger logger)
+    public GodotTimeManager(ILogger logger)
     {
         _logger = logger;
-        Instance = this;
+    }
+
+    public override void _Ready()
+    {
         SetGameSpeed(1.0f);
         _logger.LogInformation("TimeManager initialized with 1x speed");
     }
@@ -30,7 +34,7 @@ public class TimeManager : ITimeManager
         int speedIndex = 0;
         for (int i = 0; i < _speedOptions.Length; i++)
         {
-            if (System.Math.Abs(_speedOptions[i] - multiplier) < 0.01f)
+            if (Mathf.Abs(_speedOptions[i] - multiplier) < 0.01f)
             {
                 speedIndex = i;
                 break;
@@ -44,17 +48,19 @@ public class TimeManager : ITimeManager
     {
         if (speedIndex < 0 || speedIndex >= _speedOptions.Length)
         {
-        _logger.LogWarning($"Invalid speed index {speedIndex}, using index 0");
+            _logger.LogWarning($"Invalid speed index {speedIndex}, using index 0");
             speedIndex = 0;
         }
 
         _currentSpeedIndex = speedIndex;
         _currentTimeScale = _speedOptions[speedIndex];
         
+        Engine.TimeScale = _currentTimeScale;
+        
         SpeedChanged?.Invoke(_currentTimeScale, _currentSpeedIndex);
         
         var speedText = GetCurrentSpeedText();
-        _logger.LogInformation($"Game speed set to {speedText}");
+        _logger.LogInformation($"Game speed set to {speedText} (Engine.TimeScale = {Engine.TimeScale})");
     }
 
     public void CycleToNextSpeed()
@@ -99,5 +105,11 @@ public class TimeManager : ITimeManager
             20.0f => "20x",
             _ => $"{_currentTimeScale:F1}x"
         };
+    }
+
+    public override void _ExitTree()
+    {
+        Engine.TimeScale = 1.0f;
+        _logger.LogInformation("TimeManager cleaned up, time scale reset to 1x");
     }
 }

@@ -4,6 +4,7 @@ using Xunit;
 using FluentAssertions;
 using Game.Application.Simulation;
 using Game.Application.Simulation.ValueObjects;
+using Game.Domain.Common.Services;
 
 namespace Game.Tests.Application.Simulation;
 
@@ -13,7 +14,8 @@ public class GameSimRunnerTests
 
     public GameSimRunnerTests()
     {
-        _runner = new Game.Application.Simulation.GameSimRunner();
+        var silentLogger = new ConsoleLogger("[TEST]", LogLevel.Error); // Only show errors during tests
+        _runner = new Game.Application.Simulation.GameSimRunner(silentLogger);
     }
 
     [Fact]

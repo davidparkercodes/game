@@ -24,14 +24,29 @@ public struct Vector2I
         Y = y;
     }
     
-    public static implicit operator Godot.Vector2I(Vector2I vector)
+    public override string ToString()
     {
-        return new Godot.Vector2I(vector.X, vector.Y);
+        return $"Vector2I(X:{X}, Y:{Y})";
     }
     
-    public static implicit operator Vector2I(Godot.Vector2I vector)
+    public override bool Equals(object? obj)
     {
-        return new Vector2I(vector.X, vector.Y);
+        return obj is Vector2I other && X == other.X && Y == other.Y;
+    }
+    
+    public override int GetHashCode()
+    {
+        return System.HashCode.Combine(X, Y);
+    }
+    
+    public static bool operator ==(Vector2I left, Vector2I right)
+    {
+        return left.Equals(right);
+    }
+    
+    public static bool operator !=(Vector2I left, Vector2I right)
+    {
+        return !left.Equals(right);
     }
 }
 
@@ -48,13 +63,28 @@ public struct Rect2I
     
     public Vector2I End => new Vector2I(Position.X + Size.X, Position.Y + Size.Y);
     
-    public static implicit operator Godot.Rect2I(Rect2I rect)
+    public override string ToString()
     {
-        return new Godot.Rect2I(rect.Position, rect.Size);
+        return $"Rect2I(Position:{Position}, Size:{Size})";
     }
     
-    public static implicit operator Rect2I(Godot.Rect2I rect)
+    public override bool Equals(object? obj)
     {
-        return new Rect2I(rect.Position, rect.Size);
+        return obj is Rect2I other && Position == other.Position && Size == other.Size;
+    }
+    
+    public override int GetHashCode()
+    {
+        return System.HashCode.Combine(Position, Size);
+    }
+    
+    public static bool operator ==(Rect2I left, Rect2I right)
+    {
+        return left.Equals(right);
+    }
+    
+    public static bool operator !=(Rect2I left, Rect2I right)
+    {
+        return !left.Equals(right);
     }
 }

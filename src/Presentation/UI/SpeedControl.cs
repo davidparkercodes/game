@@ -11,7 +11,7 @@ public partial class SpeedControl : CanvasLayer
     [Export] public Button? Speed10xButton;
     [Export] public Button? Speed20xButton;
 
-    private TimeManager? _timeManager;
+    private ITimeManager? _timeManager;
     private const string LogPrefix = "⚡ [SPEED-CONTROL]";
     
     public override void _Ready()
@@ -105,6 +105,7 @@ public partial class SpeedControl : CanvasLayer
 
     private void ConnectToTimeManager()
     {
+        // For now, we'll use the singleton pattern until we refactor to use DI
         _timeManager = TimeManager.Instance;
         if (_timeManager != null)
         {

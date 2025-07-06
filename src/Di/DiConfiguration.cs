@@ -24,6 +24,9 @@ using Game.Application.Buildings.Services;
 using Game.Application.Enemies.Services;
 using Game.Application.Shared.Services;
 using Game.Domain.Shared.Services;
+using Game.Application.Game.Services;
+using Game.Infrastructure.Game;
+using Game.Domain.Common.Services;
 
 namespace Game.Di;
 
@@ -92,6 +95,13 @@ public static class DiConfiguration
         
         diContainer.RegisterFactory<IQueryHandler<GetGameStateQuery, GameStateResponse>>(() => 
             new GetGameStateQueryHandler());
+        
+        // Register ITimeManager with factory using logger
+        diContainer.RegisterFactory<ITimeManager>(() => 
+        {
+            var logger = new ConsoleLogger("⚡ [TIMEMANAGER]");
+            return new TimeManager(logger);
+        });
     }
 
     public static void RegisterSingletonsFromGodot(DiContainer diContainer)
