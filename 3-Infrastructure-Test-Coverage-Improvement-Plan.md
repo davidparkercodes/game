@@ -1,7 +1,27 @@
 # Infrastructure Layer Test Coverage Improvement Plan
 
 ## Overview
-This plan focuses on achieving ~80% test coverage for the Infrastructure layer by implementing meaningful, integration-focused tests. The emphasis is on testing external system integration, Godot-specific implementations, file I/O operations, and service adapters rather than padding statistics with trivial tests.
+This plan focuses on achieving meaningful test coverage for the Infrastructure layer by implementing **integration-critical tests only**. The emphasis is on testing external system integration, Godot-specific implementations, and critical service adapters, NOT exhaustive validation testing or framework behavior.
+
+## ⚠️ **CRITICAL: AVOID OVER-TESTING**
+Learn from Domain layer mistakes (577 tests, 4,856 lines):
+- ❌ **Every configuration parameter** (file paths, JSON parsing details)
+- ❌ **Framework behavior** (Godot engine internals, .NET I/O mechanics)
+- ❌ **Trivial edge cases** (file format validation, resource loading)
+- ❌ **Implementation details** (singleton patterns, adapter mechanics)
+
+## ✅ **CORRECT TESTING APPROACH**
+**Focus on integration value:**
+- ✅ **External system integration** (file loading, Godot services)
+- ✅ **Critical service adapters** (domain-to-infrastructure translation)
+- ✅ **Essential workflows** (game initialization, resource management)
+- ✅ **Error scenarios** (missing files, failed initialization)
+
+**Test quantities should be:**
+- **Service Adapters**: 2-3 tests max (translation + error handling)
+- **External Integration**: 3-4 tests max (success path + failure scenarios)
+- **Configuration Loading**: 2-3 tests max (valid config + error cases)
+- **Total Target**: ~60-90 meaningful tests, not 150+
 
 ## Execution Instructions
 **Process**: Execute phases one at a time. When a phase is complete:
@@ -19,251 +39,125 @@ This plan focuses on achieving ~80% test coverage for the Infrastructure layer b
 
 ---
 
-## Phase 1: Core Game Services Testing
-**Focus**: Test fundamental game state management and singleton services
+## Phase 1: Core Service Integration Testing
+**Focus**: Test essential service adapters and external integrations
 
 - [ ] **GameService Tests** (`tests/Infrastructure/Game/Services/GameServiceTests.cs`)
-  - Game state initialization and lifecycle
-  - Money management (spending, adding, validation)
-  - Lives tracking and game over conditions
-  - Score calculation and tracking
-  - HUD integration and state synchronization
-  - Singleton pattern implementation
-
-- [ ] **GodotTimeManager Tests** (`tests/Infrastructure/Game/GodotTimeManagerTests.cs`)
-  - Time scale management
-  - Godot engine integration
-  - Frame rate and timing accuracy
-  - Pause/resume functionality
-
-**Success Criteria**: Core game state properly managed with reliable service integration
-
----
-
-## Phase 2: Audio Infrastructure Testing
-**Focus**: Test sound system integration and Godot audio pipeline
+  - Game state initialization success
+  - Money management core functionality
+  - Critical error scenarios
 
 - [ ] **SoundService Tests** (`tests/Infrastructure/Sound/SoundServiceTests.cs`)
-  - Sound loading and configuration
-  - Audio player management and pooling
-  - Volume control and categories (SFX, UI, Music)
-  - Positional audio calculations
-  - Godot AudioStreamPlayer integration
-  - Sound format handling (OGG, WAV, MP3)
+  - Sound loading and playback
+  - Volume control functionality
   - Error handling for missing sounds
 
-- [ ] **SoundLoader Tests** (`tests/Infrastructure/Sound/SoundLoaderTests.cs`)
-  - Sound file discovery and loading
-  - Configuration parsing
-  - Resource path resolution
-  - Error handling for corrupted files
-
-- [ ] **SoundServiceAdapter Tests** (`tests/Infrastructure/Sound/SoundServiceAdapterTests.cs`)
-  - Domain-to-infrastructure translation
-  - SoundRequest processing
-  - Adapter pattern implementation
-
-**Success Criteria**: Audio system reliably plays sounds with proper volume and positioning
+**Success Criteria**: Core services integrate correctly with external systems
 
 ---
 
-## Phase 3: Stats and Configuration Management Testing
-**Focus**: Test data loading and configuration systems
+## Phase 2: Configuration and Data Loading Testing
+**Focus**: Test critical configuration loading and data access
 
 - [ ] **StatsManagerService Tests** (`tests/Infrastructure/Stats/Services/StatsManagerServiceTests.cs`)
-  - JSON configuration loading
-  - Enemy and building stats parsing
-  - Fallback stats generation
-  - File path resolution
-  - Godot FileAccess integration
-  - Error handling for malformed JSON
-  - Singleton pattern and initialization
-
-- [ ] **StatsService Tests** (`tests/Infrastructure/Stats/StatsServiceTests.cs`)
-  - Stats provider interface implementation
-  - Data access patterns
-  - Caching behavior
-
-- [ ] **StatsServiceAdapter Tests** (`tests/Infrastructure/Stats/StatsServiceAdapterTests.cs`)
-  - Domain stats conversion
-  - Adapter pattern implementation
-  - Performance optimization
-
-**Success Criteria**: Configuration data reliably loaded with proper error handling
-
----
-
-## Phase 4: Wave and Enemy Management Testing
-**Focus**: Test wave spawning and enemy lifecycle management
-
-- [ ] **WaveManager Tests** (`tests/Infrastructure/Waves/Services/WaveManagerTests.cs`)
-  - Wave progression logic
-  - Enemy spawning coordination
-  - Wave completion detection
-  - Boss wave special handling
-  - State synchronization with game services
-  - Debug wave jumping functionality
-  - UI integration and notifications
+  - JSON configuration loading success
+  - Error handling for malformed data
+  - Fallback behavior when files missing
 
 - [ ] **WaveConfigurationService Tests** (`tests/Infrastructure/Waves/Services/WaveConfigurationServiceTests.cs`)
   - Wave data loading from JSON
-  - Wave validation and parsing
-  - Enemy group configuration
-  - Timing and delay management
+  - Essential wave validation
 
-- [ ] **WaveSpawnerService Tests** (`tests/Infrastructure/Enemies/Services/WaveSpawnerServiceTests.cs`)
-  - Enemy spawning mechanics
-  - Spawn timing and intervals
-  - Enemy positioning and path assignment
-  - Spawn queue management
-
-- [ ] **WaveModel Tests** (`tests/Infrastructure/Waves/Models/WaveModelTests.cs`)
-  - Wave data structure validation
-  - Enemy group organization
-  - Serialization and deserialization
-
-**Success Criteria**: Wave system spawns enemies correctly with proper timing and progression
+**Success Criteria**: Configuration data loads reliably with proper error handling
 
 ---
 
-## Phase 5: Map and Spatial Services Testing
-**Focus**: Test map boundaries, building zones, and spatial calculations
+## Phase 3: Spatial and Map Services Testing
+**Focus**: Test critical spatial calculations and map integration
 
 - [ ] **MapBoundaryService Tests** (`tests/Infrastructure/Map/Services/MapBoundaryServiceTests.cs`)
-  - Map bounds calculation from tile data
-  - Position validation (walking, building)
-  - Abyss buffer zone management
-  - Tile-based collision detection
-  - World-to-tile coordinate conversion
-  - Boundary clamping logic
+  - Position validation for building placement
+  - Boundary checking functionality
 
 - [ ] **BuildingZoneService Tests** (`tests/Infrastructure/Buildings/Services/BuildingZoneServiceTests.cs`)
   - Building placement validation
-  - Path detection and avoidance
-  - Zone service adapter implementation
-  - Position coordinate conversion
+  - Zone service adapter functionality
 
-- [ ] **BuildingZoneValidator Tests** (`tests/Infrastructure/Buildings/Validators/BuildingZoneValidatorTests.cs`)
-  - Godot-specific validation logic
-  - Tile map integration
-  - Static validation methods
-
-**Success Criteria**: Spatial validation prevents invalid building placement and ensures proper pathfinding
+**Success Criteria**: Spatial validation prevents invalid placements reliably
 
 ---
 
-## Phase 6: Level Data and Resource Management Testing
-**Focus**: Test level loading and Godot resource integration
+## Phase 4: Critical Integration Workflows
+**Focus**: Test key infrastructure workflows end-to-end
 
-- [ ] **LevelDataResource Tests** (`tests/Infrastructure/Levels/LevelDataResourceTests.cs`)
-  - Godot Resource serialization
-  - Domain-to-Godot data conversion
-  - Path point validation and conversion
-  - Export attribute handling
-  - Resource loading and saving
+- [ ] **Service Integration Tests**
+  - Game initialization workflow
+  - Configuration loading chain
+  - Error propagation and recovery
 
-- [ ] **GodotLevelDataRepository Tests** (`tests/Infrastructure/Levels/GodotLevelDataRepositoryTests.cs`)
-  - Level data repository implementation
-  - File system integration
-  - Resource path resolution
-  - Error handling for missing files
-
-**Success Criteria**: Level data loads correctly from Godot resources with proper validation
+**Success Criteria**: Critical infrastructure workflows function reliably
 
 ---
 
-## Phase 7: Geometry and Adapter Testing
-**Focus**: Test coordinate conversion and adapter patterns
+## 🎧 **INFRASTRUCTURE TESTING GUIDELINES: DO THIS, NOT THAT**
 
-- [ ] **GodotGeometryConverter Tests** (`tests/Infrastructure/Common/Converters/GodotGeometryConverterTests.cs`)
-  - Vector2 and Rect2 conversion accuracy
-  - Domain-to-Godot coordinate mapping
-  - Precision handling for floating-point values
-  - Bidirectional conversion consistency
+### ✅ **DO: Focus on Integration Points**
+```csharp
+// GOOD: Tests external system integration
+[Fact]
+public void SoundService_LoadSound_ShouldIntegrateWithGodotAudio()
+{
+    var result = soundService.LoadSound("test_sound.ogg");
+    result.IsSuccess.Should().BeTrue();
+    mockAudioPlayer.Verify(x => x.LoadAudioStream(It.IsAny<string>()));
+}
 
-- [ ] **TileMapLayerAdapter Tests** (`tests/Infrastructure/Map/Adapters/TileMapLayerAdapterTests.cs`)
-  - Godot TileMap integration
-  - Tile coordinate conversion
-  - Tile data extraction
-  - Layer management
+// GOOD: Tests configuration loading
+[Fact] 
+public void StatsManager_LoadConfig_ShouldHandleMissingFiles()
+{
+    var result = statsManager.LoadConfiguration("missing_file.json");
+    result.IsSuccess.Should().BeFalse();
+    result.Should().UseFallbackConfiguration();
+}
+```
 
-- [ ] **Service Adapter Pattern Tests** (`tests/Infrastructure/Integration/ServiceAdapterTests.cs`)
-  - Adapter pattern consistency
-  - Domain-to-infrastructure boundary testing
-  - Interface compliance validation
+### ❌ **DON'T: Test Framework Internals**
+```csharp
+// BAD: Testing Godot engine behavior
+[Fact]
+public void GodotNode_OnReady_ShouldCallBaseMethod() { } // DON'T DO THIS
 
-**Success Criteria**: Geometry conversion and adapters provide accurate coordinate mapping
+// BAD: Testing every file format detail
+[Fact]
+public void JsonLoader_WithInvalidJson_ShouldThrow() { } // DON'T DO THIS
+[Fact]
+public void JsonLoader_WithMissingProperty_ShouldThrow() { } // DON'T DO THIS
+```
 
----
+### 🏆 **TARGET EXAMPLES**
 
-## Phase 8: Godot Engine Integration Testing
-**Focus**: Test Godot-specific integrations and engine dependencies
+**Service Adapter (2-3 tests max):**
+- Domain-to-infrastructure translation
+- Error handling for external failures
 
-- [ ] **Godot Runtime Detection Tests** (`tests/Infrastructure/Common/GodotRuntimeTests.cs`)
-  - Engine runtime detection accuracy
-  - Editor vs. runtime differentiation
-  - Fallback behavior for non-Godot environments
+**External Integration (3-4 tests max):**
+- Success path with valid data
+- Key failure scenarios
+- Recovery mechanisms
 
-- [ ] **Scene Tree Integration Tests** (`tests/Infrastructure/Integration/SceneTreeTests.cs`)
-  - Node management and lifecycle
-  - Scene tree traversal
-  - Group-based node queries
-  - Child node addition and removal
-
-- [ ] **Resource Loading Tests** (`tests/Infrastructure/Integration/ResourceLoadingTests.cs`)
-  - Godot resource loading patterns
-  - Path resolution strategies
-  - Resource caching behavior
-  - Error handling for missing resources
-
-**Success Criteria**: Godot engine integration works reliably with proper error handling
-
----
-
-## Phase 9: Integration and System Testing
-**Focus**: Test complex interactions between infrastructure components
-
-- [ ] **Service Integration Tests** (`tests/Infrastructure/Integration/ServiceIntegrationTests.cs`)
-  - Cross-service communication
-  - Event propagation and handling
-  - State synchronization
-  - Service lifecycle management
-
-- [ ] **File I/O Integration Tests** (`tests/Infrastructure/Integration/FileIOTests.cs`)
-  - Configuration file loading
-  - Resource path resolution
-  - File system error handling
-  - Platform-specific file access
-
-- [ ] **Performance Tests** (`tests/Infrastructure/Performance/InfrastructurePerformanceTests.cs`)
-  - Audio system performance
-  - Resource loading benchmarks
-  - Memory usage patterns
-  - Garbage collection impact
-
-**Success Criteria**: Infrastructure components work together reliably under various conditions
+**Configuration Loading (2-3 tests max):**
+- Valid configuration loading
+- Fallback when files missing
 
 ---
 
-## Phase 10: Coverage Analysis and Optimization
-**Focus**: Measure and optimize test coverage
+## Expected Outcomes
 
-- [ ] **Coverage Assessment**
-  - Run coverage analysis: `dotnet test --collect:"XPlat Code Coverage"`
-  - Generate coverage reports
-  - Identify gaps in critical infrastructure logic
-
-- [ ] **Targeted Coverage Improvements**
-  - Add tests for uncovered integration paths
-  - Focus on error handling and edge cases
-  - Test platform-specific code paths
-
-- [ ] **Test Quality Review**
-  - Ensure tests validate infrastructure behavior, not implementation details
-  - Verify meaningful test names and descriptions
-  - Remove any padding tests that don't add value
-
-**Success Criteria**: ~80% coverage with meaningful, maintainable tests
+1. **Reliable External Integration**: Well-tested integration with Godot and file systems
+2. **Configuration Resilience**: Robust configuration loading with proper fallbacks
+3. **Service Adapter Reliability**: Consistent domain-to-infrastructure translation
+4. **Error Recovery**: Graceful handling of external system failures
 
 ---
 

@@ -1,7 +1,27 @@
 # Presentation Layer Test Coverage Improvement Plan
 
 ## Overview
-This plan focuses on achieving ~80% test coverage for the Presentation layer by implementing meaningful, UI-focused tests. The emphasis is on testing Godot scene interactions, user input handling, visual components, and presentation logic rather than padding statistics with trivial tests.
+This plan focuses on achieving meaningful test coverage for the Presentation layer by implementing **UI-critical tests only**. The emphasis is on testing Godot-specific UI components, core user interactions, and visual feedback mechanisms, NOT exhaustive edge case testing or UI framework behavior.
+
+## ⚠️ **CRITICAL: AVOID OVER-TESTING**
+Learn from Domain layer mistakes (577 tests, 4,856 lines):
+- ❌ **Every UI state** (validating every possible UI state change)
+- ❌ **Framework behavior** (Godot node functionality, signal connections)
+- ❌ **Trivial interactions** (button clicks with no side effect)
+- ❌ **Visual details** (specific pixel alignment, theme colors)
+
+## ✅ **CORRECT TESTING APPROACH**
+**Focus on UI value:**
+- ✅ **Key user interactions** (menus, navigation, input handling)
+- ✅ **Scene transitions** (loading scenes, entering/exiting states)
+- ✅ **Critical visual feedback** (errors, confirmations, dynamic updates)
+- ✅ **Responsive behavior** (UI adapting to gameplay state changes)
+
+**Test quantities should be:**
+- **UI Components**: 2-3 tests max (key interaction + error scenario)
+- **Scene Management**: 2-3 tests max (transition + error handling)
+- **Visual Feedback**: 3-4 tests max (feedback on key actions)
+- **Total Target**: ~40-70 meaningful tests, not 100+
 
 ## Execution Instructions
 **Process**: Execute phases one at a time. When a phase is complete:
@@ -21,257 +41,124 @@ This plan focuses on achieving ~80% test coverage for the Presentation layer by 
 
 ---
 
-## Phase 1: Core Application Bootstrap Testing
-**Focus**: Test application initialization and scene management
-
-- [ ] **Main Tests** (`tests/Presentation/Core/MainTests.cs`)
-  - Dependency injection container initialization
-  - Infrastructure service setup
-  - UI component initialization sequence
-  - HUD scene loading and instantiation
-  - Building system initialization
-  - Error handling for missing scenes
-  - Deferred initialization patterns
-
-- [ ] **Scene Lifecycle Tests** (`tests/Presentation/Core/SceneLifecycleTests.cs`)
-  - Scene loading and unloading
-  - Node tree construction
-  - Signal connection verification
-  - Memory cleanup on scene changes
-
-**Success Criteria**: Application boots reliably with all services initialized
-
----
-
-## Phase 2: UI Component Testing
-**Focus**: Test user interface components and HUD management
+## Phase 1: Core UI Component Testing
+**Focus**: Test essential UI components and interactions
 
 - [ ] **HudManager Tests** (`tests/Presentation/UI/HudManagerTests.cs`)
-  - Singleton pattern implementation
-  - HUD instance management
-  - UI state synchronization
-  - Money, lives, wave display updates
-  - Building stats panel management
-  - Button state management
-  - Error handling for null HUD
-
-- [ ] **Hud Tests** (`tests/Presentation/UI/HudTests.cs`)
-  - UI element updates
-  - Label text formatting
-  - Panel visibility management
-  - Button interactions
-  - Visual state changes
+  - HUD initialization and state updates
+  - Money, lives, wave display functionality
+  - Error handling for missing UI elements
 
 - [ ] **SpeedControl Tests** (`tests/Presentation/UI/SpeedControlTests.cs`)
-  - Speed selection interface
+  - Speed selection functionality
   - TimeManager integration
-  - Button state management
   - Visual feedback for speed changes
 
-**Success Criteria**: UI components display correct information and respond to state changes
+**Success Criteria**: Core UI components function correctly and respond to state changes
 
 ---
 
-## Phase 3: Building System Testing
-**Focus**: Test building placement and management
-
-- [ ] **Building Tests** (`tests/Presentation/Buildings/BuildingTests.cs`)
-  - Building initialization and stats loading
-  - Range visualization and management
-  - Enemy targeting and tracking
-  - Firing system and timing
-  - Bullet creation and pooling
-  - Sound integration
-  - Visual rotation and effects
-
-- [ ] **BuildingPreview Tests** (`tests/Presentation/Buildings/BuildingPreviewTests.cs`)
-  - Preview positioning and movement
-  - Placement validation visualization
-  - Color feedback for valid/invalid placement
-  - Scene switching during build mode
+## Phase 2: Player Interaction Testing
+**Focus**: Test critical player interactions and building placement
 
 - [ ] **PlayerBuildingBuilder Tests** (`tests/Presentation/Player/PlayerBuildingBuilderTests.cs`)
-  - Build mode activation and cancellation
-  - Input handling (mouse clicks, keyboard shortcuts)
-  - Building placement validation
-  - Cost verification and spending
-  - Construction sound integration
-  - Preview management
+  - Build mode activation and placement
+  - Input handling for building placement
+  - Placement validation and feedback
 
-**Success Criteria**: Building system allows intuitive placement with proper feedback
+- [ ] **BuildingPreview Tests** (`tests/Presentation/Buildings/BuildingPreviewTests.cs`)
+  - Preview positioning and validation visualization
+  - Color feedback for valid/invalid placement
+
+**Success Criteria**: Building placement system is intuitive with proper visual feedback
 
 ---
 
-## Phase 4: Enemy System Testing
-**Focus**: Test enemy presentation and lifecycle
+## Phase 3: Scene Management Testing
+**Focus**: Test critical scene transitions and lifecycle management
 
-- [ ] **Enemy Tests** (`tests/Presentation/Enemies/EnemyTests.cs`)
-  - Enemy initialization and stats loading
-  - Health management and damage handling
-  - Visual scaling for boss enemies
-  - Health bar display and updates
-  - Path completion handling
-  - Death sequence and cleanup
-  - Sound integration
-  - Group management
+- [ ] **Main Tests** (`tests/Presentation/Core/MainTests.cs`)
+  - Application initialization success
+  - Service setup and integration
+  - Error handling for initialization failures
 
-- [ ] **Enemy Lifecycle Tests** (`tests/Presentation/Enemies/EnemyLifecycleTests.cs`)
-  - Spawn to death workflow
-  - Signal emission and handling
+- [ ] **Scene Lifecycle Tests** (`tests/Presentation/Core/SceneLifecycleTests.cs`)
+  - Scene loading and transitions
   - Memory cleanup verification
-  - Performance under multiple enemies
 
-**Success Criteria**: Enemies display correctly and handle damage/death properly
-
----
-
-## Phase 5: Player Interaction Testing
-**Focus**: Test player controls and interaction systems
-
-- [ ] **Player Tests** (`tests/Presentation/Player/PlayerTests.cs`)
-  - Player input processing
-  - Movement and navigation
-  - Interaction state management
-  - Selection state handling
-
-- [ ] **PlayerMovement Tests** (`tests/Presentation/Player/PlayerMovementTests.cs`)
-  - Movement mechanics
-  - Collision detection
-  - Boundary constraints
-  - Input responsiveness
-
-- [ ] **Inventory Tests** (`tests/Presentation/Inventory/InventoryTests.cs`)
-  - Inventory display and updates
-  - Item management
-  - UI integration
-
-**Success Criteria**: Player controls are responsive and intuitive
+**Success Criteria**: Scenes load correctly with proper resource management
 
 ---
 
-## Phase 6: Component System Testing
-**Focus**: Test reusable components and systems
+## Phase 4: Critical User Feedback
+**Focus**: Test essential visual feedback and user experience
 
-- [ ] **Component Tests** (`tests/Presentation/Components/ComponentTests.cs`)
-  - Damageable component functionality
-  - Hitbox collision detection
-  - PathFollower movement behavior
-  - StatsComponent state management
-  - HpLabel display updates
+- [ ] **Visual Feedback Tests**
+  - Building placement feedback (valid/invalid colors)
+  - Health bar updates for enemies
+  - Money/resource display updates
 
-- [ ] **Component Integration Tests** (`tests/Presentation/Components/ComponentIntegrationTests.cs`)
-  - Component interaction patterns
-  - Signal propagation between components
-  - Performance with multiple components
-
-**Success Criteria**: Components work together seamlessly
+**Success Criteria**: Users receive clear visual feedback for actions
 
 ---
 
-## Phase 7: Visual and Audio Presentation Testing
-**Focus**: Test visual effects and audio integration
+## 🎧 **PRESENTATION TESTING GUIDELINES: DO THIS, NOT THAT**
 
-- [ ] **Visual Effects Tests** (`tests/Presentation/Visual/VisualEffectsTests.cs`)
-  - Range circle rendering
-  - Building rotation animations
-  - Health bar updates
-  - Scale effects for boss enemies
-  - Color feedback systems
+### ✅ **DO: Focus on User Experience**
+```csharp
+// GOOD: Tests critical user interaction
+[Fact]
+public void BuildingBuilder_OnValidPlacement_ShouldShowGreenPreview()
+{
+    buildingBuilder.SetBuildMode(true, towerType);
+    buildingBuilder.UpdatePreviewPosition(validPosition);
+    preview.Modulate.Should().Be(Colors.Green);
+}
 
-- [ ] **Audio Integration Tests** (`tests/Presentation/Audio/AudioIntegrationTests.cs`)
-  - Sound trigger timing
-  - Volume and spatial audio
-  - Music state management
-  - Audio service integration
+// GOOD: Tests UI state updates
+[Fact] 
+public void HudManager_OnMoneyChange_ShouldUpdateDisplay()
+{
+    hudManager.UpdateMoneyDisplay(150);
+    moneyLabel.Text.Should().Be("$150");
+}
+```
 
-- [ ] **Performance Tests** (`tests/Presentation/Performance/PresentationPerformanceTests.cs`)
-  - Frame rate impact of visual effects
-  - Memory usage with multiple entities
-  - Audio system performance
+### ❌ **DON'T: Test Godot Framework**
+```csharp
+// BAD: Testing Godot node behavior
+[Fact]
+public void Node_OnReady_ShouldBeInSceneTree() { } // DON'T DO THIS
 
-**Success Criteria**: Visual and audio presentation enhances gameplay without performance issues
+// BAD: Testing every visual detail
+[Fact]
+public void Label_FontSize_ShouldBe12() { } // DON'T DO THIS
+[Fact]
+public void Button_Position_ShouldBeExact() { } // DON'T DO THIS
+```
 
----
+### 🏆 **TARGET EXAMPLES**
 
-## Phase 8: Input and Controls Testing
-**Focus**: Test input handling and control responsiveness
+**UI Component (2-3 tests max):**
+- Key user interaction success
+- Error state handling
 
-- [ ] **Input System Tests** (`tests/Presentation/Input/InputSystemTests.cs`)
-  - Mouse and keyboard input processing
-  - Input event routing
-  - Control scheme validation
-  - Input buffering and responsiveness
+**Scene Management (2-3 tests max):**
+- Scene transition success
+- Initialization failure handling
 
-- [ ] **Debug Controls Tests** (`tests/Presentation/Input/DebugControlsTests.cs`)
-  - Debug shortcut functionality
-  - Wave jumping controls
-  - Speed control shortcuts
-  - Development tool integration
-
-**Success Criteria**: All input controls work as expected with proper feedback
-
----
-
-## Phase 9: Godot Scene Integration Testing
-**Focus**: Test Godot-specific scene functionality
-
-- [ ] **Scene Management Tests** (`tests/Presentation/Godot/SceneManagementTests.cs`)
-  - Scene loading and instantiation
-  - PackedScene resource handling
-  - Node tree management
-  - Resource cleanup
-
-- [ ] **Signal System Tests** (`tests/Presentation/Godot/SignalSystemTests.cs`)
-  - Signal connection and emission
-  - Cross-node communication
-  - Signal parameter handling
-  - Memory leak prevention
-
-- [ ] **Resource Loading Tests** (`tests/Presentation/Godot/ResourceLoadingTests.cs`)
-  - Asset loading performance
-  - Missing resource handling
-  - Resource caching behavior
-
-**Success Criteria**: Godot-specific features work reliably with proper error handling
+**Visual Feedback (3-4 tests max):**
+- Feedback on user actions
+- State change visualization
 
 ---
 
-## Phase 10: Integration and System Testing
-**Focus**: Test complex presentation workflows
+## Expected Outcomes
 
-- [ ] **Presentation Integration Tests** (`tests/Presentation/Integration/PresentationIntegrationTests.cs`)
-  - End-to-end gameplay workflows
-  - UI to game state synchronization
-  - Cross-system communication
-  - Error propagation and handling
-
-- [ ] **User Experience Tests** (`tests/Presentation/UX/UserExperienceTests.cs`)
-  - Complete user interaction flows
-  - Feedback timing and clarity
-  - Accessibility considerations
-  - Performance under stress
-
-**Success Criteria**: Complete presentation layer works cohesively for smooth user experience
-
----
-
-## Phase 11: Coverage Analysis and Optimization
-**Focus**: Measure and optimize test coverage
-
-- [ ] **Coverage Assessment**
-  - Run coverage analysis: `dotnet test --collect:"XPlat Code Coverage"`
-  - Generate coverage reports
-  - Identify gaps in critical presentation logic
-
-- [ ] **Targeted Coverage Improvements**
-  - Add tests for uncovered UI interactions
-  - Focus on error handling and edge cases
-  - Test platform-specific presentation code
-
-- [ ] **Test Quality Review**
-  - Ensure tests validate presentation behavior, not implementation
-  - Verify meaningful test names and descriptions
-  - Remove any padding tests that don't add value
+1. **Intuitive User Interface**: Well-tested UI components with reliable user interactions
+2. **Smooth Scene Management**: Tested transitions and lifecycle management
+3. **Clear Visual Feedback**: Users understand system state through visual cues
+4. **Responsive Controls**: Input handling works consistently across different scenarios
 
 **Success Criteria**: ~80% coverage with meaningful, maintainable tests
 
