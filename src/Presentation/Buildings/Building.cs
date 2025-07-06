@@ -297,7 +297,7 @@ public partial class Building : StaticBody2D
 		RotateTowardsTarget(direction);
 		
 		// Get bullet from pool or create new one
-		Bullet bullet = GetPooledBullet();
+		Bullet? bullet = GetPooledBullet();
 		if (bullet == null)
 		{
 			GD.PrintErr($"{LogPrefix} {Name} failed to get bullet from pool");

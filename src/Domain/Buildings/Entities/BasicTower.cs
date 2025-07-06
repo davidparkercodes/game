@@ -2,7 +2,7 @@ using Game.Domain.Buildings.ValueObjects;
 
 namespace Game.Domain.Buildings.Entities;
 
-public class BasicTower : Building
+public class BasicTower : Tower
 {
     public const string ConfigKey = "basic_tower";
 

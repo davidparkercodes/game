@@ -65,9 +65,10 @@
 - `SoundManagerService` - Handles audio playback
 - `BuildingTypeRegistry` / `EnemyTypeRegistry` - Type management
 
-### **Clean Tower Architecture**
-- Domain entities: Only `ConfigKey` constant + unique behavior
-- Base `Building` class: All common tower functionality (`CanShoot`, `Shoot`, etc.)
+### **Clean Building Architecture**
+- `Building` base class: Common building functionality (position, range, etc.)
+- `Tower` class: Extends Building with shooting functionality (`CanShoot`, `Shoot`)
+- Specific towers: Only `ConfigKey` constant + unique behavior
 - Easy renaming: Change `ConfigKey` + JSON config files
 
 ## ⚠️ Common Mistakes to Avoid
@@ -80,3 +81,4 @@
 - Using upgrade methods in domain entities - stats come from config only
 - Duplicating constants (e.g., `TowerType` + `ConfigKey`) - use only `ConfigKey`
 - Overriding base class methods unnecessarily - inherit common behavior
+- Adding shooting methods to base `Building` - use `Tower` class for combat

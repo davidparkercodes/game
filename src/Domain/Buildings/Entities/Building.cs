@@ -11,7 +11,6 @@ public abstract class Building
     public float Y { get; }
     public bool IsActive { get; private set; }
     public DateTime CreatedAt { get; }
-    public float LastShotTime { get; private set; }
 
     protected Building(BuildingStats stats, float x, float y)
     {
@@ -21,21 +20,6 @@ public abstract class Building
         Y = y;
         IsActive = true;
         CreatedAt = DateTime.UtcNow;
-        LastShotTime = 0f;
-    }
-
-    public virtual bool CanShoot(float currentTime)
-    {
-        if (!IsActive) return false;
-        return currentTime - LastShotTime >= (1f / Stats.FireRate);
-    }
-
-    public virtual void Shoot(float currentTime)
-    {
-        if (!CanShoot(currentTime))
-            throw new InvalidOperationException("Building cannot shoot at this time");
-        
-        LastShotTime = currentTime;
     }
 
     public virtual bool IsInRange(float targetX, float targetY)
