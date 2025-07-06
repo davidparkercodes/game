@@ -7,6 +7,7 @@ using Game.Presentation.Systems;
 using Game.Application.Shared.Services;
 using Game.Presentation.UI;
 using Game.Infrastructure.Waves.Services;
+using Game.Application.Game.Services;
 using static Game.Di.DiConfiguration;
 
 namespace Game.Presentation.Core;
@@ -19,6 +20,8 @@ public partial class Main : Node
 	private IMediator _mediator = null!;
 	private HudManager _hudManager = null!;
 	private Hud _hud = null!;
+	private TimeManager _timeManager = null!;
+	private SpeedControl _speedControl = null!;
 
 	public override void _Ready()
 	{
@@ -74,6 +77,12 @@ public partial class Main : Node
 		
 		// Initialize HUD
 		InitializeHUD();
+		
+		// Initialize TimeManager
+		InitializeTimeManager();
+		
+		// Initialize Speed Control
+		InitializeSpeedControl();
 		
 		GD.Print("🎨 UI components initialized");
 	}
@@ -231,6 +240,51 @@ public partial class Main : Node
 			{
 				GD.PrintErr("⚠️  Startup validation detected issues with configuration. Check logs for detailed errors.");
 			}
+		}
+	}
+
+	private void InitializeTimeManager()
+	{
+		try
+		{
+			// Create and initialize TimeManager
+			_timeManager = new TimeManager();
+			AddChild(_timeManager);
+			GD.Print("⚡ TimeManager created and added to tree");
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"❌ Failed to initialize TimeManager: {ex.Message}");
+		}
+	}
+
+	private void InitializeSpeedControl()
+	{
+		try
+		{
+			// Load and instantiate SpeedControlPanel scene
+			var speedControlScene = GD.Load<PackedScene>("res://scenes/UI/SpeedControlPanel.tscn");
+			if (speedControlScene == null)
+			{
+				GD.PrintErr("❌ Failed to load SpeedControlPanel scene from res://scenes/UI/SpeedControlPanel.tscn");
+				return;
+			}
+			
+			_speedControl = speedControlScene.Instantiate<SpeedControl>();
+			if (_speedControl == null)
+			{
+				GD.PrintErr("❌ Failed to instantiate SpeedControl from scene");
+				return;
+			}
+			
+			// Add SpeedControl to scene tree
+			AddChild(_speedControl);
+			GD.Print("✅ SpeedControlPanel instantiated and added to tree");
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"❌ Failed to initialize SpeedControl: {ex.Message}");
+			GD.PrintErr($"Stack trace: {ex.StackTrace}");
 		}
 	}
 
