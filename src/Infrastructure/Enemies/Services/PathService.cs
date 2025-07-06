@@ -18,7 +18,7 @@ public class PathService
 
     public Vector2 GetEndPosition()
     {
-        return new Vector2(300, 750);
+        return new Vector2(1000, 50);
     }
 
     public Vector2[] GetPathPoints()
@@ -34,7 +34,12 @@ public class PathService
             new Vector2(500, 450),
             new Vector2(500, 600),
             new Vector2(300, 600),
-            new Vector2(300, 750)
+            new Vector2(300, 750),
+            new Vector2(800, 750),
+            new Vector2(800, 350),
+            new Vector2(600, 350),
+            new Vector2(600, 50),
+            new Vector2(1000, 50)
         };
     }
 

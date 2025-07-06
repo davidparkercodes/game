@@ -202,13 +202,6 @@ namespace Game.Domain.Enemies.Services
         {
             var position = new Vector2(point.X, point.Y);
             DrawCircle(position, 8.0f, _pathColor);
-            
-            // Draw order number
-            var font = ThemeDB.FallbackFont;
-            var text = point.Order.ToString();
-            var textSize = font.GetStringSize(text, HorizontalAlignment.Center, -1, 12);
-            var textPos = position - textSize / 2;
-            DrawString(font, textPos, text, HorizontalAlignment.Center, -1, 12, Colors.Black);
         }
         
         GD.Print($"🎨 PathManager drew path with {_pathPoints.Count} points");

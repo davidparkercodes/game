@@ -67,6 +67,7 @@ autowrap_mode = 2
 [node name="GameManager" type="Node" parent="."]
 
 [node name="PathManager" type="Node2D" parent="."]
+z_index = 1
 script = ExtResource("11_pathmanager")
 CurrentLevel = ExtResource("11_ft6cd")
 
