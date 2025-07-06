@@ -200,6 +200,9 @@ public partial class Main : Node
 				UpdateInventoryDisplay();
 			}
 		}
+		
+		// DEBUG: Wave jump shortcuts
+		HandleDebugInput(@event);
 	}
 
 	private void UpdateInventoryDisplay()
@@ -294,6 +297,43 @@ public partial class Main : Node
 		WaveManager.Initialize();
 		WaveManager.Instance?.Reset(); // This will set up the initial wave button state
 		GD.Print("🌊 Wave Manager initialized");
+		
+		// Announce debug shortcuts
+		AnnounceDebugShortcuts();
+	}
+
+	// DEBUG: Handle debug keyboard shortcuts
+	private void HandleDebugInput(InputEvent @event)
+	{
+		if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.ShiftPressed)
+		{
+			switch (keyEvent.Keycode)
+			{
+				case Key.Key5:
+					GD.Print("🔥 DEBUG: Shift+5 pressed - Jumping to Wave 5 (Boss Wave)!");
+					WaveManager.Instance?.JumpToWave(5);
+					break;
+					
+				case Key.Key6:
+					GD.Print("⏭️ DEBUG: Shift+6 pressed - Jumping to next wave!");
+					WaveManager.Instance?.JumpToNextWave();
+					break;
+					
+				case Key.Key7:
+					GD.Print("⚡ DEBUG: Shift+7 pressed - Completing current wave instantly!");
+					WaveManager.Instance?.CompleteCurrentWaveInstantly();
+					break;
+			}
+		}
+	}
+	
+	private void AnnounceDebugShortcuts()
+	{
+		GD.Print("🔧 ===== DEBUG SHORTCUTS AVAILABLE =====");
+		GD.Print("🔥 Shift+5: Jump to Wave 5 (Boss Wave)");
+		GD.Print("⏭️ Shift+6: Jump to next wave");
+		GD.Print("⚡ Shift+7: Complete current wave instantly");
+		GD.Print("🔧 ====================================");
 	}
 
 	public DiContainer GetDiContainer() => _diContainer;
