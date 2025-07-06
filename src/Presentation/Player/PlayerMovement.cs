@@ -1,4 +1,5 @@
 using Godot;
+using Game.Presentation.Core;
 
 namespace Game.Presentation.Player;
 
@@ -19,7 +20,32 @@ public class PlayerMovement
 		if (input != Vector2.Zero)
 			LastDirection = input.Normalized();
 
-		_player.Velocity = input * _player.Speed;
+		// Calculate desired velocity and position
+		Vector2 desiredVelocity = input * _player.Speed;
+		Vector2 currentPosition = _player.GlobalPosition;
+		Vector2 desiredPosition = currentPosition + desiredVelocity * (float)delta;
+		
+		// Check boundary constraints if MapBoundaryService is available
+		if (Main.MapBoundaryService != null && Main.MapBoundaryService.IsInitialized)
+		{
+			// Check if the desired position is valid for walking
+			if (Main.MapBoundaryService.CanWalkToPosition(desiredPosition))
+			{
+				// Position is valid, use normal movement
+				_player.Velocity = desiredVelocity;
+			}
+			else
+			{
+				// Position is invalid, stop movement
+				_player.Velocity = Vector2.Zero;
+			}
+		}
+		else
+		{
+			// Fallback to original movement if boundary service isn't available
+			_player.Velocity = desiredVelocity;
+		}
+		
 		_player.MoveAndSlide();
 	}
 }

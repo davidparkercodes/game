@@ -8,6 +8,8 @@ using Game.Application.Shared.Services;
 using Game.Presentation.UI;
 using Game.Infrastructure.Waves.Services;
 using Game.Application.Game.Services;
+using Game.Infrastructure.Map.Services;
+using Game.Infrastructure.Map.Extensions;
 using static Game.Di.DiConfiguration;
 
 namespace Game.Presentation.Core;
@@ -22,6 +24,9 @@ public partial class Main : Node
 	private Hud _hud = null!;
 	private TimeManager _timeManager = null!;
 	private SpeedControl _speedControl = null!;
+	private static MapBoundaryService? _mapBoundaryService = null!;
+	
+	public static MapBoundaryService? MapBoundaryService => _mapBoundaryService;
 
 	public override void _Ready()
 	{
@@ -177,16 +182,21 @@ public partial class Main : Node
 			}
 		}
 		
-		if (foundLayer != null)
-		{
-			BuildingZoneValidator.Initialize(foundLayer);
-			GD.Print("🏗️ Building system initialized successfully");
-		}
-		else
-		{
-			GD.PrintErr("❌ Could not find any TileMapLayer - building placement will not work");
-			GD.PrintErr("💡 Make sure the Level01 scene contains a TileMapLayer node");
-		}
+	if (foundLayer != null)
+	{
+		BuildingZoneValidator.Initialize(foundLayer);
+		GD.Print("🏗️ Building system initialized successfully");
+		
+		// Initialize MapBoundaryService with the same TileMapLayer
+		_mapBoundaryService = new MapBoundaryService();
+		_mapBoundaryService.Initialize(foundLayer);
+		GD.Print("🗺️ Map boundary service initialized successfully");
+	}
+	else
+	{
+		GD.PrintErr("❌ Could not find any TileMapLayer - building placement will not work");
+		GD.PrintErr("💡 Make sure the Level01 scene contains a TileMapLayer node");
+	}
 	}
 
 	public override void _Input(InputEvent @event)
