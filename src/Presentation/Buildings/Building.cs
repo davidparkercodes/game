@@ -407,6 +407,14 @@ public partial class Building : StaticBody2D
 				SetShootSoundKey("sniper_tower_shoot");
 				SetBulletImpactSoundKey("sniper_bullet_impact");
 				break;
+			case "rapid_tower":
+				SetShootSoundKey("rapid_tower_shoot");
+				SetBulletImpactSoundKey("rapid_bullet_impact");
+				break;
+			case "heavy_tower":
+				SetShootSoundKey("heavy_tower_shoot");
+				SetBulletImpactSoundKey("heavy_bullet_impact");
+				break;
 			default:
 				SetShootSoundKey("basic_tower_shoot");
 				SetBulletImpactSoundKey("basic_bullet_impact");

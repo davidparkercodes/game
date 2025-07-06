@@ -12,6 +12,18 @@
         "category": "SFX",
         "volume": -2.0,
         "description": "Sniper tower firing sound"
+      },
+      "rapid_tower_shoot": {
+        "file": "res://assets/audio/towers/rapid_tower_shoot.mp3",
+        "category": "SFX",
+        "volume": -1.5,
+        "description": "Rapid tower firing sound"
+      },
+      "heavy_tower_shoot": {
+        "file": "res://assets/audio/towers/heavy_tower_shoot.mp3",
+        "category": "SFX",
+        "volume": -1.0,
+        "description": "Heavy tower firing sound"
       }
     },
     "projectiles": {
@@ -26,6 +38,18 @@
         "category": "SFX",
         "volume": -2.0,
         "description": "Sniper bullet impact sound"
+      },
+      "rapid_bullet_impact": {
+        "file": "res://assets/audio/projectiles/rapid_bullet_impact.mp3",
+        "category": "SFX",
+        "volume": -1.5,
+        "description": "Rapid bullet impact sound"
+      },
+      "heavy_bullet_impact": {
+        "file": "res://assets/audio/projectiles/heavy_bullet_impact.mp3",
+        "category": "SFX",
+        "volume": -0.5,
+        "description": "Heavy bullet impact sound"
       }
     },
     "game": {
@@ -48,6 +72,18 @@
         "category": "SFX",
         "volume": -2.0,
         "description": "Sniper tower construction sound"
+      },
+      "rapid_tower_build": {
+        "file": "res://assets/audio/towers/rapid_tower_build.mp3",
+        "category": "SFX",
+        "volume": -1.5,
+        "description": "Rapid tower construction sound"
+      },
+      "heavy_tower_build": {
+        "file": "res://assets/audio/towers/heavy_tower_build.mp3",
+        "category": "SFX",
+        "volume": -1.0,
+        "description": "Heavy tower construction sound"
       }
     },
     "ui": {},

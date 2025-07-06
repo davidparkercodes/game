@@ -372,6 +372,11 @@ public partial class Main : Node
 		GD.Print("🐌 Shift+1: Set speed to 1x");
 		GD.Print("🏃 Shift+2: Set speed to 2x");
 		GD.Print("⚡ Shift+3: Set speed to 4x");
+		GD.Print("🏰 ===== TOWER SELECTION =====");
+		GD.Print("📦 1: Basic Tower (Balanced)");
+		GD.Print("🎯 2: Sniper Tower (Long Range)");
+		GD.Print("⚡ 3: Rapid Tower (Fast Fire)");
+		GD.Print("💪 4: Heavy Tower (High Damage)");
 		GD.Print("🔧 ===== DEBUG SHORTCUTS =====");
 		GD.Print("🔥 Shift+5: Jump to Wave 5 (Boss Wave)");
 		GD.Print("⏭️ Shift+6: Jump to next wave");

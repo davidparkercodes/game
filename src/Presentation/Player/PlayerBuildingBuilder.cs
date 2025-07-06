@@ -155,6 +155,14 @@ public class PlayerBuildingBuilder
 		{
 			soundKey = "sniper_tower_build";
 		}
+		else if (building.Name == "RapidTower")
+		{
+			soundKey = "rapid_tower_build";
+		}
+		else if (building.Name == "HeavyTower")
+		{
+			soundKey = "heavy_tower_build";
+		}
 		else
 		{
 			soundKey = "basic_tower_build"; // fallback to basic tower sound

@@ -1,8 +1,6 @@
-[gd_scene load_steps=6 format=4 uid="uid://wgthd0eexbcv"]
+[gd_scene load_steps=4 format=4 uid="uid://wgthd0eexbcv"]
 
 [ext_resource type="PackedScene" uid="uid://b25v1654ttu42" path="res://scenes/Player/Player.tscn" id="2_nxtc6"]
-[ext_resource type="PackedScene" uid="uid://ddkixe5gb73sy" path="res://scenes/Towers/BasicTower.tscn" id="3_wp0k4"]
-[ext_resource type="PackedScene" uid="uid://db86u6pd501cl" path="res://scenes/Towers/SniperTower.tscn" id="4_wp0k4"]
 [ext_resource type="PackedScene" uid="uid://3cpqs0fsd2cq" path="res://scenes/Levels/Level01.tscn" id="5_qmy6f"]
 [ext_resource type="Script" uid="uid://bdy1qo0owpahe" path="res://src/Presentation/Core/Main.cs" id="8_bjd11"]
 
@@ -12,8 +10,6 @@ script = ExtResource("8_bjd11")
 [node name="Player" parent="." instance=ExtResource("2_nxtc6")]
 z_index = 2
 position = Vector2(220, 220)
-BasicTowerScene = ExtResource("3_wp0k4")
-SniperTowerScene = ExtResource("4_wp0k4")
 
 [node name="InventoryUI" type="CanvasLayer" parent="."]
 

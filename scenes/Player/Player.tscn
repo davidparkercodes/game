@@ -1,8 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://b25v1654ttu42"]
+[gd_scene load_steps=13 format=3 uid="uid://b25v1654ttu42"]
 
 [ext_resource type="Script" uid="uid://6e12ogd5np7v" path="res://src/Presentation/Player/Player.cs" id="1_kpjcp"]
 [ext_resource type="Texture2D" uid="uid://vvwher3fvaq" path="res://assets/sprites/simple_player_24x24_pink_diamond.png" id="2_bvqhm"]
 [ext_resource type="Script" uid="uid://g0wlghawnmxn" path="res://src/Presentation/Components/Hitbox.cs" id="3_3li8b"]
+[ext_resource type="PackedScene" uid="uid://ddkixe5gb73sy" path="res://scenes/Towers/BasicTower.tscn" id="4_basic"]
+[ext_resource type="PackedScene" uid="uid://cxqlwwmwovlx1" path="res://scenes/Towers/SniperTower.tscn" id="5_sniper"]
+[ext_resource type="PackedScene" uid="uid://bcx4v8jh2k9lm" path="res://scenes/Towers/RapidTower.tscn" id="6_rapid"]
+[ext_resource type="PackedScene" uid="uid://bpx3v7gh4m2kn" path="res://scenes/Towers/HeavyTower.tscn" id="7_heavy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kpjcp"]
 size = Vector2(16, 16)
@@ -64,6 +68,10 @@ _data = {
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 2
 script = ExtResource("1_kpjcp")
+BasicTowerScene = ExtResource("4_basic")
+SniperTowerScene = ExtResource("5_sniper")
+RapidTowerScene = ExtResource("6_rapid")
+HeavyTowerScene = ExtResource("7_heavy")
 
 [node name="TempChar" type="Sprite2D" parent="."]
 texture = ExtResource("2_bvqhm")

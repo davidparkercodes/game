@@ -84,64 +84,64 @@ This plan implements critical building system improvements including collision p
 ## Phase 3: Rapid Tower Implementation
 **Goal**: Implement the rapid_tower type with fast attack speed and lower damage.
 
-### [ ] 3.1 Create Rapid Tower Class
-- [ ] Create `src/Presentation/Buildings/RapidTower.cs` class extending `Building`
-- [ ] Implement `InitializeStats()` to load "rapid_tower" config  
-- [ ] Add tower-specific behavior if needed (rapid firing effects)
-- [ ] Set appropriate sound keys for rapid tower shooting
+### [x] 3.1 Create Rapid Tower Class
+- [x] Create `src/Presentation/Buildings/RapidTower.cs` class extending `Building`
+- [x] Implement `InitializeStats()` to load "rapid_tower" config  
+- [x] Add tower-specific behavior if needed (rapid firing effects)
+- [x] Set appropriate sound keys for rapid tower shooting
 
-### [ ] 3.2 Create Rapid Tower Scene
-- [ ] Create `scenes/Towers/RapidTower.tscn` scene file
-- [ ] Configure scene structure (Timer, Area2D, CollisionShape2D, etc.)
-- [ ] Set appropriate sprite/visual for rapid tower (distinct from basic/sniper)
-- [ ] Configure collision layers and enemy detection area
-- [ ] Reference `RapidTower.cs` script in scene
+### [x] 3.2 Create Rapid Tower Scene
+- [x] Create `scenes/Towers/RapidTower.tscn` scene file
+- [x] Configure scene structure (Timer, Area2D, CollisionShape2D, etc.)
+- [x] Set appropriate sprite/visual for rapid tower (distinct from basic/sniper)
+- [x] Configure collision layers and enemy detection area
+- [x] Reference `RapidTower.cs` script in scene
 
-### [ ] 3.3 Integrate Rapid Tower into Build System
-- [ ] Add rapid tower to player building selection (keyboard shortcut)
-- [ ] Update `Player.cs` to handle rapid tower selection 
-- [ ] Add rapid tower to HUD building stats display
-- [ ] Ensure rapid tower appears in inventory and selection UI
+### [x] 3.3 Integrate Rapid Tower into Build System
+- [x] Add rapid tower to player building selection (keyboard shortcut)
+- [x] Update `Player.cs` to handle rapid tower selection 
+- [x] Add rapid tower to HUD building stats display
+- [x] Ensure rapid tower appears in inventory and selection UI
 
-### [ ] 3.4 Audio and Configuration
-- [ ] Add rapid tower sound effects to `sound_config.json`:
+### [x] 3.4 Audio and Configuration
+- [x] Add rapid tower sound effects to `sound_config.json`:
   - `rapid_tower_shoot` sound
   - `rapid_tower_build` construction sound
-- [ ] Verify `building-stats.json` contains correct rapid tower stats:
-  - Cost: 75, Damage: 15, Range: 80.0, AttackSpeed: 75.0
-- [ ] Test sound playback and stat loading
+- [x] Verify `building-stats.json` contains correct rapid tower stats:
+  - Cost: 75, Damage: 6, Range: 100.0, AttackSpeed: 75.0
+- [x] Test sound playback and stat loading
 
 ---
 
 ## Phase 4: Heavy Tower Implementation  
 **Goal**: Implement the heavy_tower type with high damage and slow attack speed.
 
-### [ ] 4.1 Create Heavy Tower Class
-- [ ] Create `src/Presentation/Buildings/HeavyTower.cs` class extending `Building`
-- [ ] Implement `InitializeStats()` to load "heavy_tower" config
-- [ ] Add tower-specific behavior if needed (heavy impact effects)
-- [ ] Set appropriate sound keys for heavy tower shooting
+### [x] 4.1 Create Heavy Tower Class
+- [x] Create `src/Presentation/Buildings/HeavyTower.cs` class extending `Building`
+- [x] Implement `InitializeStats()` to load "heavy_tower" config
+- [x] Add tower-specific behavior if needed (heavy impact effects)
+- [x] Set appropriate sound keys for heavy tower shooting
 
-### [ ] 4.2 Create Heavy Tower Scene
-- [ ] Create `scenes/Towers/HeavyTower.tscn` scene file
-- [ ] Configure scene structure with appropriate nodes
-- [ ] Set distinctive sprite/visual for heavy tower (larger, more imposing)
-- [ ] Configure collision and detection areas
-- [ ] Reference `HeavyTower.cs` script in scene
+### [x] 4.2 Create Heavy Tower Scene
+- [x] Create `scenes/Towers/HeavyTower.tscn` scene file
+- [x] Configure scene structure with appropriate nodes
+- [x] Set distinctive sprite/visual for heavy tower (larger, more imposing)
+- [x] Configure collision and detection areas
+- [x] Reference `HeavyTower.cs` script in scene
 
-### [ ] 4.3 Integrate Heavy Tower into Build System
-- [ ] Add heavy tower to player building selection system
-- [ ] Update `Player.cs` keyboard shortcuts and selection logic
-- [ ] Add heavy tower to HUD and inventory displays
-- [ ] Implement build cost validation (150 cost)
+### [x] 4.3 Integrate Heavy Tower into Build System
+- [x] Add heavy tower to player building selection system
+- [x] Update `Player.cs` keyboard shortcuts and selection logic
+- [x] Add heavy tower to HUD and inventory displays
+- [x] Implement build cost validation (100 cost)
 
-### [ ] 4.4 Audio and Configuration  
-- [ ] Add heavy tower sound effects to `sound_config.json`:
+### [x] 4.4 Audio and Configuration  
+- [x] Add heavy tower sound effects to `sound_config.json`:
   - `heavy_tower_shoot` sound (deep, powerful)
   - `heavy_tower_build` construction sound
-- [ ] Verify `building-stats.json` contains correct heavy tower stats:
-  - Cost: 150, Damage: 100, Range: 120.0, AttackSpeed: 24.0
-- [ ] Test all heavy tower functionality
+- [x] Verify `building-stats.json` contains correct heavy tower stats:
+  - Cost: 100, Damage: 50, Range: 150.0, AttackSpeed: 18.0
+- [x] Test all heavy tower functionality
 
 ---
 
@@ -200,16 +200,16 @@ This plan implements critical building system improvements including collision p
 - [x] No exploits allow premature building activation
 
 ### Phase 3 Success:
-- [ ] Rapid tower is fully functional with correct stats
-- [ ] Rapid tower has distinctive audio and visual identity
-- [ ] Rapid tower integrates seamlessly with build system
-- [ ] Rapid tower provides strategic gameplay value
+- [x] Rapid tower is fully functional with correct stats
+- [x] Rapid tower has distinctive audio and visual identity
+- [x] Rapid tower integrates seamlessly with build system
+- [x] Rapid tower provides strategic gameplay value
 
 ### Phase 4 Success:
-- [ ] Heavy tower is fully functional with correct stats  
-- [ ] Heavy tower has distinctive audio and visual identity
-- [ ] Heavy tower integrates seamlessly with build system
-- [ ] Heavy tower provides strategic gameplay value
+- [x] Heavy tower is fully functional with correct stats  
+- [x] Heavy tower has distinctive audio and visual identity
+- [x] Heavy tower integrates seamlessly with build system
+- [x] Heavy tower provides strategic gameplay value
 
 ### Phase 5 Success:
 - [ ] All phases work together without conflicts

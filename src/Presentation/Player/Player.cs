@@ -19,6 +19,8 @@ public partial class Player : CharacterBody2D
 
 	[Export] public PackedScene? BasicTowerScene;
 	[Export] public PackedScene? SniperTowerScene;
+	[Export] public PackedScene? RapidTowerScene;
+	[Export] public PackedScene? HeavyTowerScene;
 
 	public PackedScene? CurrentBuildingScene { get; private set; } = null;
 
@@ -100,6 +102,50 @@ public partial class Player : CharacterBody2D
 						GD.PrintErr("❌ No SniperTowerScene assigned!");
 					}
 					break;
+
+				case Key.Key3:
+					if (RapidTowerScene != null)
+					{
+						if (CurrentBuildingScene == RapidTowerScene)
+						{
+							ClearBuildingSelection();
+							GD.Print("🚫 Deselected Rapid Tower");
+						}
+						else
+						{
+							CurrentBuildingScene = RapidTowerScene;
+							UpdateSelectedBuildingDisplay("Rapid");
+							_buildingBuilder.StartBuildMode(RapidTowerScene);
+							GD.Print("⚡ Selected Rapid Tower for building");
+						}
+					}
+					else
+					{
+						GD.PrintErr("❌ No RapidTowerScene assigned!");
+					}
+					break;
+
+				case Key.Key4:
+					if (HeavyTowerScene != null)
+					{
+						if (CurrentBuildingScene == HeavyTowerScene)
+						{
+							ClearBuildingSelection();
+							GD.Print("🚫 Deselected Heavy Tower");
+						}
+						else
+						{
+							CurrentBuildingScene = HeavyTowerScene;
+							UpdateSelectedBuildingDisplay("Heavy");
+							_buildingBuilder.StartBuildMode(HeavyTowerScene);
+							GD.Print("💪 Selected Heavy Tower for building");
+						}
+					}
+					else
+					{
+						GD.PrintErr("❌ No HeavyTowerScene assigned!");
+					}
+					break;
 			}
 		}
 	}
@@ -117,6 +163,16 @@ public partial class Player : CharacterBody2D
 				CurrentBuildingScene = SniperTowerScene;
 				UpdateSelectedBuildingDisplay("Sniper");
 				_buildingBuilder.StartBuildMode(SniperTowerScene!);
+				break;
+			case "Rapid":
+				CurrentBuildingScene = RapidTowerScene;
+				UpdateSelectedBuildingDisplay("Rapid");
+				_buildingBuilder.StartBuildMode(RapidTowerScene!);
+				break;
+			case "Heavy":
+				CurrentBuildingScene = HeavyTowerScene;
+				UpdateSelectedBuildingDisplay("Heavy");
+				_buildingBuilder.StartBuildMode(HeavyTowerScene!);
 				break;
 		}
 	}
@@ -179,6 +235,8 @@ public partial class Player : CharacterBody2D
 		{
 			"Basic" => "basic_tower",
 			"Sniper" => "sniper_tower",
+			"Rapid" => "rapid_tower",
+			"Heavy" => "heavy_tower",
 			_ => null
 		};
 		
