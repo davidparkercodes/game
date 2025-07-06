@@ -42,11 +42,15 @@ public class WaveManager
 
         if (totalWaves <= 0)
         {
-            GD.PrintErr("❌ MockWaveService returned 0 total waves! Wave loading failed.");
+            GD.PrintErr("❌ WaveService returned 0 total waves! Wave loading failed.");
         }
         else
         {
             _isInitialized = true;
+            
+            // Set the total rounds in RoundService from the wave configuration
+            RoundService.Instance?.SetTotalRounds(totalWaves);
+            GD.Print($"🌊 WaveManager: Set RoundService.TotalRounds to {totalWaves}");
         }
     }
 
@@ -169,6 +173,14 @@ public class WaveManager
         {
             // Re-initialize the wave service if needed
             _waveService.Initialize();
+        }
+        
+        // Re-sync total rounds with RoundService after reset
+        var totalWaves = GetTotalWaves();
+        if (totalWaves > 0)
+        {
+            RoundService.Instance?.SetTotalRounds(totalWaves);
+            GD.Print($"🔄 WaveManager: Re-synced RoundService.TotalRounds to {totalWaves} after reset");
         }
 
         UpdateWaveButtonState();

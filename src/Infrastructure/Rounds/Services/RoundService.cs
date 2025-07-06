@@ -122,7 +122,13 @@ public class RoundService
         return (float)(TotalEnemies - EnemiesRemaining) / TotalEnemies;
     }
 
-    public int TotalRounds { get; set; } = 10;
+    public int TotalRounds { get; private set; } = -1; // -1 indicates not yet loaded from wave configuration
+
+    public void SetTotalRounds(int totalRounds)
+    {
+        TotalRounds = totalRounds;
+        GD.Print($"RoundService: Total rounds set to {TotalRounds}");
+    }
 
     public void ForceStartDefendPhase()
     {

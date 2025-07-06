@@ -86,7 +86,7 @@ public partial class Hud : CanvasLayer
 	{
 		if (MoneyLabel != null) MoneyLabel.Text = "Money: $0";
 		if (LivesLabel != null) LivesLabel.Text = "Lives: 0";
-		if (WaveLabel != null) WaveLabel.Text = "Wave: 0/5";
+		if (WaveLabel != null) WaveLabel.Text = "Wave: 0/?";
 	}
 
 	private void LogNodeStatus()
@@ -140,8 +140,9 @@ public partial class Hud : CanvasLayer
 	public void UpdateWave(int wave)
 	{
 		if (!ValidateComponent(WaveLabel, "WaveLabel")) return;
-		var totalRounds = RoundService.Instance?.TotalRounds ?? 5;
-		WaveLabel!.Text = $"Wave: {wave}/{totalRounds}";
+		var totalRounds = RoundService.Instance?.TotalRounds ?? -1;
+		var totalDisplay = totalRounds > 0 ? totalRounds.ToString() : "?";
+		WaveLabel!.Text = $"Wave: {wave}/{totalDisplay}";
 	}
 
 	private bool ValidateComponent(Node? component, string componentName)

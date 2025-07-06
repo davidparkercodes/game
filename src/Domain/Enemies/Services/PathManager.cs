@@ -70,7 +70,7 @@ namespace Game.Domain.Enemies.Services
 			GD.Print($"📍 PathPoints variant type: {pathPointsVariant.VariantType}");
 			GD.Print($"📍 PathPoints raw value: {pathPointsVariant}");
 			
-			Vector2[] pathPointsArray = null;
+			Vector2[]? pathPointsArray = null;
 			
 			if (pathPointsVariant.VariantType == Variant.Type.PackedVector2Array)
 			{
