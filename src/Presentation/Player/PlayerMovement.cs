@@ -1,5 +1,6 @@
 using Godot;
 using Game.Presentation.Core;
+using Game.Infrastructure.Common.Converters;
 
 namespace Game.Presentation.Player;
 
@@ -29,7 +30,8 @@ public class PlayerMovement
 		if (Main.MapBoundaryService != null && Main.MapBoundaryService.IsInitialized)
 		{
 			// Check if the desired position is valid for walking
-			if (Main.MapBoundaryService.CanWalkToPosition(desiredPosition))
+			var domainPosition = GodotGeometryConverter.FromGodotVector2(desiredPosition);
+			if (Main.MapBoundaryService.CanWalkToPosition(domainPosition))
 			{
 				// Position is valid, use normal movement
 				_player.Velocity = desiredVelocity;

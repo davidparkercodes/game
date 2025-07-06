@@ -5,6 +5,7 @@ using System.Text.Json;
 using Game.Domain.Enemies.Services;
 using Game.Domain.Enemies.ValueObjects;
 using Game.Domain.Levels.ValueObjects;
+using Game.Domain.Common.Services;
 using SimulationWaveConfiguration = Game.Application.Simulation.ValueObjects.WaveConfiguration;
 using SimulationWaveSetConfiguration = Game.Application.Simulation.ValueObjects.WaveSetConfiguration;
 using SimulationEnemyGroupConfiguration = Game.Application.Simulation.ValueObjects.EnemyGroupConfiguration;
@@ -13,6 +14,7 @@ namespace Game.Application.Simulation.Services;
 
 public class MockWaveService : IWaveService
 {
+    private readonly ILogger _logger;
     private SimulationWaveSetConfiguration? _currentWaveSet;
     private List<SimulationWaveConfiguration>? _waves;
     private int _currentWaveNumber = 0;
@@ -24,26 +26,27 @@ public class MockWaveService : IWaveService
     private float _enemyCountMultiplier = 1.0f;
     private int _currentEnemyGroupIndex = 0;
 
-    public MockWaveService()
+    public MockWaveService(ILogger? logger = null)
     {
-        Godot.GD.Print("🌊 MockWaveService constructor starting");
+        _logger = logger ?? new ConsoleLogger("🌊 [WAVE-SVC]");
+        _logger.LogInformation("MockWaveService constructor starting");
 
         // Initialize fields
         _waves = null;
         _totalWaves = 0;
         _currentWaveSetName = "Unknown";
 
-        Godot.GD.Print("🌊 MockWaveService: About to load wave configuration");
+        _logger.LogInformation("About to load wave configuration");
         LoadWaveConfiguration();
 
-        Godot.GD.Print($"🌊 MockWaveService constructor finished: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
+        _logger.LogInformation($"MockWaveService constructor finished: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
 
         // Double-check that waves were loaded
         if (_waves == null || _waves.Count == 0 || _totalWaves == 0)
         {
-            Godot.GD.PrintErr("❌ MockWaveService: Wave loading failed completely! Forcing fallback creation...");
+            _logger.LogError("Wave loading failed completely! Forcing fallback creation...");
             CreateFallbackConfiguration();
-            Godot.GD.Print($"🔧 After forced fallback: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
+            _logger.LogInformation($"After forced fallback: waves={_waves?.Count ?? 0}, totalWaves={_totalWaves}");
         }
     }
 
@@ -213,12 +216,12 @@ public class MockWaveService : IWaveService
         // Only reload if we don't already have waves loaded
         if (_waves == null || _waves.Count == 0 || _totalWaves == 0)
         {
-            Godot.GD.Print("🌊 MockWaveService.Initialize(): No waves loaded, reloading...");
+            Console.WriteLine("🌊 MockWaveService.Initialize(): No waves loaded, reloading...");
             LoadWaveConfiguration();
         }
         else
         {
-            Godot.GD.Print($"🌊 MockWaveService.Initialize(): Already have {_totalWaves} waves loaded, skipping reload");
+            Console.WriteLine($"🌊 MockWaveService.Initialize(): Already have {_totalWaves} waves loaded, skipping reload");
         }
     }
 
@@ -238,38 +241,86 @@ public class MockWaveService : IWaveService
 
     private void LoadWaveConfiguration(string difficulty = "default")
     {
-        Godot.GD.Print($"🌊 MockWaveService: Loading wave configuration for difficulty: {difficulty}");
         try
         {
             var configPath = GetWaveConfigPath(difficulty);
-            Godot.GD.Print($"🌊 MockWaveService: Attempting to load config from: {configPath}");
-            var configContent = System.IO.File.ReadAllText(configPath);
+            Console.WriteLine($"🌊 MockWaveService: Attempting to load config from: {configPath}");
+            
+            // Try to find the config file with multiple search paths
+            var actualConfigPath = FindWaveConfigFile(configPath);
+            
+            if (!System.IO.File.Exists(actualConfigPath))
+            {
+                Console.WriteLine($"⚠️ MockWaveService: Wave config file not found at {actualConfigPath}, creating fallback");
+                CreateFallbackConfiguration();
+                return;
+            }
+            
+            var configContent = System.IO.File.ReadAllText(actualConfigPath);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true
+            };
 
-            _currentWaveSet = JsonSerializer.Deserialize<SimulationWaveSetConfiguration>(configContent);
+            _currentWaveSet = JsonSerializer.Deserialize<SimulationWaveSetConfiguration>(configContent, options);
 
             if (_currentWaveSet?.Waves != null)
             {
                 _waves = _currentWaveSet.Waves;
                 _totalWaves = _waves.Count;
                 _currentWaveSetName = _currentWaveSet.SetName ?? difficulty;
-                Godot.GD.Print($"✅ MockWaveService: Loaded {_totalWaves} waves from config");
+                Console.WriteLine($"✅ MockWaveService: Loaded {_totalWaves} waves from config");
             }
             else
             {
-                Godot.GD.Print("⚠️ MockWaveService: Wave set loaded but no waves found, creating fallback");
+                Console.WriteLine("⚠️ MockWaveService: Wave set loaded but no waves found, creating fallback");
                 CreateFallbackConfiguration();
             }
         }
         catch (Exception ex)
         {
-            Godot.GD.Print($"⚠️ MockWaveService: Failed to load wave configuration: {ex.Message}");
+            Console.WriteLine($"⚠️ MockWaveService: Failed to load wave configuration: {ex.Message}");
             CreateFallbackConfiguration();
         }
+    }
+    
+    private static string FindWaveConfigFile(string relativePath)
+    {
+        // First try the relative path as-is
+        if (System.IO.File.Exists(relativePath))
+        {
+            return relativePath;
+        }
+        
+        // Try looking in common directories relative to current directory
+        var searchPaths = new[]
+        {
+            relativePath,
+            System.IO.Path.Combine("..", relativePath),
+            System.IO.Path.Combine("..", "..", relativePath),
+            System.IO.Path.Combine("..", "..", "..", relativePath),
+            System.IO.Path.Combine("..", "..", "..", "..", relativePath),
+            System.IO.Path.Combine("..", "..", "..", "..", "..", relativePath),
+            System.IO.Path.Combine(Environment.CurrentDirectory, relativePath),
+        };
+        
+        foreach (var searchPath in searchPaths)
+        {
+            if (System.IO.File.Exists(searchPath))
+            {
+                return searchPath;
+            }
+        }
+        
+        // Return the original path if nothing found (will trigger fallback)
+        return relativePath;
     }
 
     private void CreateFallbackConfiguration()
     {
-        Godot.GD.Print("🔧 MockWaveService: Creating fallback wave configuration");
+        Console.WriteLine("🔧 MockWaveService: Creating fallback wave configuration");
         _waves = new List<SimulationWaveConfiguration>();
 
         // Create 15 fallback waves to support typical simulation scenarios

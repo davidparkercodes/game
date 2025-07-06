@@ -1,3 +1,5 @@
+using System;
+
 namespace Game.Domain.Common.Types;
 
 public struct Vector2
@@ -11,15 +13,43 @@ public struct Vector2
         Y = y;
     }
     
-    public static implicit operator Godot.Vector2(Vector2 vector)
+    public float Length => (float)Math.Sqrt(X * X + Y * Y);
+    
+    public Vector2 Normalized()
     {
-        return new Godot.Vector2(vector.X, vector.Y);
+        var length = Length;
+        return length > 0 ? new Vector2(X / length, Y / length) : new Vector2(0, 0);
     }
     
-    public static implicit operator Vector2(Godot.Vector2 vector)
+    public float DistanceTo(Vector2 other)
     {
-        return new Vector2(vector.X, vector.Y);
+        var dx = X - other.X;
+        var dy = Y - other.Y;
+        return (float)Math.Sqrt(dx * dx + dy * dy);
     }
+    
+    public static Vector2 operator +(Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.X + b.X, a.Y + b.Y);
+    }
+    
+    public static Vector2 operator -(Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.X - b.X, a.Y - b.Y);
+    }
+    
+    public static Vector2 operator *(Vector2 vector, float scalar)
+    {
+        return new Vector2(vector.X * scalar, vector.Y * scalar);
+    }
+    
+    public override string ToString()
+    {
+        return $"({X:F2}, {Y:F2})";
+    }
+    
+    // Implicit conversions to Godot types removed to maintain framework independence
+    // Use converter utilities in Infrastructure layer for Godot interop
 }
 
 public struct Rect2
@@ -59,15 +89,8 @@ public struct Rect2
         );
     }
     
-    public static implicit operator Godot.Rect2(Rect2 rect)
-    {
-        return new Godot.Rect2(rect.Position, rect.Size);
-    }
-    
-    public static implicit operator Rect2(Godot.Rect2 rect)
-    {
-        return new Rect2(rect.Position, rect.Size);
-    }
+    // Implicit conversions to Godot types removed to maintain framework independence
+    // Use converter utilities in Infrastructure layer for Godot interop
     
     public override string ToString()
     {

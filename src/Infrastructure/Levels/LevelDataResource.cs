@@ -1,11 +1,15 @@
 using Godot;
 using System;
+using Game.Domain.Common.Services;
+using Game.Domain.Levels.ValueObjects;
 
-namespace Game.Domain.Levels.ValueObjects
+namespace Game.Infrastructure.Levels
 {
 	[GlobalClass]
 	public partial class LevelDataResource : Resource
 	{
+		private static readonly ILogger _logger = new ConsoleLogger("📝 [LEVEL]");
+		
 		[Export] public string LevelName { get; set; } = "";
 		[Export] public string Description { get; set; } = "";
 		[Export] public Vector2[] PathPoints { get; set; } = Array.Empty<Vector2>();
@@ -27,11 +31,11 @@ namespace Game.Domain.Levels.ValueObjects
 		// Ensure PathPoints is not null
 		PathPoints ??= Array.Empty<Vector2>();
 		
-		GD.Print($"📝 Converting LevelDataResource to LevelData: {PathPoints.Length} path points");
+		_logger.LogInformation($"Converting LevelDataResource to LevelData: {PathPoints.Length} path points");
 		
 		if (PathPoints.Length < 2)
 		{
-			GD.PrintErr($"❌ LevelDataResource.ToLevelData: PathPoints has only {PathPoints.Length} points, need at least 2");
+			_logger.LogError($"ToLevelData: PathPoints has only {PathPoints.Length} points, need at least 2");
 			throw new InvalidOperationException($"PathPoints must have at least 2 points, but has {PathPoints.Length}");
 		}
 		
@@ -41,7 +45,7 @@ namespace Game.Domain.Levels.ValueObjects
 			pathPoints[i] = new PathPoint(PathPoints[i].X, PathPoints[i].Y);
 		}
 
-		GD.Print($"📝 About to create LevelData with {pathPoints.Length} path points");
+		_logger.LogDebug($"About to create LevelData with {pathPoints.Length} path points");
 		
 		return new LevelData(
 			LevelName,

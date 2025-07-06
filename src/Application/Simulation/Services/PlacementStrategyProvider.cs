@@ -97,7 +97,8 @@ public class PlacementStrategyProvider : IPlacementStrategyProvider
             var actualPath = FindConfigFile(configPath);
             if (!File.Exists(actualPath))
             {
-                throw new FileNotFoundException($"Placement strategy config file not found: {actualPath}");
+                Console.WriteLine($"WARNING: Placement strategy config file not found: {actualPath}. Using fallback configuration.");
+                return CreateFallbackPlacementStrategyConfig();
             }
 
             var jsonContent = File.ReadAllText(actualPath);
@@ -109,12 +110,56 @@ public class PlacementStrategyProvider : IPlacementStrategyProvider
             };
             
             return JsonSerializer.Deserialize<PlacementStrategyConfig>(jsonContent, options) 
-                   ?? new PlacementStrategyConfig();
+                   ?? CreateFallbackPlacementStrategyConfig();
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Failed to load placement strategy from {configPath}: {ex.Message}", ex);
+            Console.WriteLine($"WARNING: Failed to load placement strategy from {configPath}: {ex.Message}. Using fallback configuration.");
+            return CreateFallbackPlacementStrategyConfig();
         }
+    }
+    
+    private static PlacementStrategyConfig CreateFallbackPlacementStrategyConfig()
+    {
+        return new PlacementStrategyConfig
+        {
+            strategies = new StrategiesConfig
+            {
+                initial_wave = new InitialWaveConfig
+                {
+                    building_category = "starter",
+                    max_cost_per_building = 100,
+                    positions = new List<List<int>>
+                    {
+                        new List<int> { 5, 5 },   // Top-left corner
+                        new List<int> { 15, 5 },  // Top-right corner
+                        new List<int> { 5, 15 },  // Bottom-left corner
+                        new List<int> { 15, 15 }  // Bottom-right corner
+                    }
+                },
+                wave_upgrades = new Dictionary<string, WaveUpgradeConfig>
+                {
+                    ["wave_3"] = new WaveUpgradeConfig
+                    {
+                        category = "precision",
+                        cost_threshold = 150,
+                        position = new List<int> { 10, 10 }
+                    },
+                    ["wave_5"] = new WaveUpgradeConfig
+                    {
+                        category = "heavy",
+                        cost_threshold = 200,
+                        position = new List<int> { 8, 12 }
+                    }
+                }
+            },
+            fallback_strategy = new FallbackStrategyConfig
+            {
+                use_default_type = true,
+                use_cheapest_type = true,
+                emergency_fallback = "basic_tower"
+            }
+        };
     }
 
     private static string FindConfigFile(string relativePath)

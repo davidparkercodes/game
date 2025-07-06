@@ -1,5 +1,6 @@
 using Game.Domain.Common.Types;
 using Game.Domain.Map.Interfaces;
+using Game.Infrastructure.Common.Converters;
 using Godot;
 
 namespace Game.Infrastructure.Map.Adapters;
@@ -15,17 +16,21 @@ public class TileMapLayerAdapter : ITileMapLayer
     
     public Domain.Common.Types.Vector2 MapToLocal(Domain.Map.Interfaces.Vector2I tileCoords)
     {
-        return _tileMapLayer.MapToLocal(tileCoords);
+        var godotResult = _tileMapLayer.MapToLocal(tileCoords);
+        return GodotGeometryConverter.FromGodotVector2(godotResult);
     }
     
     public Domain.Map.Interfaces.Vector2I LocalToMap(Domain.Common.Types.Vector2 localPosition)
     {
-        return _tileMapLayer.LocalToMap(localPosition);
+        var godotPosition = GodotGeometryConverter.ToGodotVector2(localPosition);
+        return _tileMapLayer.LocalToMap(godotPosition);
     }
     
     public Domain.Common.Types.Vector2 ToLocal(Domain.Common.Types.Vector2 globalPosition)
     {
-        return _tileMapLayer.ToLocal(globalPosition);
+        var godotPosition = GodotGeometryConverter.ToGodotVector2(globalPosition);
+        var godotResult = _tileMapLayer.ToLocal(godotPosition);
+        return GodotGeometryConverter.FromGodotVector2(godotResult);
     }
     
     public Domain.Map.Interfaces.Rect2I GetUsedRect()

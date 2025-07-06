@@ -1,9 +1,10 @@
+using System;
 using Godot;
 using Game.Presentation.UI;
 using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Rounds.Services;
 using Game.Infrastructure.Waves.Services;
-
+using Game.Domain.Common.Services;
 namespace Game.Application.Shared.Services;
 
 public class HudDebugCommands
@@ -14,28 +15,28 @@ public class HudDebugCommands
 	{
 		if (HudManager.Instance == null)
 		{
-			GD.PrintErr($"{LogPrefix} HudManager not available");
+			Console.WriteLine($"{LogPrefix} HudManager not available");
 			return;
 		}
 
-		GD.Print($"{LogPrefix} Force updating HUD values with test data...");
+		Console.WriteLine($"{LogPrefix} Force updating HUD values with test data...");
 		
 		HudManager.Instance.UpdateMoney(1500);
 		HudManager.Instance.UpdateLives(8);
 		HudManager.Instance.UpdateWave(3);
 		
-		GD.Print($"{LogPrefix} HUD values force updated!");
+		Console.WriteLine($"{LogPrefix} HUD values force updated!");
 	}
 
 	public static void TestAllHudStates()
 	{
 		if (HudManager.Instance == null)
 		{
-			GD.PrintErr($"{LogPrefix} HudManager not available");
+			Console.WriteLine($"{LogPrefix} HudManager not available");
 			return;
 		}
 
-		GD.Print($"{LogPrefix} Testing all HUD states...");
+		Console.WriteLine($"{LogPrefix} Testing all HUD states...");
 		
 		TestMoneyStates();
 		TestLivesStates();
@@ -43,48 +44,48 @@ public class HudDebugCommands
 		TestBuildingStatsStates();
 		TestButtonStates();
 		
-		GD.Print($"{LogPrefix} All HUD state tests completed!");
+		Console.WriteLine($"{LogPrefix} All HUD state tests completed!");
 	}
 
 	private static void TestMoneyStates()
 	{
-		GD.Print($"{LogPrefix} Testing money display states...");
+		Console.WriteLine($"{LogPrefix} Testing money display states...");
 		
 		var testValues = new[] { 0, 50, 500, 1000, 9999 };
 		foreach (var money in testValues)
 		{
 			HudManager.Instance?.UpdateMoney(money);
-			GD.Print($"{LogPrefix}   Money: ${money}");
+			Console.WriteLine($"{LogPrefix}   Money: ${money}");
 		}
 	}
 
 	private static void TestLivesStates()
 	{
-		GD.Print($"{LogPrefix} Testing lives display states...");
+		Console.WriteLine($"{LogPrefix} Testing lives display states...");
 		
 		var testValues = new[] { 0, 1, 5, 10, 20 };
 		foreach (var lives in testValues)
 		{
 			HudManager.Instance?.UpdateLives(lives);
-			GD.Print($"{LogPrefix}   Lives: {lives}");
+			Console.WriteLine($"{LogPrefix}   Lives: {lives}");
 		}
 	}
 
 	private static void TestWaveStates()
 	{
-		GD.Print($"{LogPrefix} Testing wave display states...");
+		Console.WriteLine($"{LogPrefix} Testing wave display states...");
 		
 		var testValues = new[] { 1, 2, 3, 4, 5 };
 		foreach (var wave in testValues)
 		{
 			HudManager.Instance?.UpdateWave(wave);
-			GD.Print($"{LogPrefix}   Wave: {wave}");
+			Console.WriteLine($"{LogPrefix}   Wave: {wave}");
 		}
 	}
 
 	private static void TestBuildingStatsStates()
 	{
-		GD.Print($"{LogPrefix} Testing building stats display states...");
+		Console.WriteLine($"{LogPrefix} Testing building stats display states...");
 		
 		var testBuildings = new[]
 		{
@@ -97,25 +98,25 @@ public class HudDebugCommands
 		foreach (var (name, cost, damage, range, fireRate) in testBuildings)
 		{
 			HudManager.Instance?.ShowBuildingStats(name, cost, damage, range, fireRate);
-			GD.Print($"{LogPrefix}   Building: {name} (${cost}, {damage} dmg, {range} range, {fireRate}s)");
+			Console.WriteLine($"{LogPrefix}   Building: {name} (${cost}, {damage} dmg, {range} range, {fireRate}s)");
 		}
 		
 		HudManager.Instance?.HideBuildingStats();
-		GD.Print($"{LogPrefix}   Building stats hidden");
+		Console.WriteLine($"{LogPrefix}   Building stats hidden");
 	}
 
 	private static void TestButtonStates()
 	{
 		if (HudManager.Instance?.GetHud() == null)
 		{
-			GD.PrintErr($"{LogPrefix} HUD instance not available for button testing");
+			Console.WriteLine($"{LogPrefix} HUD instance not available for button testing");
 			return;
 		}
 
 		var hud = HudManager.Instance.GetHud();
 		if (hud == null) return;
 
-		GD.Print($"{LogPrefix} Testing button states...");
+		Console.WriteLine($"{LogPrefix} Testing button states...");
 		
 		var testTexts = new[]
 		{
@@ -129,21 +130,21 @@ public class HudDebugCommands
 		foreach (var text in testTexts)
 		{
 			hud.UpdateSkipButtonText(text);
-			GD.Print($"{LogPrefix}   Button text: {text}");
+			Console.WriteLine($"{LogPrefix}   Button text: {text}");
 		}
 
 		hud.HideSkipButton();
-		GD.Print($"{LogPrefix}   Button hidden");
+		Console.WriteLine($"{LogPrefix}   Button hidden");
 		
 		hud.ShowSkipButton();
-		GD.Print($"{LogPrefix}   Button shown");
+		Console.WriteLine($"{LogPrefix}   Button shown");
 	}
 
 	public static void ToggleHudVisibility()
 	{
 		if (HudManager.Instance?.GetHud() == null)
 		{
-			GD.PrintErr($"{LogPrefix} HUD instance not available");
+			Console.WriteLine($"{LogPrefix} HUD instance not available");
 			return;
 		}
 
@@ -153,18 +154,18 @@ public class HudDebugCommands
 		bool currentVisibility = hud.Visible;
 		hud.Visible = !currentVisibility;
 		
-		GD.Print($"{LogPrefix} HUD visibility toggled: {currentVisibility} -> {!currentVisibility}");
+		Console.WriteLine($"{LogPrefix} HUD visibility toggled: {currentVisibility} -> {!currentVisibility}");
 	}
 
 	public static void ResetHudToDefaults()
 	{
 		if (HudManager.Instance == null)
 		{
-			GD.PrintErr($"{LogPrefix} HudManager not available");
+			Console.WriteLine($"{LogPrefix} HudManager not available");
 			return;
 		}
 
-		GD.Print($"{LogPrefix} Resetting HUD to default state...");
+		Console.WriteLine($"{LogPrefix} Resetting HUD to default state...");
 		
 		var gameService = GameService.Instance;
 		var roundService = RoundService.Instance;
@@ -185,31 +186,31 @@ public class HudDebugCommands
 			hud.UpdateSkipButtonText("⏭️ Start Wave");
 		}
 		
-		GD.Print($"{LogPrefix} HUD reset to defaults: ${defaultMoney}, {defaultLives} lives, wave {defaultWave}");
+		Console.WriteLine($"{LogPrefix} HUD reset to defaults: ${defaultMoney}, {defaultLives} lives, wave {defaultWave}");
 	}
 
 	public static void DiagnoseHudComponents()
 	{
-		GD.Print($"{LogPrefix} Diagnosing HUD component status...");
+		Console.WriteLine($"{LogPrefix} Diagnosing HUD component status...");
 		
 		if (HudManager.Instance == null)
 		{
-			GD.PrintErr($"{LogPrefix} ❌ HudManager.Instance is null");
+			Console.WriteLine($"{LogPrefix} ❌ HudManager.Instance is null");
 			return;
 		}
 		
-		GD.Print($"{LogPrefix} ✅ HudManager.Instance is available");
+		Console.WriteLine($"{LogPrefix} ✅ HudManager.Instance is available");
 		
 		var hud = HudManager.Instance.GetHud();
 		if (hud == null)
 		{
-			GD.PrintErr($"{LogPrefix} ❌ HUD instance is null");
+			Console.WriteLine($"{LogPrefix} ❌ HUD instance is null");
 			return;
 		}
 		
-		GD.Print($"{LogPrefix} ✅ HUD instance is available");
-		GD.Print($"{LogPrefix} HUD initialization status: {(hud.IsInitialized ? "✅ Initialized" : "❌ Not initialized")}");
-		GD.Print($"{LogPrefix} HUD visibility: {(hud.Visible ? "✅ Visible" : "❌ Hidden")}");
+		Console.WriteLine($"{LogPrefix} ✅ HUD instance is available");
+		Console.WriteLine($"{LogPrefix} HUD initialization status: {(hud.IsInitialized ? "✅ Initialized" : "❌ Not initialized")}");
+		Console.WriteLine($"{LogPrefix} HUD visibility: {(hud.Visible ? "✅ Visible" : "❌ Hidden")}");
 		
 		DiagnoseHudLabels(hud);
 		DiagnoseHudPanels(hud);
@@ -218,50 +219,50 @@ public class HudDebugCommands
 
 	private static void DiagnoseHudLabels(Hud hud)
 	{
-		GD.Print($"{LogPrefix} Label Status:");
-		GD.Print($"{LogPrefix}   MoneyLabel: {(hud.MoneyLabel != null ? "✅" : "❌")} - Text: '{hud.MoneyLabel?.Text ?? "null"}'");
-		GD.Print($"{LogPrefix}   LivesLabel: {(hud.LivesLabel != null ? "✅" : "❌")} - Text: '{hud.LivesLabel?.Text ?? "null"}'");
-		GD.Print($"{LogPrefix}   WaveLabel: {(hud.WaveLabel != null ? "✅" : "❌")} - Text: '{hud.WaveLabel?.Text ?? "null"}'");
-		GD.Print($"{LogPrefix}   TowerNameLabel: {(hud.TowerNameLabel != null ? "✅" : "❌")} - Text: '{hud.TowerNameLabel?.Text ?? "null"}'");
+		Console.WriteLine($"{LogPrefix} Label Status:");
+		Console.WriteLine($"{LogPrefix}   MoneyLabel: {(hud.MoneyLabel != null ? "✅" : "❌")} - Text: '{hud.MoneyLabel?.Text ?? "null"}'");
+		Console.WriteLine($"{LogPrefix}   LivesLabel: {(hud.LivesLabel != null ? "✅" : "❌")} - Text: '{hud.LivesLabel?.Text ?? "null"}'");
+		Console.WriteLine($"{LogPrefix}   WaveLabel: {(hud.WaveLabel != null ? "✅" : "❌")} - Text: '{hud.WaveLabel?.Text ?? "null"}'");
+		Console.WriteLine($"{LogPrefix}   TowerNameLabel: {(hud.TowerNameLabel != null ? "✅" : "❌")} - Text: '{hud.TowerNameLabel?.Text ?? "null"}'");
 	}
 
 	private static void DiagnoseHudPanels(Hud hud)
 	{
-		GD.Print($"{LogPrefix} Panel Status:");
+		Console.WriteLine($"{LogPrefix} Panel Status:");
 		
 		if (hud.TowerStatsPanel != null)
 		{
-			GD.Print($"{LogPrefix}   TowerStatsPanel: ✅ - Visible: {(hud.TowerStatsPanel.Visible ? "✅" : "❌")}");
+			Console.WriteLine($"{LogPrefix}   TowerStatsPanel: ✅ - Visible: {(hud.TowerStatsPanel.Visible ? "✅" : "❌")}");
 		}
 		else
 		{
-			GD.Print($"{LogPrefix}   TowerStatsPanel: ❌");
+			Console.WriteLine($"{LogPrefix}   TowerStatsPanel: ❌");
 		}
 	}
 
 	private static void DiagnoseHudButtons(Hud hud)
 	{
-		GD.Print($"{LogPrefix} Button Status:");
+		Console.WriteLine($"{LogPrefix} Button Status:");
 		
 		if (hud.SkipButton != null)
 		{
-			GD.Print($"{LogPrefix}   SkipButton: ✅ - Visible: {(hud.SkipButton.Visible ? "✅" : "❌")} - Text: '{hud.SkipButton.Text}'");
-			GD.Print($"{LogPrefix}   SkipButton Visibility Helper: {(hud.IsSkipButtonVisible ? "✅" : "❌")}");
+			Console.WriteLine($"{LogPrefix}   SkipButton: ✅ - Visible: {(hud.SkipButton.Visible ? "✅" : "❌")} - Text: '{hud.SkipButton.Text}'");
+			Console.WriteLine($"{LogPrefix}   SkipButton Visibility Helper: {(hud.IsSkipButtonVisible ? "✅" : "❌")}");
 		}
 		else
 		{
-			GD.Print($"{LogPrefix}   SkipButton: ❌");
+			Console.WriteLine($"{LogPrefix}   SkipButton: ❌");
 		}
 	}
 
 	public static void PrintHudCommands()
 	{
-		GD.Print($"{LogPrefix} Available HUD Debug Commands:");
-		GD.Print($"{LogPrefix}   HudDebugCommands.ForceUpdateHudValues() - Update with test values");
-		GD.Print($"{LogPrefix}   HudDebugCommands.TestAllHudStates() - Test all display states");
-		GD.Print($"{LogPrefix}   HudDebugCommands.ToggleHudVisibility() - Show/hide HUD");
-		GD.Print($"{LogPrefix}   HudDebugCommands.ResetHudToDefaults() - Reset to game defaults");
-		GD.Print($"{LogPrefix}   HudDebugCommands.DiagnoseHudComponents() - Diagnose component status");
-		GD.Print($"{LogPrefix}   HudDebugCommands.PrintHudCommands() - Show this help");
+		Console.WriteLine($"{LogPrefix} Available HUD Debug Commands:");
+		Console.WriteLine($"{LogPrefix}   HudDebugCommands.ForceUpdateHudValues() - Update with test values");
+		Console.WriteLine($"{LogPrefix}   HudDebugCommands.TestAllHudStates() - Test all display states");
+		Console.WriteLine($"{LogPrefix}   HudDebugCommands.ToggleHudVisibility() - Show/hide HUD");
+		Console.WriteLine($"{LogPrefix}   HudDebugCommands.ResetHudToDefaults() - Reset to game defaults");
+		Console.WriteLine($"{LogPrefix}   HudDebugCommands.DiagnoseHudComponents() - Diagnose component status");
+		Console.WriteLine($"{LogPrefix}   HudDebugCommands.PrintHudCommands() - Show this help");
 	}
 }

@@ -4,12 +4,15 @@ using System.Linq;
 using Godot;
 using Game.Domain.Enemies.Entities;
 using Game.Domain.Levels.ValueObjects;
+using Game.Domain.Common.Services;
+using Game.Infrastructure.Levels;
 
 namespace Game.Domain.Enemies.Services
 {
 	[Tool]
 	public partial class PathManager : Node2D
 	{
+	private readonly ILogger _logger;
 	private Resource? _currentLevel;
 	[Export] 
 	public Resource? CurrentLevel 
@@ -39,11 +42,11 @@ namespace Game.Domain.Enemies.Services
 						return;
 					}
 					
-					GD.PrintErr($"❌ PathManager: Cannot convert CurrentLevel to LevelDataResource, got: {_currentLevel.GetType().Name}");
+					_logger.LogError($"Cannot convert CurrentLevel to LevelDataResource, got: {_currentLevel.GetType().Name}");
 				}
 				catch (System.Exception ex)
 				{
-					GD.PrintErr($"❌ PathManager: Error loading level data - {ex.Message}");
+					_logger.LogError($"Error loading level data - {ex.Message}");
 				}
 			}
 		}
@@ -58,35 +61,35 @@ namespace Game.Domain.Enemies.Services
 		try
 		{
 			// Debug: Try different ways to access properties
-			GD.Print($"🔍 Resource type: {resource.GetType().Name}");
-			GD.Print($"🔍 Resource script: {resource.GetScript()}");
+			_logger.LogDebug($"Resource type: {resource.GetType().Name}");
+			_logger.LogDebug($"Resource script: {resource.GetScript()}");
 			
 			// Try getting specific properties directly
-			GD.Print($"🔍 LevelName: {resource.Get("LevelName")}");
-			GD.Print($"🔍 Description: {resource.Get("Description")}");
+			_logger.LogDebug($"LevelName: {resource.Get("LevelName")}");
+			_logger.LogDebug($"Description: {resource.Get("Description")}");
 			
 			// Check if resource has the expected PathPoints property
 			var pathPointsVariant = resource.Get("PathPoints");
-			GD.Print($"📍 PathPoints variant type: {pathPointsVariant.VariantType}");
-			GD.Print($"📍 PathPoints raw value: {pathPointsVariant}");
+			_logger.LogDebug($"PathPoints variant type: {pathPointsVariant.VariantType}");
+			_logger.LogDebug($"PathPoints raw value: {pathPointsVariant}");
 			
 			Vector2[]? pathPointsArray = null;
 			
 			if (pathPointsVariant.VariantType == Variant.Type.PackedVector2Array)
 			{
 				pathPointsArray = pathPointsVariant.AsVector2Array();
-				GD.Print($"📍 Found {pathPointsArray.Length} path points in PackedVector2Array");
+				_logger.LogDebug($"Found {pathPointsArray.Length} path points in PackedVector2Array");
 			}
 			else if (pathPointsVariant.VariantType == Variant.Type.Array)
 			{
-				GD.Print("📍 Trying to convert from Array to Vector2[]");
+				_logger.LogDebug("Trying to convert from Array to Vector2[]");
 				var array = pathPointsVariant.AsGodotArray();
 				pathPointsArray = new Vector2[array.Count];
 				for (int i = 0; i < array.Count; i++)
 				{
 					pathPointsArray[i] = array[i].AsVector2();
 				}
-				GD.Print($"📍 Converted {pathPointsArray.Length} points from Array");
+				_logger.LogDebug($"Converted {pathPointsArray.Length} points from Array");
 			}
 			
 			if (pathPointsArray != null && pathPointsArray.Length > 0)
@@ -94,7 +97,7 @@ namespace Game.Domain.Enemies.Services
 				// Debug: Print first few points if any
 				for (int i = 0; i < Math.Min(3, pathPointsArray.Length); i++)
 				{
-					GD.Print($"  Point {i}: {pathPointsArray[i]}");
+					_logger.LogDebug($"  Point {i}: {pathPointsArray[i]}");
 				}
 				
 				// Create new LevelDataResource instance and copy all properties
@@ -109,25 +112,25 @@ namespace Game.Domain.Enemies.Services
 				levelResource.InitialLives = resource.Get("InitialLives").AsInt32();
 				levelResource.PathColor = resource.Get("PathColor").AsColor();
 				
-				GD.Print($"✅ Created LevelDataResource with {levelResource.PathPoints.Length} path points");
+				_logger.LogInformation($"Created LevelDataResource with {levelResource.PathPoints.Length} path points");
 				return levelResource;
 			}
 			else
 			{
-				GD.PrintErr($"❌ PathPoints conversion failed - variant type: {pathPointsVariant.VariantType}, array length: {pathPointsArray?.Length ?? -1}");
+				_logger.LogError($"PathPoints conversion failed - variant type: {pathPointsVariant.VariantType}, array length: {pathPointsArray?.Length ?? -1}");
 				
 				// Try to use default level data as fallback
-				GD.Print("🔄 Falling back to default level data");
+				_logger.LogInformation("Falling back to default level data");
 				var defaultLevelData = LevelData.CreateDefault();
 				return LevelDataResource.FromLevelData(defaultLevelData);
 			}
 		}
 		catch (System.Exception ex)
 		{
-			GD.PrintErr($"❌ PathManager: Error during resource conversion - {ex.Message}");
+			_logger.LogError($"Error during resource conversion - {ex.Message}");
 		}
 		
-		GD.PrintErr($"❌ PathManager: Failed to convert resource type: {resource.GetType().Name}");
+		_logger.LogError($"Failed to convert resource type: {resource.GetType().Name}");
 		return null;
 	}
 		private readonly List<OrderedPathPoint> _pathPoints;
@@ -135,8 +138,13 @@ namespace Game.Domain.Enemies.Services
 		private Color _pathColor = Colors.Yellow;
 		private float _pathWidth = 5.0f;
 
-		public PathManager()
+		public PathManager() : this(new ConsoleLogger("🗺️ [PATH]"))
 		{
+		}
+		
+		public PathManager(ILogger logger)
+		{
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_pathPoints = new List<OrderedPathPoint>();
 			_pathTolerance = 10.0f;
 		}
@@ -164,12 +172,12 @@ namespace Game.Domain.Enemies.Services
 					return;
 				}
 				
-				GD.PrintErr($"❌ PathManager._Ready: Cannot load CurrentLevel, got: {CurrentLevel.GetType().Name}");
+				_logger.LogError($"_Ready: Cannot load CurrentLevel, got: {CurrentLevel.GetType().Name}");
 			}
 		}
 		catch (System.Exception ex)
 		{
-			GD.PrintErr($"❌ PathManager._Ready: Error loading path - {ex.Message}");
+			_logger.LogError($"_Ready: Error loading path - {ex.Message}");
 		}
 	}
 
