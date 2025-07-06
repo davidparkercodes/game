@@ -10,12 +10,10 @@ namespace Game.Tests.Application.Simulation;
 
 public class GameSimRunnerTests
 {
-    private readonly Game.Application.Simulation.GameSimRunner _runner;
-
-    public GameSimRunnerTests()
+    private Game.Application.Simulation.GameSimRunner GetRunner()
     {
         var silentLogger = new ConsoleLogger("[TEST]", LogLevel.Error); // Only show errors during tests
-        _runner = new Game.Application.Simulation.GameSimRunner(silentLogger);
+        return new Game.Application.Simulation.GameSimRunner(silentLogger);
     }
 
     [Fact]
@@ -25,7 +23,7 @@ public class GameSimRunnerTests
         var config = SimulationConfig.Default();
 
         // Act
-        var result = _runner.RunSimulation(config);
+        var result = GetRunner().RunSimulation(config);
 
         // Assert
         result.Should().NotBeNull();
@@ -40,8 +38,8 @@ public class GameSimRunnerTests
         var config2 = new SimulationConfig(randomSeed: 12345);
 
         // Act
-        var result1 = _runner.RunSimulation(config1);
-        var result2 = _runner.RunSimulation(config2);
+        var result1 = GetRunner().RunSimulation(config1);
+        var result2 = GetRunner().RunSimulation(config2);
 
         // Assert
         result1.Success.Should().Be(result2.Success);
@@ -57,7 +55,7 @@ public class GameSimRunnerTests
         var config = SimulationConfig.ForBalanceTesting();
 
         // Act
-        var result = _runner.RunSimulation(config);
+        var result = GetRunner().RunSimulation(config);
 
         // Assert
         result.WavesCompleted.Should().BeGreaterThan(0);
@@ -76,7 +74,7 @@ public class GameSimRunnerTests
         );
 
         // Act
-        var result = _runner.RunSimulation(config);
+        var result = GetRunner().RunSimulation(config);
 
         // Assert
         result.WaveResults.Should().NotBeEmpty();
@@ -94,7 +92,7 @@ public class GameSimRunnerTests
         );
 
         // Act
-        var result = _runner.RunSimulation(config);
+        var result = GetRunner().RunSimulation(config);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -114,7 +112,7 @@ public class GameSimRunnerTests
         );
 
         // Act
-        var result = _runner.RunSimulation(config);
+        var result = GetRunner().RunSimulation(config);
 
         // Assert
         result.Success.Should().BeTrue();
@@ -135,7 +133,7 @@ public class GameSimRunnerTests
         };
 
         // Act
-        var results = _runner.RunMultipleScenarios(scenarios.ToList());
+        var results = GetRunner().RunMultipleScenarios(scenarios.ToList());
 
         // Assert
         results.Should().HaveCount(3);
@@ -181,7 +179,7 @@ public class GameSimRunnerTests
         var config = SimulationConfig.ForBalanceTesting();
 
         // Act
-        var result = _runner.RunSimulation(config);
+        var result = GetRunner().RunSimulation(config);
         var resultString = result.ToString();
 
         // Assert
@@ -205,8 +203,8 @@ public class GameSimRunnerTests
         var config = new SimulationConfig(randomSeed: 42, maxWaves: 3);
 
         // Act
-        var syncResult = _runner.RunSimulation(config);
-        var asyncResult = await _runner.RunSimulationAsync(config);
+        var syncResult = GetRunner().RunSimulation(config);
+        var asyncResult = await GetRunner().RunSimulationAsync(config);
 
         // Assert
         syncResult.Success.Should().Be(asyncResult.Success);

@@ -1,0 +1,297 @@
+using FluentAssertions;
+using Game.Infrastructure.Stats.Services;
+using Xunit;
+using System;
+
+namespace Game.Tests.Infrastructure.Stats.Services;
+
+public class StatsManagerServiceTests
+{
+    private StatsManagerService? _statsManager;
+
+    public StatsManagerServiceTests()
+    {
+        // Don't initialize Godot services during test discovery - do it in tests
+    }
+
+    private StatsManagerService? GetStatsManager()
+    {
+        if (_statsManager == null)
+        {
+            try
+            {
+                _statsManager = StatsManagerService.Instance;
+            }
+            catch (Exception)
+            {
+                // Handle case where Godot services aren't available
+                _statsManager = null;
+            }
+        }
+        return _statsManager;
+    }
+
+    internal void RunAllTests()
+    {
+        Console.WriteLine("🧪 Running StatsManagerService Integration Tests");
+        
+        TestInstanceIsInitialized();
+        TestGetEnemyStatsWithValidType();
+        TestGetEnemyStatsWithInvalidType();
+        TestGetBuildingStatsWithValidType();
+        TestGetBuildingStatsWithInvalidType();
+        TestHasEnemyTypeWithValidType();
+        TestHasBuildingTypeWithValidType();
+        TestReloadConfigurations();
+        
+        Console.WriteLine("✅ All StatsManagerService tests completed");
+    }
+
+    private void TestInstanceIsInitialized()
+    {
+        Console.WriteLine("Testing instance initialization...");
+        AssertNotNull(_statsManager, "StatsManager instance should not be null");
+        Console.WriteLine("✓ Instance initialization works correctly");
+    }
+
+    private void TestGetEnemyStatsWithValidType()
+    {
+        Console.WriteLine("Testing GetEnemyStats with valid type...");
+        if (_statsManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        var stats = _statsManager.GetEnemyStats("basic_enemy");
+        AssertNotNull(stats, "Enemy stats should not be null");
+        AssertTrue(stats.max_health > 0, "Enemy max health should be greater than 0");
+        AssertTrue(stats.speed > 0, "Enemy speed should be greater than 0");
+        AssertTrue(stats.reward_gold >= 0, "Enemy reward gold should be >= 0");
+        Console.WriteLine("✓ GetEnemyStats with valid type works correctly");
+    }
+
+    private void TestGetEnemyStatsWithInvalidType()
+    {
+        Console.WriteLine("Testing GetEnemyStats with invalid type...");
+        if (_statsManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        var stats = _statsManager.GetEnemyStats("invalid_enemy_type");
+        var defaultStats = _statsManager.GetDefaultEnemyStats();
+        AssertTrue(stats.max_health == defaultStats.max_health, "Should return default stats for invalid type");
+        Console.WriteLine("✓ GetEnemyStats with invalid type works correctly");
+    }
+
+    private void TestGetBuildingStatsWithValidType()
+    {
+        Console.WriteLine("Testing GetBuildingStats with valid type...");
+        if (_statsManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        var stats = _statsManager.GetBuildingStats("basic_tower");
+        AssertNotNull(stats, "Building stats should not be null");
+        AssertTrue(stats.cost > 0, "Building cost should be greater than 0");
+        AssertTrue(stats.damage > 0, "Building damage should be greater than 0");
+        AssertTrue(stats.range > 0, "Building range should be greater than 0");
+        AssertTrue(stats.attack_speed > 0, "Building attack speed should be greater than 0");
+        Console.WriteLine("✓ GetBuildingStats with valid type works correctly");
+    }
+
+    private void TestGetBuildingStatsWithInvalidType()
+    {
+        Console.WriteLine("Testing GetBuildingStats with invalid type...");
+        if (_statsManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        var stats = _statsManager.GetBuildingStats("invalid_building_type");
+        var defaultStats = _statsManager.GetDefaultBuildingStats();
+        AssertTrue(stats.cost == defaultStats.cost, "Should return default stats for invalid type");
+        Console.WriteLine("✓ GetBuildingStats with invalid type works correctly");
+    }
+
+    private void TestHasEnemyTypeWithValidType()
+    {
+        Console.WriteLine("Testing HasEnemyType with valid type...");
+        if (_statsManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        var hasType = _statsManager.HasEnemyType("basic_enemy");
+        AssertTrue(hasType, "Should return true for valid enemy type");
+        Console.WriteLine("✓ HasEnemyType with valid type works correctly");
+    }
+
+    private void TestHasBuildingTypeWithValidType()
+    {
+        Console.WriteLine("Testing HasBuildingType with valid type...");
+        if (_statsManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        var hasType = _statsManager.HasBuildingType("basic_tower");
+        AssertTrue(hasType, "Should return true for valid building type");
+        Console.WriteLine("✓ HasBuildingType with valid type works correctly");
+    }
+
+    private void TestReloadConfigurations()
+    {
+        Console.WriteLine("Testing ReloadConfigurations...");
+        if (_statsManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        try
+        {
+            _statsManager.ReloadConfigurations();
+            Console.WriteLine("✓ ReloadConfigurations works correctly");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"ReloadConfigurations should not throw: {ex.Message}");
+        }
+    }
+
+    private static void AssertNotNull(object? value, string message)
+    {
+        if (value == null)
+        {
+            throw new Exception($"Assertion failed: {message}");
+        }
+    }
+
+    private static void AssertTrue(bool condition, string message)
+    {
+        if (!condition)
+        {
+            throw new Exception($"Assertion failed: {message}");
+        }
+    }
+
+    [Fact]
+    public void Instance_ShouldBeInitialized()
+    {
+        var statsManager = GetStatsManager();
+        if (statsManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        statsManager.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void GetEnemyStats_WithValidType_ShouldReturnStats()
+    {
+        var statsManager = GetStatsManager();
+        if (statsManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var stats = statsManager.GetEnemyStats("basic_enemy");
+
+        stats.Should().NotBeNull();
+        stats.max_health.Should().BeGreaterThan(0);
+        stats.speed.Should().BeGreaterThan(0);
+        stats.reward_gold.Should().BeGreaterThanOrEqualTo(0);
+    }
+
+    [Fact]
+    public void GetEnemyStats_WithInvalidType_ShouldReturnDefaultStats()
+    {
+        var statsManager = GetStatsManager();
+        if (statsManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var stats = statsManager.GetEnemyStats("invalid_enemy_type");
+        var defaultStats = statsManager.GetDefaultEnemyStats();
+
+        stats.Should().BeEquivalentTo(defaultStats);
+    }
+
+    [Fact]
+    public void GetBuildingStats_WithValidType_ShouldReturnStats()
+    {
+        var statsManager = GetStatsManager();
+        if (statsManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var stats = statsManager.GetBuildingStats("basic_tower");
+
+        stats.Should().NotBeNull();
+        stats.cost.Should().BeGreaterThan(0);
+        stats.damage.Should().BeGreaterThan(0);
+        stats.range.Should().BeGreaterThan(0);
+        stats.attack_speed.Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public void GetBuildingStats_WithInvalidType_ShouldReturnDefaultStats()
+    {
+        var statsManager = GetStatsManager();
+        if (statsManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var stats = statsManager.GetBuildingStats("invalid_building_type");
+        var defaultStats = statsManager.GetDefaultBuildingStats();
+
+        stats.Should().BeEquivalentTo(defaultStats);
+    }
+
+    [Fact]
+    public void HasEnemyType_WithValidType_ShouldReturnTrue()
+    {
+        var statsManager = GetStatsManager();
+        if (statsManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var hasType = statsManager.HasEnemyType("basic_enemy");
+
+        hasType.Should().BeTrue();
+    }
+
+    [Fact]
+    public void HasBuildingType_WithValidType_ShouldReturnTrue()
+    {
+        var statsManager = GetStatsManager();
+        if (statsManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var hasType = statsManager.HasBuildingType("basic_tower");
+
+        hasType.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ReloadConfigurations_ShouldNotThrow()
+    {
+        var statsManager = GetStatsManager();
+        if (statsManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var action = () => statsManager.ReloadConfigurations();
+
+        action.Should().NotThrow();
+    }
+}

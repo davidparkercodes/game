@@ -8,19 +8,18 @@ namespace Game.Application.Game.Handlers.Tests;
 
 public class GetGameStateQueryHandlerTests
 {
-    private readonly GetGameStateQueryHandler _handler;
-
-    public GetGameStateQueryHandlerTests()
+    private GetGameStateQueryHandler GetHandler()
     {
-        _handler = new GetGameStateQueryHandler();
+        return new GetGameStateQueryHandler();
     }
 
     [Fact]
     public async Task HandleAsync_WithValidQuery_ShouldReturnGameStateSuccessfully()
     {
+        var handler = GetHandler();
         var query = new GetGameStateQuery();
 
-        var result = await _handler.HandleAsync(query);
+        var result = await handler.HandleAsync(query);
 
         result.Should().NotBeNull();
         result.Money.Should().BeGreaterThanOrEqualTo(0);
@@ -34,10 +33,11 @@ public class GetGameStateQueryHandlerTests
     [Fact]
     public async Task HandleAsync_ShouldProvideConsistentData()
     {
+        var handler = GetHandler();
         var query = new GetGameStateQuery();
 
-        var result1 = await _handler.HandleAsync(query);
-        var result2 = await _handler.HandleAsync(query);
+        var result1 = await handler.HandleAsync(query);
+        var result2 = await handler.HandleAsync(query);
 
         result1.CurrentPhase.Should().Be(result2.CurrentPhase);
         result1.CurrentRound.Should().Be(result2.CurrentRound);
@@ -46,9 +46,10 @@ public class GetGameStateQueryHandlerTests
     [Fact]
     public async Task HandleAsync_WhenServicesUnavailable_ShouldProvideDefaultValues()
     {
+        var handler = GetHandler();
         var query = new GetGameStateQuery();
 
-        var result = await _handler.HandleAsync(query);
+        var result = await handler.HandleAsync(query);
 
         result.Money.Should().BeGreaterThanOrEqualTo(0);
         result.Lives.Should().BeGreaterThanOrEqualTo(0);

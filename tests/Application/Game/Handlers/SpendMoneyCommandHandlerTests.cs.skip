@@ -8,19 +8,18 @@ namespace Game.Application.Game.Handlers.Tests;
 
 public class SpendMoneyCommandHandlerTests
 {
-    private readonly SpendMoneyCommandHandler _handler;
-
-    public SpendMoneyCommandHandlerTests()
+    private SpendMoneyCommandHandler GetHandler()
     {
-        _handler = new SpendMoneyCommandHandler();
+        return new SpendMoneyCommandHandler();
     }
 
     [Fact]
     public async Task HandleAsync_WithValidAmount_ShouldProcessSuccessfully()
     {
+        var handler = GetHandler();
         var command = new SpendMoneyCommand(50, "Building tower");
 
-        var result = await _handler.HandleAsync(command);
+        var result = await handler.HandleAsync(command);
 
         result.Should().NotBeNull();
         result.Success.Should().BeTrue();
@@ -30,9 +29,10 @@ public class SpendMoneyCommandHandlerTests
     [Fact]
     public async Task HandleAsync_WithNegativeAmount_ShouldFail()
     {
+        var handler = GetHandler();
         var command = new SpendMoneyCommand(-10, "Invalid transaction");
 
-        var result = await _handler.HandleAsync(command);
+        var result = await handler.HandleAsync(command);
 
         result.Success.Should().BeFalse();
         result.ErrorMessage.Should().Contain("Amount cannot be negative");
@@ -41,7 +41,8 @@ public class SpendMoneyCommandHandlerTests
     [Fact]
     public async Task HandleAsync_WithNullCommand_ShouldFail()
     {
-        var result = await _handler.HandleAsync(null!);
+        var handler = GetHandler();
+        var result = await handler.HandleAsync(null!);
 
         result.Success.Should().BeFalse();
         result.ErrorMessage.Should().Contain("Command cannot be null");

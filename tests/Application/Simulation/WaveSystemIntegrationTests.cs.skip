@@ -11,49 +11,54 @@ namespace Game.Tests.Application.Simulation;
 
 public class WaveSystemIntegrationTests
 {
-    private readonly MockWaveService _waveService;
-    private readonly GameSimRunner _runner;
-
-    public WaveSystemIntegrationTests()
+    private MockWaveService GetWaveService()
     {
         var silentLogger = new ConsoleLogger("[TEST]", LogLevel.Error); // Only show errors during tests
-        _waveService = new MockWaveService(silentLogger);
-        _runner = new GameSimRunner(silentLogger);
+        return new MockWaveService(silentLogger);
+    }
+
+    private GameSimRunner GetRunner()
+    {
+        var silentLogger = new ConsoleLogger("[TEST]", LogLevel.Error); // Only show errors during tests
+        return new GameSimRunner(silentLogger);
     }
 
     [Fact]
     public void MockWaveService_ShouldLoadDefaultConfiguration()
     {
+        // Arrange
+        var waveService = GetWaveService();
+        
         // Act
-        _waveService.Initialize();
+        waveService.Initialize();
 
         // Assert
-        _waveService.GetTotalWaves().Should().BeGreaterThan(0);
-        _waveService.GetAvailableWaveSets().Should().NotBeEmpty();
-        _waveService.GetCurrentWaveSetName().Should().NotBeNullOrEmpty();
+        waveService.GetTotalWaves().Should().BeGreaterThan(0);
+        waveService.GetAvailableWaveSets().Should().NotBeEmpty();
+        waveService.GetCurrentWaveSetName().Should().NotBeNullOrEmpty();
     }
 
     [Fact]
     public void MockWaveService_ShouldLoadBalanceTestingConfiguration()
     {
         // Act
-        var loaded = _waveService.LoadWaveSet("balance-testing");
+        var loaded = GetWaveService().LoadWaveSet("balance-testing");
 
         // Assert
         loaded.Should().BeTrue();
-        _waveService.GetTotalWaves().Should().Be(5); // Balance testing has 5 waves
-        _waveService.GetCurrentWaveSetName().Should().Be("Balance Testing Waves");
+        GetWaveService().GetTotalWaves().Should().Be(5); // Balance testing has 5 waves
+        GetWaveService().GetCurrentWaveSetName().Should().Be("Balance Testing Waves");
     }
 
     [Fact]
     public void MockWaveService_ShouldHandleEnemyCountMultiplier()
     {
         // Arrange
-        _waveService.SetEnemyCountMultiplier(2.0f);
+        GetWaveService().SetEnemyCountMultiplier(2.0f);
 
         // Act
-        _waveService.StartWave(1);
-        var remainingEnemies = _waveService.GetRemainingEnemies();
+        GetWaveService().StartWave(1);
+        var remainingEnemies = GetWaveService().GetRemainingEnemies();
 
         // Assert
         remainingEnemies.Should().BeGreaterThan(0);
@@ -64,10 +69,10 @@ public class WaveSystemIntegrationTests
     public void MockWaveService_ShouldProvideEnemyStats()
     {
         // Arrange
-        _waveService.StartWave(1);
+        GetWaveService().StartWave(1);
 
         // Act
-        var enemyStats = _waveService.GetNextEnemyType();
+        var enemyStats = GetWaveService().GetNextEnemyType();
 
         // Assert
         enemyStats.Should().NotBeNull();
@@ -80,12 +85,12 @@ public class WaveSystemIntegrationTests
     public void MockWaveService_ShouldTrackWaveProgress()
     {
         // Arrange
-        _waveService.StartWave(1);
-        var initialProgress = _waveService.GetWaveProgress();
+        GetWaveService().StartWave(1);
+        var initialProgress = GetWaveService().GetWaveProgress();
 
         // Act
-        _waveService.OnEnemyKilled();
-        var progressAfterKill = _waveService.GetWaveProgress();
+        GetWaveService().OnEnemyKilled();
+        var progressAfterKill = GetWaveService().GetWaveProgress();
 
         // Assert
         initialProgress.Should().Be(0f);
@@ -96,19 +101,19 @@ public class WaveSystemIntegrationTests
     public void MockWaveService_ShouldCompleteWaveWhenAllEnemiesKilled()
     {
         // Arrange
-        _waveService.StartWave(1);
-        var totalEnemies = _waveService.GetRemainingEnemies();
+        GetWaveService().StartWave(1);
+        var totalEnemies = GetWaveService().GetRemainingEnemies();
 
         // Act - Kill all enemies
         for (int i = 0; i < totalEnemies; i++)
         {
-            _waveService.OnEnemyKilled();
+            GetWaveService().OnEnemyKilled();
         }
 
         // Assert
-        _waveService.IsWaveComplete().Should().BeTrue();
-        _waveService.IsWaveActive().Should().BeFalse();
-        _waveService.GetRemainingEnemies().Should().Be(0);
+        GetWaveService().IsWaveComplete().Should().BeTrue();
+        GetWaveService().IsWaveActive().Should().BeFalse();
+        GetWaveService().GetRemainingEnemies().Should().Be(0);
     }
 
     [Fact]
@@ -118,7 +123,7 @@ public class WaveSystemIntegrationTests
         var config = SimulationConfig.ForBalanceTesting();
 
         // Act
-        var result = _runner.RunSimulation(config);
+        var result = GetRunner().RunSimulation(config);
 
         // Assert
         result.Should().NotBeNull();
@@ -143,8 +148,8 @@ public class WaveSystemIntegrationTests
         );
 
         // Act
-        var baseResult = _runner.RunSimulation(baseConfig);
-        var doubleResult = _runner.RunSimulation(doubleEnemyConfig);
+        var baseResult = GetRunner().RunSimulation(baseConfig);
+        var doubleResult = GetRunner().RunSimulation(doubleEnemyConfig);
 
         // Assert
         baseResult.WaveResults.Should().NotBeEmpty();
@@ -172,8 +177,8 @@ public class WaveSystemIntegrationTests
         );
 
         // Act
-        var defaultResult = _runner.RunSimulation(defaultConfig);
-        var balanceResult = _runner.RunSimulation(balanceConfig);
+        var defaultResult = GetRunner().RunSimulation(defaultConfig);
+        var balanceResult = GetRunner().RunSimulation(balanceConfig);
 
         // Assert
         defaultResult.Should().NotBeNull();
@@ -194,8 +199,8 @@ public class WaveSystemIntegrationTests
         );
 
         // Act
-        var result1 = _runner.RunSimulation(config);
-        var result2 = _runner.RunSimulation(config);
+        var result1 = GetRunner().RunSimulation(config);
+        var result2 = GetRunner().RunSimulation(config);
 
         // Assert
         result1.Success.Should().Be(result2.Success);
@@ -208,13 +213,13 @@ public class WaveSystemIntegrationTests
     public void MockWaveService_ShouldCycleEnemyGroups()
     {
         // Arrange
-        _waveService.LoadWaveSet("balance-testing"); // Has multiple enemy groups
-        _waveService.StartWave(2); // Wave 2 has mixed enemy types
+        GetWaveService().LoadWaveSet("balance-testing"); // Has multiple enemy groups
+        GetWaveService().StartWave(2); // Wave 2 has mixed enemy types
 
         // Act
-        var enemy1 = _waveService.GetNextEnemyType();
-        var enemy2 = _waveService.GetNextEnemyType();
-        var enemy3 = _waveService.GetNextEnemyType();
+        var enemy1 = GetWaveService().GetNextEnemyType();
+        var enemy2 = GetWaveService().GetNextEnemyType();
+        var enemy3 = GetWaveService().GetNextEnemyType();
 
         // Assert
         enemy1.Should().NotBeNull();

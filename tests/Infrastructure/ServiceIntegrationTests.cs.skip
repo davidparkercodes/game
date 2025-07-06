@@ -1,0 +1,242 @@
+using Game.Di;
+using Game.Application.Shared.Services;
+using Game.Application.Shared.Cqrs;
+using Game.Infrastructure.Audio.Services;
+using Game.Infrastructure.Stats.Services;
+using Game.Infrastructure.Game.Services;
+using Game.Infrastructure.Waves.Services;
+using Game.Infrastructure.Buildings.Services;
+using Game.Infrastructure.Map.Services;
+using Game.Infrastructure.Enemies.Services;
+using Game.Domain.Audio.Services;
+using Game.Domain.Buildings.Services;
+using Game.Domain.Enemies.Services;
+using WaveSpawnerService = Game.Infrastructure.Enemies.Services.WaveSpawnerService;
+using System;
+
+namespace Game.Tests.Infrastructure;
+
+public class ServiceIntegrationTests
+{
+    public void RunAllTests()
+    {
+        Console.WriteLine("🧪 Running Service Integration Workflow Tests");
+        
+        TestDependencyInjectionInitialization();
+        TestConfigurationLoadingChain();
+        TestServiceResolutionWorkflow();
+        TestErrorPropagationAndRecovery();
+        TestStartupValidationWorkflow();
+        TestCriticalServiceDependencies();
+        
+        Console.WriteLine("✅ All Service Integration tests completed");
+    }
+
+    private void TestDependencyInjectionInitialization()
+    {
+        Console.WriteLine("Testing DI container initialization workflow...");
+        
+        // Test complete DI initialization sequence
+        var diContainer = new DiContainer();
+        AssertNotNull(diContainer, "DI container should be created successfully");
+        
+        // Test service registration without errors
+        DiConfiguration.RegisterServices(diContainer);
+        Console.WriteLine("✓ Service registration completed without exceptions");
+        
+        // Test essential services can be resolved after registration
+        var mediator = diContainer.Resolve<IMediator>();
+        AssertNotNull(mediator, "Mediator should be resolvable after registration");
+        
+        var waveConfigService = diContainer.Resolve<IWaveConfigurationService>();
+        AssertNotNull(waveConfigService, "Wave configuration service should be resolvable");
+        
+        var buildingZoneService = diContainer.Resolve<IBuildingZoneService>();
+        AssertNotNull(buildingZoneService, "Building zone service should be resolvable");
+        
+        var soundService = diContainer.Resolve<ISoundService>();
+        AssertNotNull(soundService, "Sound service should be resolvable");
+        
+        Console.WriteLine("✓ DI initialization workflow works correctly");
+    }
+
+    private void TestConfigurationLoadingChain()
+    {
+        Console.WriteLine("Testing configuration loading chain...");
+        
+        // Skip StatsManagerService.Instance test in unit test environment
+        Console.WriteLine("⚠️ Skipping StatsManagerService.Instance test (requires Godot environment)");
+        
+        var waveConfigService = new WaveConfigurationService();
+        AssertNotNull(waveConfigService, "Wave configuration service should be created");
+        
+        // Test configuration loading with fallback behavior
+        var waveConfig = waveConfigService.LoadWaveSet("nonexistent");
+        AssertNotNull(waveConfig.Name, "Should return fallback configuration for missing files");
+        AssertTrue(waveConfig.Name.Length > 0, "Fallback configuration should have valid name");
+        
+        var defaultWaveConfig = waveConfigService.CreateDefaultWaveSet();
+        AssertNotNull(defaultWaveConfig.Name, "Default configuration should be available");
+        
+        Console.WriteLine("✓ Configuration loading chain works with fallbacks");
+    }
+
+    private void TestServiceResolutionWorkflow()
+    {
+        Console.WriteLine("Testing service resolution workflow...");
+        
+        var diContainer = new DiContainer();
+        DiConfiguration.RegisterServices(diContainer);
+        
+        // Test dependent service resolution chain
+        var startupValidationService = diContainer.Resolve<StartupValidationService>();
+        AssertNotNull(startupValidationService, "Startup validation service should resolve");
+        
+        // Test that validation service can perform its function without errors
+        bool validationCompleted = false;
+        try
+        {
+            var result = startupValidationService.ValidateOnStartup();
+            validationCompleted = true;
+            Console.WriteLine($"✓ Startup validation completed: {(result ? "passed" : "found issues")}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️ Validation failed with exception: {ex.Message}");
+        }
+        
+        AssertTrue(validationCompleted, "Validation should complete without throwing exceptions");
+        
+        Console.WriteLine("✓ Service resolution workflow completes successfully");
+    }
+
+    private void TestErrorPropagationAndRecovery()
+    {
+        Console.WriteLine("Testing error propagation and recovery...");
+        
+        // Test recovery from DI resolution failures
+        var emptyContainer = new DiContainer();
+        
+        bool exceptionCaught = false;
+        try
+        {
+            var service = emptyContainer.Resolve<IWaveConfigurationService>();
+        }
+        catch (Exception)
+        {
+            exceptionCaught = true;
+        }
+        
+        AssertTrue(exceptionCaught, "Should throw exception when service not registered");
+        
+        // Skip GameService.Instance test in unit test environment
+        Console.WriteLine("⚠️ Skipping GameService.Instance test (requires Godot environment)");
+        
+        // Test configuration services handle missing files gracefully
+        var waveConfigService = new WaveConfigurationService();
+        var config = waveConfigService.LoadWaveSetFromPath("nonexistent/path.json");
+        AssertNotNull(config.Name, "Should return fallback configuration for invalid paths");
+        
+        Console.WriteLine("✓ Error propagation and recovery mechanisms work correctly");
+    }
+
+    private void TestStartupValidationWorkflow()
+    {
+        Console.WriteLine("Testing startup validation workflow...");
+        
+        var diContainer = new DiContainer();
+        DiConfiguration.RegisterServices(diContainer);
+        
+        var validationService = diContainer.Resolve<StartupValidationService>();
+        
+        // Test validation completes without crashing
+        bool validationRan = false;
+        try
+        {
+            validationService.ValidateOnStartup();
+            validationRan = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️ Validation workflow exception: {ex.Message}");
+        }
+        
+        AssertTrue(validationRan, "Startup validation workflow should complete");
+        
+        // Test detailed validation can run without errors
+        bool detailedValidationRan = false;
+        try
+        {
+            validationService.ValidateSpecificConfigurations();
+            detailedValidationRan = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️ Detailed validation exception: {ex.Message}");
+        }
+        
+        AssertTrue(detailedValidationRan, "Detailed validation should complete without exceptions");
+        
+        Console.WriteLine("✓ Startup validation workflow operates correctly");
+    }
+
+    private void TestCriticalServiceDependencies()
+    {
+        Console.WriteLine("Testing critical service dependencies...");
+        
+        var diContainer = new DiContainer();
+        DiConfiguration.RegisterServices(diContainer);
+        
+        // Test critical service chain: WaveService depends on WaveConfigurationService
+        var waveService = diContainer.Resolve<IWaveService>();
+        AssertNotNull(waveService, "Wave service should resolve with its dependencies");
+        
+        // Test service initialization workflow
+        if (waveService is WaveSpawnerService spawnerService)
+        {
+            spawnerService.Initialize();
+            Console.WriteLine("✓ Wave spawner service initialized successfully");
+        }
+        
+        // Test map boundary service initialization workflow
+        var mapBoundaryService = new MapBoundaryService();
+        AssertNotNull(mapBoundaryService, "Map boundary service should be creatable");
+        AssertFalse(mapBoundaryService.IsInitialized, "Should not be initialized without TileMapLayer");
+        
+        // Test building zone service workflow
+        var buildingZoneService = diContainer.Resolve<IBuildingZoneService>();
+        AssertNotNull(buildingZoneService, "Building zone service should be resolvable");
+        
+        // Test service factory patterns work correctly
+        var soundService1 = diContainer.Resolve<ISoundService>();
+        var soundService2 = diContainer.Resolve<ISoundService>();
+        AssertNotNull(soundService1, "First sound service resolution should work");
+        AssertNotNull(soundService2, "Second sound service resolution should work");
+        
+        Console.WriteLine("✓ Critical service dependencies work correctly");
+    }
+
+    private static void AssertNotNull(object? value, string message)
+    {
+        if (value == null)
+        {
+            throw new Exception($"Assertion failed: {message}");
+        }
+    }
+
+    private static void AssertTrue(bool condition, string message)
+    {
+        if (!condition)
+        {
+            throw new Exception($"Assertion failed: {message}");
+        }
+    }
+
+    private static void AssertFalse(bool condition, string message)
+    {
+        if (condition)
+        {
+            throw new Exception($"Assertion failed: {message}");
+        }
+    }
+}

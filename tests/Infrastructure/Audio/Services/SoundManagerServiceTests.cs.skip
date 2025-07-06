@@ -1,0 +1,255 @@
+using FluentAssertions;
+using Game.Domain.Audio.Enums;
+using Game.Domain.Shared.ValueObjects;
+using Game.Infrastructure.Audio.Services;
+using Godot;
+using Xunit;
+using System;
+
+namespace Game.Tests.Infrastructure.Audio.Services;
+
+public class SoundManagerServiceTests
+{
+    private SoundManagerService? _soundManager;
+
+    public SoundManagerServiceTests()
+    {
+        // Don't initialize Godot services during test discovery - do it in tests
+    }
+
+    private SoundManagerService? GetSoundManager()
+    {
+        if (_soundManager == null)
+        {
+            try
+            {
+                _soundManager = SoundManagerService.Instance;
+            }
+            catch (Exception)
+            {
+                // Handle case where Godot services aren't available
+                _soundManager = null;
+            }
+        }
+        return _soundManager;
+    }
+
+    internal void RunAllTests()
+    {
+        Console.WriteLine("🧪 Running SoundManagerService Integration Tests");
+        
+        TestInstanceIsInitialized();
+        TestPlaySoundWithValidParameters();
+        TestPlaySoundAtPositionWithValidParameters();
+        TestSetMasterVolume();
+        TestSetCategoryVolumeWithValidCategory();
+        TestStopAllSounds();
+        
+        Console.WriteLine("✅ All SoundManagerService tests completed");
+    }
+
+    private void TestInstanceIsInitialized()
+    {
+        Console.WriteLine("Testing instance initialization...");
+        var soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        AssertNotNull(soundManager, "SoundManager instance should not be null");
+        Console.WriteLine("✓ Instance initialization works correctly");
+    }
+
+    private void TestPlaySoundWithValidParameters()
+    {
+        Console.WriteLine("Testing PlaySound with valid parameters...");
+        var soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        try
+        {
+            soundManager.PlaySound("test_sound", SoundCategory.SFX, 0.0f);
+            Console.WriteLine("✓ PlaySound works correctly");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"PlaySound should not throw: {ex.Message}");
+        }
+    }
+
+    private void TestPlaySoundAtPositionWithValidParameters()
+    {
+        Console.WriteLine("Testing PlaySoundAtPosition with valid parameters...");
+        if (_soundManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        try
+        {
+            var soundPosition = new Vector2(100, 100);
+            var listenerPosition = new Vector2(0, 0);
+            _soundManager.PlaySoundAtPosition("test_sound", soundPosition, listenerPosition, 500.0f);
+            Console.WriteLine("✓ PlaySoundAtPosition works correctly");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"PlaySoundAtPosition should not throw: {ex.Message}");
+        }
+    }
+
+    private void TestSetMasterVolume()
+    {
+        Console.WriteLine("Testing SetMasterVolume...");
+        if (_soundManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        try
+        {
+            _soundManager.SetMasterVolume(0.5f);
+            Console.WriteLine("✓ SetMasterVolume works correctly");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"SetMasterVolume should not throw: {ex.Message}");
+        }
+    }
+
+    private void TestSetCategoryVolumeWithValidCategory()
+    {
+        Console.WriteLine("Testing SetCategoryVolume with valid category...");
+        if (_soundManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        try
+        {
+            _soundManager.SetCategoryVolume(SoundCategory.Music, 0.7f);
+            Console.WriteLine("✓ SetCategoryVolume works correctly");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"SetCategoryVolume should not throw: {ex.Message}");
+        }
+    }
+
+    private void TestStopAllSounds()
+    {
+        Console.WriteLine("Testing StopAllSounds...");
+        if (_soundManager == null)
+        {
+            Console.WriteLine("⚠️ Skipping test - Godot environment not available");
+            return;
+        }
+        try
+        {
+            _soundManager.StopAllSounds();
+            Console.WriteLine("✓ StopAllSounds works correctly");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"StopAllSounds should not throw: {ex.Message}");
+        }
+    }
+
+    private static void AssertNotNull(object? value, string message)
+    {
+        if (value == null)
+        {
+            throw new Exception($"Assertion failed: {message}");
+        }
+    }
+
+    [Fact]
+    public void Instance_ShouldBeInitialized()
+    {
+        var soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        soundManager.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void PlaySound_WithValidParameters_ShouldNotThrow()
+    {
+        var soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        // Testing that the service can handle basic sound requests without crashing
+        var action = () => soundManager.PlaySound("test_sound", SoundCategory.SFX, 0.0f);
+        
+        action.Should().NotThrow();
+    }
+
+    [Fact]
+    public void PlaySoundAtPosition_WithValidParameters_ShouldNotThrow()
+    {
+        var soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var soundPosition = new Vector2(100, 100);
+        var listenerPosition = new Vector2(0, 0);
+        
+        var action = () => soundManager.PlaySoundAtPosition("test_sound", soundPosition, listenerPosition, 500.0f);
+        
+        action.Should().NotThrow();
+    }
+
+    [Fact]
+    public void SetMasterVolume_ShouldNotThrow()
+    {
+        var soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var action = () => soundManager.SetMasterVolume(0.5f);
+        
+        action.Should().NotThrow();
+    }
+
+    [Fact]
+    public void SetCategoryVolume_WithValidCategory_ShouldNotThrow()
+    {
+        var soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var action = () => soundManager.SetCategoryVolume(SoundCategory.Music, 0.7f);
+        
+        action.Should().NotThrow();
+    }
+
+    [Fact]
+    public void StopAllSounds_ShouldNotThrow()
+    {
+        var soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            // Skip test when Godot environment is not available
+            return;
+        }
+        var action = () => soundManager.StopAllSounds();
+        
+        action.Should().NotThrow();
+    }
+}

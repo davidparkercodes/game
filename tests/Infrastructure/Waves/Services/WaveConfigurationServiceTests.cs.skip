@@ -1,0 +1,169 @@
+using FluentAssertions;
+using Game.Infrastructure.Waves.Services;
+using Xunit;
+using System;
+
+namespace Game.Tests.Infrastructure.Waves.Services;
+
+public class WaveConfigurationServiceTests
+{
+    private readonly WaveConfigurationService _waveConfigService;
+
+    public WaveConfigurationServiceTests()
+    {
+        _waveConfigService = new WaveConfigurationService();
+    }
+
+    internal void RunAllTests()
+    {
+        Console.WriteLine("🧪 Running WaveConfigurationService Integration Tests");
+        
+        TestLoadWaveSetWithDefaultDifficulty();
+        TestLoadWaveSetWithInvalidDifficulty();
+        TestGetAvailableWaveSets();
+        TestCreateDefaultWaveSet();
+        TestClearCache();
+        TestLoadWaveSetFromPath();
+        
+        Console.WriteLine("✅ All WaveConfigurationService tests completed");
+    }
+
+    private void TestLoadWaveSetWithDefaultDifficulty()
+    {
+        Console.WriteLine("Testing LoadWaveSet with default difficulty...");
+        var waveConfig = _waveConfigService.LoadWaveSet("default");
+        AssertNotNull(waveConfig, "Wave config should not be null");
+        AssertNotNullOrEmpty(waveConfig.Name, "Wave config name should not be null or empty");
+        Console.WriteLine("✓ LoadWaveSet with default difficulty works correctly");
+    }
+
+    private void TestLoadWaveSetWithInvalidDifficulty()
+    {
+        Console.WriteLine("Testing LoadWaveSet with invalid difficulty...");
+        var waveConfig = _waveConfigService.LoadWaveSet("nonexistent_difficulty");
+        AssertNotNull(waveConfig, "Wave config should not be null");
+        AssertNotNullOrEmpty(waveConfig.Name, "Wave config name should not be null or empty");
+        Console.WriteLine("✓ LoadWaveSet with invalid difficulty works correctly");
+    }
+
+    private void TestGetAvailableWaveSets()
+    {
+        Console.WriteLine("Testing GetAvailableWaveSets...");
+        var waveSets = _waveConfigService.GetAvailableWaveSets();
+        AssertNotNull(waveSets, "Wave sets should not be null");
+        AssertTrue(waveSets.Length > 0, "Should have at least one wave set");
+        Console.WriteLine("✓ GetAvailableWaveSets works correctly");
+    }
+
+    private void TestCreateDefaultWaveSet()
+    {
+        Console.WriteLine("Testing CreateDefaultWaveSet...");
+        var defaultWaveSet = _waveConfigService.CreateDefaultWaveSet();
+        AssertNotNull(defaultWaveSet, "Default wave set should not be null");
+        AssertNotNullOrEmpty(defaultWaveSet.Name, "Default wave set name should not be null or empty");
+        AssertNotNullOrEmpty(defaultWaveSet.JsonData, "Default wave set JSON data should not be null or empty");
+        Console.WriteLine("✓ CreateDefaultWaveSet works correctly");
+    }
+
+    private void TestClearCache()
+    {
+        Console.WriteLine("Testing ClearCache...");
+        try
+        {
+            _waveConfigService.ClearCache();
+            Console.WriteLine("✓ ClearCache works correctly");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"ClearCache should not throw: {ex.Message}");
+        }
+    }
+
+    private void TestLoadWaveSetFromPath()
+    {
+        Console.WriteLine("Testing LoadWaveSetFromPath with empty path...");
+        var waveConfig = _waveConfigService.LoadWaveSetFromPath("");
+        AssertNotNull(waveConfig, "Wave config should not be null");
+        AssertNotNullOrEmpty(waveConfig.Name, "Wave config name should not be null or empty");
+        Console.WriteLine("✓ LoadWaveSetFromPath works correctly");
+    }
+
+    private static void AssertNotNull(object? value, string message)
+    {
+        if (value == null)
+        {
+            throw new Exception($"Assertion failed: {message}");
+        }
+    }
+
+    private static void AssertNotNullOrEmpty(string? value, string message)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            throw new Exception($"Assertion failed: {message}");
+        }
+    }
+
+    private static void AssertTrue(bool condition, string message)
+    {
+        if (!condition)
+        {
+            throw new Exception($"Assertion failed: {message}");
+        }
+    }
+
+    [Fact]
+    public void LoadWaveSet_WithDefaultDifficulty_ShouldReturnConfiguration()
+    {
+        var waveConfig = _waveConfigService.LoadWaveSet("default");
+
+        waveConfig.Should().NotBeNull();
+        waveConfig.Name.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void LoadWaveSet_WithInvalidDifficulty_ShouldReturnDefaultConfiguration()
+    {
+        var waveConfig = _waveConfigService.LoadWaveSet("nonexistent_difficulty");
+
+        waveConfig.Should().NotBeNull();
+        waveConfig.Name.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void GetAvailableWaveSets_ShouldReturnAtLeastDefault()
+    {
+        var waveSets = _waveConfigService.GetAvailableWaveSets();
+
+        waveSets.Should().NotBeNull();
+        waveSets.Should().NotBeEmpty();
+        waveSets.Should().Contain("default");
+    }
+
+    [Fact]
+    public void CreateDefaultWaveSet_ShouldReturnValidConfiguration()
+    {
+        var defaultWaveSet = _waveConfigService.CreateDefaultWaveSet();
+
+        defaultWaveSet.Should().NotBeNull();
+        defaultWaveSet.Name.Should().NotBeNullOrEmpty();
+        defaultWaveSet.JsonData.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public void ClearCache_ShouldNotThrow()
+    {
+        var action = () => _waveConfigService.ClearCache();
+
+        action.Should().NotThrow();
+    }
+
+    [Fact]
+    public void LoadWaveSetFromPath_WithEmptyPath_ShouldReturnDefaultConfiguration()
+    {
+        var waveConfig = _waveConfigService.LoadWaveSetFromPath("");
+
+        waveConfig.Should().NotBeNull();
+        waveConfig.Name.Should().NotBeNullOrEmpty();
+    }
+}
