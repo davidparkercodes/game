@@ -72,22 +72,3 @@ theme_override_font_sizes/font_size = 14
 text = "4x"
 toggle_mode = true
 
-[node name="Speed10xButton" type="Button" parent="Panel/VBoxContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(50, 25)
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_color_hover = Color(1, 1, 0, 1)
-theme_override_colors/font_color_pressed = Color(0, 1, 0, 1)
-theme_override_font_sizes/font_size = 14
-text = "10x"
-toggle_mode = true
-
-[node name="Speed20xButton" type="Button" parent="Panel/VBoxContainer"]
-layout_mode = 2
-custom_minimum_size = Vector2(50, 25)
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_color_hover = Color(1, 1, 0, 1)
-theme_override_colors/font_color_pressed = Color(0, 1, 0, 1)
-theme_override_font_sizes/font_size = 14
-text = "20x"
-toggle_mode = true

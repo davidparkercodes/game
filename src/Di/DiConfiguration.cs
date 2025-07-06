@@ -100,7 +100,7 @@ public static class DiConfiguration
         diContainer.RegisterFactory<ITimeManager>(() => 
         {
             var logger = new ConsoleLogger("⚡ [TIMEMANAGER]");
-            return new TimeManager(logger);
+            return new Game.Infrastructure.Game.GodotTimeManager(logger);
         });
     }
 

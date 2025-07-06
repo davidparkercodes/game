@@ -1,5 +1,6 @@
 using Game.Application.Game.Services;
 using Game.Domain.Common.Services;
+using Game.Infrastructure.Game;
 
 namespace Game.Application.Shared.Services;
 
@@ -9,15 +10,15 @@ public class SpeedControlDebugCommands
 
     public static void TestAllSpeedOptions()
     {
-        if (TimeManager.Instance == null)
+        if (GodotTimeManager.Instance == null)
         {
-            _logger.LogError("TimeManager not available");
+            _logger.LogError("GodotTimeManager not available");
             return;
         }
 
         _logger.LogInformation("Testing all speed options...");
         
-        var timeManager = TimeManager.Instance;
+        var timeManager = GodotTimeManager.Instance;
         var availableSpeeds = timeManager.AvailableSpeeds;
         
         _logger.LogInformation($"Available speeds: {string.Join(", ", availableSpeeds)}x");
@@ -26,27 +27,27 @@ public class SpeedControlDebugCommands
 
     public static void CycleSpeedForward()
     {
-        if (TimeManager.Instance == null)
+        if (GodotTimeManager.Instance == null)
         {
-            _logger.LogError("TimeManager not available");
+            _logger.LogError("GodotTimeManager not available");
             return;
         }
 
         _logger.LogInformation("Cycling to next speed...");
-        TimeManager.Instance.CycleToNextSpeed();
+        GodotTimeManager.Instance.CycleToNextSpeed();
     }
 
     public static void TestSpeedSequence()
     {
-        if (TimeManager.Instance == null)
+        if (GodotTimeManager.Instance == null)
         {
-            _logger.LogError("TimeManager not available");
+            _logger.LogError("GodotTimeManager not available");
             return;
         }
 
         _logger.LogInformation("Testing speed sequence: 1x -> 2x -> 4x -> 1x");
         
-        var timeManager = TimeManager.Instance;
+        var timeManager = GodotTimeManager.Instance;
         
         // Test 1x
         timeManager.SetSpeedTo1x();
@@ -78,28 +79,28 @@ public class SpeedControlDebugCommands
 
     public static void ForceResetSpeed()
     {
-        if (TimeManager.Instance == null)
+        if (GodotTimeManager.Instance == null)
         {
-            _logger.LogError("TimeManager not available");
+            _logger.LogError("GodotTimeManager not available");
             return;
         }
 
         _logger.LogInformation("Force resetting speed to 1x...");
-        TimeManager.Instance.SetSpeedTo1x();
-        _logger.LogInformation($"Speed reset complete: {TimeManager.Instance.GetCurrentSpeedText()}");
+        GodotTimeManager.Instance.SetSpeedTo1x();
+        _logger.LogInformation($"Speed reset complete: {GodotTimeManager.Instance.GetCurrentSpeedText()}");
     }
 
     public static void PrintCurrentSpeedStatus()
     {
-        if (TimeManager.Instance == null)
+        if (GodotTimeManager.Instance == null)
         {
-            _logger.LogError("TimeManager not available");
+            _logger.LogError("GodotTimeManager not available");
             return;
         }
 
-        var timeManager = TimeManager.Instance;
+        var timeManager = GodotTimeManager.Instance;
         _logger.LogInformation("Current Speed Status:");
-        _logger.LogInformation($"  TimeManager Speed: {timeManager.GetCurrentSpeedText()}");
+        _logger.LogInformation($"  GodotTimeManager Speed: {timeManager.GetCurrentSpeedText()}");
         _logger.LogInformation($"  Speed Index: {timeManager.CurrentSpeedIndex}");
         _logger.LogInformation($"  Available Options: {string.Join(", ", timeManager.AvailableSpeeds)}x");
     }

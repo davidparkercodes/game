@@ -262,6 +262,14 @@ public partial class Main : Node
 		{
 			// Get TimeManager from DI container
 			_timeManager = _diContainer.Resolve<ITimeManager>();
+			
+			// Add GodotTimeManager to scene tree if it's a Node
+			if (_timeManager is Node timeManagerNode)
+			{
+				AddChild(timeManagerNode);
+				GD.Print("⚡ GodotTimeManager added to scene tree");
+			}
+			
 			GD.Print("⚡ TimeManager resolved from DI container");
 		}
 		catch (System.Exception ex)
@@ -311,23 +319,40 @@ public partial class Main : Node
 		AnnounceDebugShortcuts();
 	}
 
-	// DEBUG: Handle debug keyboard shortcuts
+	// Handle keyboard shortcuts (both debug and game features)
 	private void HandleDebugInput(InputEvent @event)
 	{
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.ShiftPressed)
 		{
 			switch (keyEvent.Keycode)
 			{
+				// Speed Control shortcuts
+				case Key.Key1:
+					GD.Print("🐌 SPEED: Shift+1 pressed - Setting speed to 1x");
+					Game.Infrastructure.Game.GodotTimeManager.Instance?.SetSpeedTo1x();
+					break;
+
+				case Key.Key2:
+					GD.Print("🏃 SPEED: Shift+2 pressed - Setting speed to 2x");
+					Game.Infrastructure.Game.GodotTimeManager.Instance?.SetSpeedTo2x();
+					break;
+
+				case Key.Key3:
+					GD.Print("⚡ SPEED: Shift+3 pressed - Setting speed to 4x");
+					Game.Infrastructure.Game.GodotTimeManager.Instance?.SetSpeedTo4x();
+					break;
+
+				// DEBUG: Wave control shortcuts
 				case Key.Key5:
 					GD.Print("🔥 DEBUG: Shift+5 pressed - Jumping to Wave 5 (Boss Wave)!");
 					WaveManager.Instance?.JumpToWave(5);
 					break;
-					
+
 				case Key.Key6:
 					GD.Print("⏭️ DEBUG: Shift+6 pressed - Jumping to next wave!");
 					WaveManager.Instance?.JumpToNextWave();
 					break;
-					
+
 				case Key.Key7:
 					GD.Print("⚡ DEBUG: Shift+7 pressed - Completing current wave instantly!");
 					WaveManager.Instance?.CompleteCurrentWaveInstantly();
@@ -338,11 +363,15 @@ public partial class Main : Node
 	
 	private void AnnounceDebugShortcuts()
 	{
-		GD.Print("🔧 ===== DEBUG SHORTCUTS AVAILABLE =====");
+		GD.Print("🎮 ===== KEYBOARD SHORTCUTS AVAILABLE =====");
+		GD.Print("🐌 Shift+1: Set speed to 1x");
+		GD.Print("🏃 Shift+2: Set speed to 2x");
+		GD.Print("⚡ Shift+3: Set speed to 4x");
+		GD.Print("🔧 ===== DEBUG SHORTCUTS =====");
 		GD.Print("🔥 Shift+5: Jump to Wave 5 (Boss Wave)");
 		GD.Print("⏭️ Shift+6: Jump to next wave");
 		GD.Print("⚡ Shift+7: Complete current wave instantly");
-		GD.Print("🔧 ====================================");
+		GD.Print("🎮 ====================================");
 	}
 
 	public DiContainer GetDiContainer() => _diContainer;

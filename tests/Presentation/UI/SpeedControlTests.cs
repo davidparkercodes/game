@@ -26,8 +26,6 @@ public class SpeedControlTests
         speedControl.Speed1xButton = new Mock<Godot.Button>().Object;
         speedControl.Speed2xButton = new Mock<Godot.Button>().Object;
         speedControl.Speed4xButton = new Mock<Godot.Button>().Object;
-        speedControl.Speed10xButton = new Mock<Godot.Button>().Object;
-        speedControl.Speed20xButton = new Mock<Godot.Button>().Object;
     }
 
     [Fact]
@@ -39,14 +37,10 @@ public class SpeedControlTests
         var speed1xProperty = speedControl.GetType().GetProperty("Speed1xButton");
         var speed2xProperty = speedControl.GetType().GetProperty("Speed2xButton");
         var speed4xProperty = speedControl.GetType().GetProperty("Speed4xButton");
-        var speed10xProperty = speedControl.GetType().GetProperty("Speed10xButton");
-        var speed20xProperty = speedControl.GetType().GetProperty("Speed20xButton");
 
         speed1xProperty.Should().NotBeNull();
         speed2xProperty.Should().NotBeNull();
         speed4xProperty.Should().NotBeNull();
-        speed10xProperty.Should().NotBeNull();
-        speed20xProperty.Should().NotBeNull();
     }
 
     [Fact]

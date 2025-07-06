@@ -1,5 +1,6 @@
 using Godot;
 using Game.Application.Game.Services;
+using Game.Infrastructure.Game;
 
 namespace Game.Presentation.UI;
 
@@ -8,8 +9,6 @@ public partial class SpeedControl : CanvasLayer
     [Export] public Button? Speed1xButton;
     [Export] public Button? Speed2xButton;
     [Export] public Button? Speed4xButton;
-    [Export] public Button? Speed10xButton;
-    [Export] public Button? Speed20xButton;
 
     private ITimeManager? _timeManager;
     private const string LogPrefix = "⚡ [SPEED-CONTROL]";
@@ -36,21 +35,17 @@ public partial class SpeedControl : CanvasLayer
         Speed1xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed1xButton");
         Speed2xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed2xButton");
         Speed4xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed4xButton");
-        Speed10xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed10xButton");
-        Speed20xButton = GetNodeOrNull<Button>("Panel/VBoxContainer/Speed20xButton");
         
         // Try FindChild for any missing buttons
-        if (Speed1xButton == null || Speed2xButton == null || Speed4xButton == null || Speed10xButton == null || Speed20xButton == null)
+        if (Speed1xButton == null || Speed2xButton == null || Speed4xButton == null)
         {
             if (Speed1xButton == null) Speed1xButton = FindChild("Speed1xButton", true, false) as Button;
             if (Speed2xButton == null) Speed2xButton = FindChild("Speed2xButton", true, false) as Button;
             if (Speed4xButton == null) Speed4xButton = FindChild("Speed4xButton", true, false) as Button;
-            if (Speed10xButton == null) Speed10xButton = FindChild("Speed10xButton", true, false) as Button;
-            if (Speed20xButton == null) Speed20xButton = FindChild("Speed20xButton", true, false) as Button;
         }
         
         // Final fallback: direct child traversal for any still missing buttons
-        if (Speed1xButton == null || Speed2xButton == null || Speed4xButton == null || Speed10xButton == null || Speed20xButton == null)
+        if (Speed1xButton == null || Speed2xButton == null || Speed4xButton == null)
         {
             var panel = GetNode("Panel");
             if (panel != null)
@@ -61,8 +56,6 @@ public partial class SpeedControl : CanvasLayer
                     if (Speed1xButton == null) Speed1xButton = vbox.GetNode("Speed1xButton") as Button;
                     if (Speed2xButton == null) Speed2xButton = vbox.GetNode("Speed2xButton") as Button;
                     if (Speed4xButton == null) Speed4xButton = vbox.GetNode("Speed4xButton") as Button;
-                    if (Speed10xButton == null) Speed10xButton = vbox.GetNode("Speed10xButton") as Button;
-                    if (Speed20xButton == null) Speed20xButton = vbox.GetNode("Speed20xButton") as Button;
                 }
             }
         }
@@ -85,16 +78,6 @@ public partial class SpeedControl : CanvasLayer
         {
             Speed4xButton.Pressed += OnSpeed4xPressed;
         }
-
-        if (Speed10xButton != null)
-        {
-            Speed10xButton.Pressed += OnSpeed10xPressed;
-        }
-
-        if (Speed20xButton != null)
-        {
-            Speed20xButton.Pressed += OnSpeed20xPressed;
-        }
     }
 
     private void SetupInitialState()
@@ -105,14 +88,19 @@ public partial class SpeedControl : CanvasLayer
 
     private void ConnectToTimeManager()
     {
-        // For now, we'll use the singleton pattern until we refactor to use DI
-        _timeManager = TimeManager.Instance;
+        // Use GodotTimeManager singleton instance
+        _timeManager = GodotTimeManager.Instance;
         if (_timeManager != null)
         {
             _timeManager.SpeedChanged += OnSpeedChanged;
             
             // Update button states to match current speed
             UpdateButtonStates(_timeManager.CurrentSpeedIndex);
+            GD.Print($"{LogPrefix} Connected to GodotTimeManager singleton");
+        }
+        else
+        {
+            GD.PrintErr($"{LogPrefix} GodotTimeManager.Instance is null - speed controls will not work");
         }
     }
 
@@ -132,16 +120,6 @@ public partial class SpeedControl : CanvasLayer
         _timeManager?.SetSpeedTo4x();
     }
 
-    private void OnSpeed10xPressed()
-    {
-        _timeManager?.SetSpeedTo10x();
-    }
-
-    private void OnSpeed20xPressed()
-    {
-        _timeManager?.SetSpeedTo20x();
-    }
-
     private void OnSpeedChanged(float newSpeed, int speedIndex)
     {
         UpdateButtonStates(speedIndex);
@@ -153,8 +131,6 @@ public partial class SpeedControl : CanvasLayer
         SetButtonState(Speed1xButton, false);
         SetButtonState(Speed2xButton, false);
         SetButtonState(Speed4xButton, false);
-        SetButtonState(Speed10xButton, false);
-        SetButtonState(Speed20xButton, false);
 
         // Set the active button
         switch (activeSpeedIndex)
@@ -167,12 +143,6 @@ public partial class SpeedControl : CanvasLayer
                 break;
             case 2:
                 SetButtonState(Speed4xButton, true);
-                break;
-            case 3:
-                SetButtonState(Speed10xButton, true);
-                break;
-            case 4:
-                SetButtonState(Speed20xButton, true);
                 break;
         }
     }

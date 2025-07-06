@@ -29,8 +29,6 @@ public class TimeManagerTests
     [InlineData(0, 1.0f, "1x")]
     [InlineData(1, 2.0f, "2x")]
     [InlineData(2, 4.0f, "4x")]
-    [InlineData(3, 10.0f, "10x")]
-    [InlineData(4, 20.0f, "20x")]
     public void SetGameSpeedByIndex_ShouldSetCorrectSpeed(int speedIndex, float expectedScale, string expectedText)
     {
         _timeManager.SetGameSpeedByIndex(speedIndex);
@@ -64,7 +62,7 @@ public class TimeManagerTests
     [Fact]
     public void CycleToNextSpeed_AtMaxSpeed_ShouldWrapToFirstSpeed()
     {
-        _timeManager.SetGameSpeedByIndex(4); // Set to 20x (max)
+        _timeManager.SetGameSpeedByIndex(2); // Set to 4x (max)
         
         _timeManager.CycleToNextSpeed();
         

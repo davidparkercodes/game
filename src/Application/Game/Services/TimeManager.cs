@@ -9,7 +9,7 @@ public class TimeManager : ITimeManager
     private readonly ILogger _logger;
     private float _currentTimeScale = 1.0f;
     private int _currentSpeedIndex = 0;
-    private readonly float[] _speedOptions = { 1.0f, 2.0f, 4.0f, 10.0f, 20.0f };
+    private readonly float[] _speedOptions = { 1.0f, 2.0f, 4.0f };
     
     public event SpeedChangedEventHandler? SpeedChanged;
     
@@ -80,12 +80,14 @@ public class TimeManager : ITimeManager
 
     public void SetSpeedTo10x()
     {
-        SetGameSpeedByIndex(3);
+        // Legacy method - redirects to 4x since 10x is no longer available
+        SetGameSpeedByIndex(2);
     }
 
     public void SetSpeedTo20x()
     {
-        SetGameSpeedByIndex(4);
+        // Legacy method - redirects to 4x since 20x is no longer available
+        SetGameSpeedByIndex(2);
     }
 
     public string GetCurrentSpeedText()
@@ -95,8 +97,6 @@ public class TimeManager : ITimeManager
             1.0f => "1x",
             2.0f => "2x", 
             4.0f => "4x",
-            10.0f => "10x",
-            20.0f => "20x",
             _ => $"{_currentTimeScale:F1}x"
         };
     }
