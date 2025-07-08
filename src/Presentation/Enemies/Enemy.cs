@@ -9,7 +9,7 @@ namespace Game.Presentation.Enemies;
 
 public partial class Enemy : Area2D
 {
-	[Export] public string EnemyType = "basic_enemy";
+	[Export] public string EnemyType = Domain.Entities.EnemyConfigKeys.BasicEnemy;
 	public int MaxHealth { get; private set; }
 	public float Speed { get; private set; }
 	public int Damage { get; private set; }
@@ -162,7 +162,7 @@ public partial class Enemy : Area2D
 	
 	public bool IsBossEnemy()
 	{
-		return EnemyType == "boss_enemy" || ScaleMultiplier > 1.5f;
+		return EnemyType == Domain.Entities.EnemyConfigKeys.BossEnemy || ScaleMultiplier > 1.5f;
 	}
 	
 	private void InitializeHealthBar()

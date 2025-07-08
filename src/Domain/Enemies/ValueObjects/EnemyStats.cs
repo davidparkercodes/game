@@ -33,17 +33,9 @@ public readonly struct EnemyStats
         Description = description ?? string.Empty;
     }
 
-    public static EnemyStats CreateDefault()
-    {
-        return new EnemyStats(
-            maxHealth: 100,
-            speed: 60.0f,
-            damage: 10,
-            rewardGold: 5,
-            rewardXp: 10,
-            description: "Basic enemy configuration"
-        );
-    }
+    // REMOVED: CreateDefault() method with hardcoded values
+    // All EnemyStats must now be created from config data via StatsManagerService
+    // Use StatsManagerService.GetDefaultEnemyStats() for fallback scenarios
 
     public EnemyStats WithMultipliers(float healthMultiplier, float speedMultiplier)
     {

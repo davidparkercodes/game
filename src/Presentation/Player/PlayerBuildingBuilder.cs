@@ -145,30 +145,17 @@ public class PlayerBuildingBuilder
 			return;
 		}
 		
-		// Determine sound key based on building type
-		string soundKey;
-		if (building.Name == "BasicTower")
+		// Determine sound key based on building type using config-driven approach
+		string soundKey = building.GetType().Name.ToLower() switch
 		{
-			soundKey = "basic_tower_build";
-		}
-		else if (building.Name == "SniperTower")
-		{
-			soundKey = "sniper_tower_build";
-		}
-		else if (building.Name == "RapidTower")
-		{
-			soundKey = "rapid_tower_build";
-		}
-		else if (building.Name == "HeavyTower")
-		{
-			soundKey = "heavy_tower_build";
-		}
-		else
-		{
-			soundKey = "basic_tower_build"; // fallback to basic tower sound
-		}
+			"basictower" => $"{Domain.Entities.BuildingConfigKeys.BasicTower}_build",
+			"snipertower" => $"{Domain.Entities.BuildingConfigKeys.SniperTower}_build",
+			"rapidtower" => $"{Domain.Entities.BuildingConfigKeys.RapidTower}_build",
+			"heavytower" => $"{Domain.Entities.BuildingConfigKeys.HeavyTower}_build",
+			_ => $"{Domain.Entities.BuildingConfigKeys.BasicTower}_build" // fallback to basic tower sound
+		};
 		
-		GD.Print($"🔨 Playing construction sound: {soundKey} for building {building.Name}");
+		GD.Print($"🔨 Playing construction sound: {soundKey} for building {building.GetType().Name}");
 		SoundManagerService.Instance.PlaySound(soundKey, SoundCategory.SFX);
 	}
 }

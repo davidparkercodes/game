@@ -117,20 +117,8 @@ public class BuildingStatsTests
         stats.Description.Should().Be(string.Empty);
     }
 
-    [Fact]
-    public void CreateDefault_ShouldReturnValidDefaultStats()
-    {
-        var defaultStats = BuildingStats.CreateDefault();
-
-        defaultStats.Cost.Should().Be(10);
-        defaultStats.Damage.Should().Be(10);
-        defaultStats.Range.Should().Be(150.0f);
-        defaultStats.AttackSpeed.Should().Be(30.0f);
-        defaultStats.BulletSpeed.Should().Be(900.0f);
-        defaultStats.ShootSound.Should().Be("basic_tower_shoot");
-        defaultStats.ImpactSound.Should().Be("basic_bullet_impact");
-        defaultStats.Description.Should().Be("Basic tower configuration");
-    }
+    // REMOVED: CreateDefault test - BuildingStats no longer has hardcoded CreateDefault method
+    // All BuildingStats should be created from config data via services
 
     [Theory]
     [InlineData(10, 30.0f, 10.0f)]   // 10 damage at 30 attacks/30 = 10 DPS
@@ -262,7 +250,9 @@ public class BuildingStatsTests
     [Fact]
     public void Equals_WithNull_ShouldReturnFalse()
     {
-        var stats = BuildingStats.CreateDefault();
+        var stats = new BuildingStats(
+            cost: 10, damage: 10, range: 100.0f, attackSpeed: 30.0f,
+            bulletSpeed: 500.0f, shootSound: "", impactSound: "", description: "");
 
         stats.Equals(null).Should().BeFalse();
     }
@@ -270,7 +260,9 @@ public class BuildingStatsTests
     [Fact]
     public void Equals_WithDifferentType_ShouldReturnFalse()
     {
-        var stats = BuildingStats.CreateDefault();
+        var stats = new BuildingStats(
+            cost: 10, damage: 10, range: 100.0f, attackSpeed: 30.0f,
+            bulletSpeed: 500.0f, shootSound: "", impactSound: "", description: "");
 
         stats.Equals("not a BuildingStats").Should().BeFalse();
     }

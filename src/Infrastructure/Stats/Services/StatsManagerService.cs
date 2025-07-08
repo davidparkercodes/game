@@ -78,11 +78,13 @@ public class StatsManagerService
     
     private void LoadFallbackStats()
     {
-        _defaultEnemyStats = new EnemyStatsData(100, 60f, 10, 5, 10, "Default enemy");
-        _enemyStats["basic_enemy"] = new EnemyStatsData(100, 60f, 10, 5, 10, "Basic enemy unit with standard stats");
-        _enemyStats["fast_enemy"] = new EnemyStatsData(60, 90f, 8, 7, 12, "Fast but fragile enemy unit");
-        _enemyStats["tank_enemy"] = new EnemyStatsData(200, 30f, 15, 12, 20, "Heavy armored enemy with high health");
-        _enemyStats["elite_enemy"] = new EnemyStatsData(150, 75f, 20, 15, 25, "Elite enemy with balanced stats");
+        // NOTE: Hardcoded values here are ACCEPTABLE as emergency fallbacks when config files fail to load
+        // These should match the values in data/stats/enemy_stats.json for consistency
+        _defaultEnemyStats = new EnemyStatsData(100, 60f, 10, 5, 10, "Default enemy (fallback)");
+        _enemyStats[Domain.Entities.EnemyConfigKeys.BasicEnemy] = new EnemyStatsData(100, 60f, 10, 5, 10, "Basic enemy (fallback)");
+        _enemyStats[Domain.Entities.EnemyConfigKeys.FastEnemy] = new EnemyStatsData(60, 90f, 8, 7, 12, "Fast enemy (fallback)");
+        _enemyStats[Domain.Entities.EnemyConfigKeys.TankEnemy] = new EnemyStatsData(200, 30f, 15, 12, 20, "Tank enemy (fallback)");
+        _enemyStats[Domain.Entities.EnemyConfigKeys.EliteEnemy] = new EnemyStatsData(150, 75f, 20, 15, 25, "Elite enemy (fallback)");
     }
     
     private static bool IsInGodotRuntime()
@@ -153,11 +155,13 @@ public class StatsManagerService
     
     private void LoadFallbackBuildingStats()
     {
-        _defaultBuildingStats = new BuildingStatsData(50, 10, 150f, 1.0f, 25, "Default building", 900, 12.0f);
-        _buildingStats["basic_tower"] = new BuildingStatsData(50, 10, 120f, 1.2f, 25, "Basic tower with balanced stats", 900, 12.0f);
-        _buildingStats["sniper_tower"] = new BuildingStatsData(75, 35, 200f, 2.5f, 40, "Long range, high damage tower with slow fire rate", 1200, 12.0f);
-        _buildingStats["rapid_tower"] = new BuildingStatsData(75, 6, 100f, 0.4f, 35, "Fast firing tower with lower damage", 800, 12.0f);
-        _buildingStats["heavy_tower"] = new BuildingStatsData(100, 50, 150f, 3.0f, 75, "Heavy damage tower with slow fire rate", 700, 16.0f);
+        // NOTE: Hardcoded values here are ACCEPTABLE as emergency fallbacks when config files fail to load
+        // These should match the values in data/stats/building_stats.json for consistency
+        _defaultBuildingStats = new BuildingStatsData(50, 10, 150f, 1.0f, 25, "Default building (fallback)", 900, 12.0f);
+        _buildingStats[Domain.Entities.BuildingConfigKeys.BasicTower] = new BuildingStatsData(50, 10, 120f, 1.2f, 25, "Basic tower (fallback)", 900, 12.0f);
+        _buildingStats[Domain.Entities.BuildingConfigKeys.SniperTower] = new BuildingStatsData(75, 35, 200f, 2.5f, 40, "Sniper tower (fallback)", 1200, 12.0f);
+        _buildingStats[Domain.Entities.BuildingConfigKeys.RapidTower] = new BuildingStatsData(75, 6, 100f, 0.4f, 35, "Rapid tower (fallback)", 800, 12.0f);
+        _buildingStats[Domain.Entities.BuildingConfigKeys.HeavyTower] = new BuildingStatsData(100, 50, 150f, 3.0f, 75, "Heavy tower (fallback)", 700, 16.0f);
     }
 
     public BuildingStatsData GetBuildingStats(string buildingType)

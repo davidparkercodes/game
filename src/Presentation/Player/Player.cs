@@ -230,13 +230,14 @@ public partial class Player : CharacterBody2D
 	
 	private PlayerBuildingStats? GetBuildingStats(string buildingName)
 	{
-		// Map display names to config keys
-		string? configKey = buildingName switch
+		// Map display names to config keys using domain entity ConfigKey constants
+		// This ensures consistency with domain layer and eliminates hardcoded strings
+		string? configKey = buildingName.ToLower() switch
 		{
-			"Basic" => "basic_tower",
-			"Sniper" => "sniper_tower",
-			"Rapid" => "rapid_tower",
-			"Heavy" => "heavy_tower",
+			"basic" => Game.Domain.Buildings.Entities.BasicTower.ConfigKey,
+			"sniper" => Game.Domain.Buildings.Entities.SniperTower.ConfigKey,
+			"rapid" => Game.Domain.Buildings.Entities.RapidTower.ConfigKey,
+			"heavy" => Game.Domain.Buildings.Entities.HeavyTower.ConfigKey,
 			_ => null
 		};
 		

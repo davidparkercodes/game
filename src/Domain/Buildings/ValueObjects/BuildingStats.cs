@@ -39,19 +39,9 @@ public readonly struct BuildingStats
         Description = description ?? string.Empty;
     }
 
-    public static BuildingStats CreateDefault()
-    {
-        return new BuildingStats(
-            cost: 10,
-            damage: 10,
-            range: 150.0f,
-            attackSpeed: 30.0f,
-            bulletSpeed: 900.0f,
-            shootSound: "basic_tower_shoot",
-            impactSound: "basic_bullet_impact",
-            description: "Basic tower configuration"
-        );
-    }
+    // REMOVED: CreateDefault() method with hardcoded values
+    // All BuildingStats must now be created from config data via StatsManagerService
+    // Use StatsManagerService.GetDefaultBuildingStats() for fallback scenarios
 
     public float DamagePerSecond => Damage * (AttackSpeed / 30.0f);
 

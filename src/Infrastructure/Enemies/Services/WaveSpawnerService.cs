@@ -205,13 +205,29 @@ namespace Game.Infrastructure.Enemies.Services;
     {
         if (_currentWave == null || _currentWave.EnemyGroups.Count == 0)
         {
-            return EnemyStats.CreateDefault();
+            // Fallback enemy stats when no wave data is available
+            return new EnemyStats(
+                maxHealth: 100,
+                speed: 60.0f,
+                damage: 10,
+                rewardGold: 5,
+                rewardXp: 10,
+                description: "Default enemy stats - no wave data available"
+            );
         }
         
         var nextGroup = _currentWave.EnemyGroups.FirstOrDefault(g => g.Count > 0);
         if (nextGroup == null)
         {
-            return EnemyStats.CreateDefault();
+            // Fallback enemy stats when no enemy groups are available
+            return new EnemyStats(
+                maxHealth: 100,
+                speed: 60.0f,
+                damage: 10,
+                rewardGold: 5,
+                rewardXp: 10,
+                description: "Default enemy stats - no enemy groups available"
+            );
         }
         
         return new EnemyStats(
@@ -328,7 +344,7 @@ namespace Game.Infrastructure.Enemies.Services;
             GD.Print($"Spawning {enemyType} at {spawnPosition}");
             
             // Load and instantiate the appropriate enemy scene
-            var scenePath = enemyType == "boss_enemy" 
+            var scenePath = enemyType == Domain.Entities.EnemyConfigKeys.BossEnemy 
                 ? "res://scenes/Enemies/BossEnemy.tscn" 
                 : "res://scenes/Enemies/Enemy.tscn";
             var enemyScene = GD.Load<PackedScene>(scenePath);
@@ -350,7 +366,7 @@ namespace Game.Infrastructure.Enemies.Services;
             enemyInstance.GlobalPosition = spawnPosition;
             
             // Apply boss scaling if this is a boss enemy
-            if (enemyType == "boss_enemy")
+            if (enemyType == Domain.Entities.EnemyConfigKeys.BossEnemy)
             {
                 GD.Print($"👑 DEBUG: Boss enemy detected! Enemy type: {enemyType}");
                 _bossSpawnedThisWave = true;

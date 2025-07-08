@@ -7,7 +7,7 @@ public partial class HeavyTower : Building
 {
 	public override void _Ready()
 	{
-		LoadStatsFromConfig("heavy_tower");
+		LoadStatsFromConfig(Game.Domain.Buildings.Entities.HeavyTower.ConfigKey);
 		base._Ready();
 	}
 }

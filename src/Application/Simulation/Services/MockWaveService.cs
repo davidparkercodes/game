@@ -115,7 +115,15 @@ public class MockWaveService : IWaveService
     {
         if (_waves == null || _currentWaveNumber <= 0 || _currentWaveNumber > _waves.Count)
         {
-            return EnemyStats.CreateDefault();
+            // Fallback enemy stats for testing when waves are not loaded
+            return new EnemyStats(
+                maxHealth: 100,
+                speed: 60.0f,
+                damage: 10,
+                rewardGold: 5,
+                rewardXp: 10,
+                description: "Fallback enemy for testing"
+            );
         }
 
         var currentWave = _waves[_currentWaveNumber - 1];
@@ -123,7 +131,15 @@ public class MockWaveService : IWaveService
         // Cycle through enemy groups to provide variety
         if (currentWave.EnemyGroups.Count == 0)
         {
-            return EnemyStats.CreateDefault();
+            // Fallback enemy stats for testing when no groups are defined
+            return new EnemyStats(
+                maxHealth: 100,
+                speed: 60.0f,
+                damage: 10,
+                rewardGold: 5,
+                rewardXp: 10,
+                description: "Fallback enemy for empty wave groups"
+            );
         }
 
         var groupIndex = _currentEnemyGroupIndex % currentWave.EnemyGroups.Count;
@@ -335,7 +351,7 @@ public class MockWaveService : IWaveService
                 {
                     new SimulationEnemyGroupConfiguration
                     {
-                        EnemyType = "basic_enemy",
+                        EnemyType = Domain.Entities.EnemyConfigKeys.BasicEnemy,
                         Count = 5 + (waveNum * 2), // Scale enemy count with wave number
                         SpawnInterval = 1.0f,
                         HealthMultiplier = 1.0f + (waveNum * 0.1f), // Increase health each wave

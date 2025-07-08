@@ -157,7 +157,7 @@ public class PlacementStrategyProvider : IPlacementStrategyProvider
             {
                 use_default_type = true,
                 use_cheapest_type = true,
-                emergency_fallback = "basic_tower"
+                emergency_fallback = "" // Will be determined by registry at runtime
             }
         };
     }

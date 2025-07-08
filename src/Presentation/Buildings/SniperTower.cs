@@ -7,7 +7,7 @@ public partial class SniperTower : Building
 {
 	public override void _Ready()
 	{
-		LoadStatsFromConfig("sniper_tower");
+		LoadStatsFromConfig(Game.Domain.Buildings.Entities.SniperTower.ConfigKey);
 		base._Ready();
 	}
 }

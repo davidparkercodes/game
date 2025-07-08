@@ -387,7 +387,7 @@ public class WaveConfigurationService : IWaveConfigurationService
         
         try
         {
-            group.EnemyType = groupData.GetValueOrDefault("enemyType", "basic_enemy").AsString();
+            group.EnemyType = groupData.GetValueOrDefault("enemyType", Domain.Entities.EnemyConfigKeys.BasicEnemy).AsString();
             group.Count = groupData.GetValueOrDefault("count", 5).AsInt32();
             group.SpawnInterval = groupData.GetValueOrDefault("spawnInterval", 1.0f).AsSingle();
             group.StartDelay = groupData.GetValueOrDefault("startDelay", 0.0f).AsSingle();

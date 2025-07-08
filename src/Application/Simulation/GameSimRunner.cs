@@ -401,8 +401,8 @@ public class GameSimRunner
         // Use EnemyTypeRegistry's built-in wave progression logic
         var enemyType = _enemyStatsProvider.EnemyTypeRegistry.GetEnemyTypeForWaveProgression(waveNumber, enemyIndex);
         
-        // Return config key, with fallback to hardcoded string as last resort
-        return enemyType.HasValue ? enemyType.Value.ConfigKey : "basic_enemy";
+        // Return config key, with fallback to domain constant as last resort
+        return enemyType.HasValue ? enemyType.Value.ConfigKey : Domain.Entities.EnemyConfigKeys.BasicEnemy;
     }
 
     private int SimulateCombatTick(GameState gameState, List<SimulatedEnemy> enemies)

@@ -31,8 +31,8 @@ public partial class Building : StaticBody2D
 	private bool _isActive = true;
 	
 	// Shooting system properties
-	protected string _shootSoundKey = "basic_tower_shoot";
-	protected string _bulletImpactSoundKey = "basic_bullet_impact";
+	protected string _shootSoundKey = $"{Domain.Entities.BuildingConfigKeys.BasicTower}_shoot";
+	protected string _bulletImpactSoundKey = $"{Domain.Entities.BuildingConfigKeys.BasicTower.Replace("_tower", "_bullet")}_impact";
 	private bool _canFire = true;
 	
 	// Performance optimization - bullet pooling
@@ -397,29 +397,16 @@ public partial class Building : StaticBody2D
 	
 	private void SetSoundKeysForTowerType(string towerType)
 	{
-		switch (towerType)
-		{
-			case "basic_tower":
-				SetShootSoundKey("basic_tower_shoot");
-				SetBulletImpactSoundKey("basic_bullet_impact");
-				break;
-			case "sniper_tower":
-				SetShootSoundKey("sniper_tower_shoot");
-				SetBulletImpactSoundKey("sniper_bullet_impact");
-				break;
-			case "rapid_tower":
-				SetShootSoundKey("rapid_tower_shoot");
-				SetBulletImpactSoundKey("rapid_bullet_impact");
-				break;
-			case "heavy_tower":
-				SetShootSoundKey("heavy_tower_shoot");
-				SetBulletImpactSoundKey("heavy_bullet_impact");
-				break;
-			default:
-				SetShootSoundKey("basic_tower_shoot");
-				SetBulletImpactSoundKey("basic_bullet_impact");
-				break;
-		}
+		// Config-driven sound key generation instead of hardcoded switch statement
+		string shootSoundKey = $"{towerType}_shoot";
+		string impactSoundKey = $"{towerType.Replace("_tower", "_bullet")}_impact";
+		
+		// Fallback to basic tower sounds if the specific sound doesn't exist
+		// The SoundManagerService will handle missing sounds gracefully
+		SetShootSoundKey(shootSoundKey);
+		SetBulletImpactSoundKey(impactSoundKey);
+		
+		GD.Print($"{LogPrefix} {Name} configured sounds: shoot={shootSoundKey}, impact={impactSoundKey}");
 	}
 	
 	// ===== VISUAL ENHANCEMENTS =====

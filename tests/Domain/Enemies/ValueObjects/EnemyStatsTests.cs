@@ -117,18 +117,8 @@ public class EnemyStatsTests
         stats.RewardXp.Should().Be(0);
     }
 
-    [Fact]
-    public void CreateDefault_ShouldReturnValidDefaultStats()
-    {
-        var defaultStats = EnemyStats.CreateDefault();
-
-        defaultStats.MaxHealth.Should().Be(100);
-        defaultStats.Speed.Should().Be(60.0f);
-        defaultStats.Damage.Should().Be(10);
-        defaultStats.RewardGold.Should().Be(5);
-        defaultStats.RewardXp.Should().Be(10);
-        defaultStats.Description.Should().Be("Basic enemy configuration");
-    }
+    // REMOVED: CreateDefault test - EnemyStats no longer has hardcoded CreateDefault method
+    // All EnemyStats should be created from config data via services
 
     [Theory]
     [InlineData(2.0f, 1.5f)]
@@ -156,7 +146,7 @@ public class EnemyStatsTests
     [InlineData(1.0f, -1.0f)]
     public void WithMultipliers_WithInvalidMultipliers_ShouldThrowArgumentException(float healthMultiplier, float speedMultiplier)
     {
-        var stats = EnemyStats.CreateDefault();
+        var stats = new EnemyStats(100, 60.0f, 10, 5, 10, "test");
 
         var action = () => stats.WithMultipliers(healthMultiplier, speedMultiplier);
 
@@ -269,7 +259,7 @@ public class EnemyStatsTests
     [Fact]
     public void Equals_WithNull_ShouldReturnFalse()
     {
-        var stats = EnemyStats.CreateDefault();
+        var stats = new EnemyStats(100, 60.0f, 10, 5, 10, "test");
 
         stats.Equals(null).Should().BeFalse();
     }
@@ -277,7 +267,7 @@ public class EnemyStatsTests
     [Fact]
     public void Equals_WithDifferentType_ShouldReturnFalse()
     {
-        var stats = EnemyStats.CreateDefault();
+        var stats = new EnemyStats(100, 60.0f, 10, 5, 10, "test");
 
         stats.Equals("not enemy stats").Should().BeFalse();
     }

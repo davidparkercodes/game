@@ -58,7 +58,7 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
             );
         }
         
-        // If no basic_enemy, return the first available enemy type
+        // If no basic type defined, return the first available enemy type
         foreach (var availableStats in _enemyStats.Values)
         {
             return new EnemyStats(

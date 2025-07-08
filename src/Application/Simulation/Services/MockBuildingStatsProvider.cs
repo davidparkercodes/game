@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Game.Domain.Buildings.Services;
 using Game.Domain.Buildings.ValueObjects;
@@ -61,10 +62,12 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         else
         {
             // Fallback when no registry is available (backward compatibility)
-            // Return default stats for unknown building types (fallback to basic_tower if available)
-            if (_buildingStats.ContainsKey("basic_tower"))
+            // Return default stats for unknown building types (registry-driven fallback)
+            // Try to find any available building type as fallback
+            var firstAvailableKey = _buildingStats.Keys.FirstOrDefault();
+            if (firstAvailableKey != null)
             {
-                return _buildingStats["basic_tower"];
+                return _buildingStats[firstAvailableKey];
             }
         }
         
@@ -185,13 +188,19 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
         }
     }
     
-    private static BuildingStatsConfig CreateFallbackBuildingStatsConfig()
+    private BuildingStatsConfig CreateFallbackBuildingStatsConfig()
     {
-        return new BuildingStatsConfig
+        // CRITICAL: This fallback should load from the actual config file or use registry
+        // For now, we'll create minimal fallback but ideally this should never be needed
+        
+        var fallbackTypes = new Dictionary<string, BuildingStatsData>();
+        
+        // If we have a registry, use its types for fallback
+        if (_buildingTypeRegistry != null)
         {
-            building_types = new Dictionary<string, BuildingStatsData>
+            foreach (var buildingType in _buildingTypeRegistry.GetAllTypes())
             {
-                ["basic_tower"] = new BuildingStatsData
+                fallbackTypes[buildingType.ConfigKey] = new BuildingStatsData
                 {
                     cost = 50,
                     damage = 25,
@@ -199,39 +208,28 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
                     attack_speed = 30.0f,
                     upgrade_cost = 25,
                     bullet_speed = 200.0f,
-                    description = "Basic tower - balanced stats (fallback)"
-                },
-                ["sniper_tower"] = new BuildingStatsData
-                {
-                    cost = 100,
-                    damage = 75,
-                    range = 200.0f,
-                    attack_speed = 15.0f,
-                    upgrade_cost = 50,
-                    bullet_speed = 400.0f,
-                    description = "Sniper tower - high damage, long range (fallback)"
-                },
-                ["rapid_tower"] = new BuildingStatsData
-                {
-                    cost = 75,
-                    damage = 15,
-                    range = 80.0f,
-                    attack_speed = 75.0f,
-                    upgrade_cost = 35,
-                    bullet_speed = 300.0f,
-                    description = "Rapid tower - fast attack speed (fallback)"
-                },
-                ["heavy_tower"] = new BuildingStatsData
-                {
-                    cost = 150,
-                    damage = 100,
-                    range = 120.0f,
-                    attack_speed = 24.0f,
-                    upgrade_cost = 75,
-                    bullet_speed = 150.0f,
-                    description = "Heavy tower - high damage (fallback)"
-                }
-            },
+                    description = $"{buildingType.DisplayName} - fallback stats"
+                };
+            }
+        }
+        else
+        {
+            // Emergency fallback when no registry available
+            fallbackTypes[Domain.Entities.BuildingConfigKeys.BasicTower] = new BuildingStatsData
+            {
+                cost = 50,
+                damage = 25,
+                range = 100.0f,
+                attack_speed = 30.0f,
+                upgrade_cost = 25,
+                bullet_speed = 200.0f,
+                description = "Emergency fallback - basic tower"
+            };
+        }
+        
+        return new BuildingStatsConfig
+        {
+            building_types = fallbackTypes,
             default_stats = new BuildingStatsData
             {
                 cost = 50,
