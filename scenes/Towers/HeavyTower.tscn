@@ -17,7 +17,7 @@ BulletScene = ExtResource("2_bullet")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("3_sprite")
 region_enabled = true
-region_rect = Rect2(32, 64, 16, 16)
+region_rect = Rect2(48, 64, 16, 16)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_heavy")

@@ -26,6 +26,7 @@ public partial class Player : CharacterBody2D
 
 	private PlayerMovement _movement = null!;
 	private PlayerBuildingBuilder _buildingBuilder = null!;
+	private TowerSelectionHud? _towerSelectionHud = null;
 
 	public override void _Ready()
 	{
@@ -40,6 +41,91 @@ public partial class Player : CharacterBody2D
 
 		_movement = new PlayerMovement(this);
 		_buildingBuilder = new PlayerBuildingBuilder(this);
+		
+		// Find and connect to TowerSelectionHud
+		CallDeferred(nameof(InitializeTowerSelectionHud));
+	}
+
+	private void InitializeTowerSelectionHud()
+	{
+		try
+		{
+			// Find TowerSelectionHud in the HUD CanvasLayer
+			var hudLayer = GetTree().GetFirstNodeInGroup("hud") as CanvasLayer;
+			if (hudLayer == null)
+			{
+				// Fallback: search by path if group not found
+				hudLayer = GetNodeOrNull<CanvasLayer>("/root/Main/CanvasLayer");
+			}
+			
+			if (hudLayer != null)
+			{
+				_towerSelectionHud = hudLayer.GetNodeOrNull<TowerSelectionHud>("TowerSelectionHud");
+				if (_towerSelectionHud != null)
+				{
+					GD.Print("🎯 Player connected to TowerSelectionHud successfully");
+					// Sync initial state
+					SyncHudSelectionState();
+				}
+				else
+				{
+					GD.PrintErr("⚠️ TowerSelectionHud not found in HUD layer");
+				}
+			}
+			else
+			{
+				GD.PrintErr("⚠️ HUD CanvasLayer not found");
+			}
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"❌ Error initializing TowerSelectionHud connection: {ex.Message}");
+		}
+	}
+	
+	private void SyncHudSelectionState()
+	{
+		if (_towerSelectionHud == null) return;
+		
+		// Get current tower key based on CurrentBuildingScene
+		string? currentTowerKey = GetTowerKeyFromBuildingScene();
+		
+		if (currentTowerKey != null)
+		{
+			_towerSelectionHud.SetSelectedTower(currentTowerKey);
+			GD.Print($"🎯 Synced HUD selection to: {currentTowerKey}");
+		}
+		else
+		{
+			_towerSelectionHud.ClearSelection();
+			GD.Print("🎯 Synced HUD selection: cleared");
+		}
+	}
+	
+	private string? GetTowerKeyFromBuildingScene()
+	{
+		if (CurrentBuildingScene == null) return null;
+		
+		if (CurrentBuildingScene == BasicTowerScene) return "basic_tower";
+		if (CurrentBuildingScene == SniperTowerScene) return "sniper_tower";
+		if (CurrentBuildingScene == RapidTowerScene) return "rapid_tower";
+		if (CurrentBuildingScene == HeavyTowerScene) return "heavy_tower";
+		
+		return null;
+	}
+	
+	private void NotifyHudSelectionChange(string? towerKey)
+	{
+		if (_towerSelectionHud == null) return;
+		
+		if (towerKey != null)
+		{
+			_towerSelectionHud.SetSelectedTower(towerKey);
+		}
+		else
+		{
+			_towerSelectionHud.ClearSelection();
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -62,7 +148,7 @@ public partial class Player : CharacterBody2D
 						GD.Print($"🔍 BasicTowerScene: {BasicTowerScene.ResourcePath.GetFile().GetBaseName()}");
 						GD.Print($"🔍 Are they equal? {CurrentBuildingScene == BasicTowerScene}");
 						
-						if (CurrentBuildingScene == BasicTowerScene)
+					if (CurrentBuildingScene == BasicTowerScene)
 						{
 							ClearBuildingSelection();
 							GD.Print("🚫 Deselected Basic Tower");
@@ -72,6 +158,7 @@ public partial class Player : CharacterBody2D
 							CurrentBuildingScene = BasicTowerScene;
 							UpdateSelectedBuildingDisplay("Basic");
 							_buildingBuilder.StartBuildMode(BasicTowerScene);
+							NotifyHudSelectionChange("basic_tower");
 							GD.Print("📦 Selected Basic Tower for building");
 						}
 					}
@@ -84,7 +171,7 @@ public partial class Player : CharacterBody2D
 				case Key.Key2:
 					if (SniperTowerScene != null)
 					{
-						if (CurrentBuildingScene == SniperTowerScene)
+					if (CurrentBuildingScene == SniperTowerScene)
 						{
 							ClearBuildingSelection();
 							GD.Print("🚫 Deselected Sniper Tower");
@@ -94,6 +181,7 @@ public partial class Player : CharacterBody2D
 							CurrentBuildingScene = SniperTowerScene;
 							UpdateSelectedBuildingDisplay("Sniper");
 							_buildingBuilder.StartBuildMode(SniperTowerScene);
+							NotifyHudSelectionChange("sniper_tower");
 							GD.Print("🎯 Selected Sniper Tower for building");
 						}
 					}
@@ -106,7 +194,7 @@ public partial class Player : CharacterBody2D
 				case Key.Key3:
 					if (RapidTowerScene != null)
 					{
-						if (CurrentBuildingScene == RapidTowerScene)
+					if (CurrentBuildingScene == RapidTowerScene)
 						{
 							ClearBuildingSelection();
 							GD.Print("🚫 Deselected Rapid Tower");
@@ -116,6 +204,7 @@ public partial class Player : CharacterBody2D
 							CurrentBuildingScene = RapidTowerScene;
 							UpdateSelectedBuildingDisplay("Rapid");
 							_buildingBuilder.StartBuildMode(RapidTowerScene);
+							NotifyHudSelectionChange("rapid_tower");
 							GD.Print("⚡ Selected Rapid Tower for building");
 						}
 					}
@@ -128,7 +217,7 @@ public partial class Player : CharacterBody2D
 				case Key.Key4:
 					if (HeavyTowerScene != null)
 					{
-						if (CurrentBuildingScene == HeavyTowerScene)
+					if (CurrentBuildingScene == HeavyTowerScene)
 						{
 							ClearBuildingSelection();
 							GD.Print("🚫 Deselected Heavy Tower");
@@ -138,6 +227,7 @@ public partial class Player : CharacterBody2D
 							CurrentBuildingScene = HeavyTowerScene;
 							UpdateSelectedBuildingDisplay("Heavy");
 							_buildingBuilder.StartBuildMode(HeavyTowerScene);
+							NotifyHudSelectionChange("heavy_tower");
 							GD.Print("💪 Selected Heavy Tower for building");
 						}
 					}
@@ -158,21 +248,25 @@ public partial class Player : CharacterBody2D
 				CurrentBuildingScene = BasicTowerScene;
 				UpdateSelectedBuildingDisplay("Basic");
 				_buildingBuilder.StartBuildMode(BasicTowerScene!);
+				NotifyHudSelectionChange("basic_tower");
 				break;
 			case "Sniper":
 				CurrentBuildingScene = SniperTowerScene;
 				UpdateSelectedBuildingDisplay("Sniper");
 				_buildingBuilder.StartBuildMode(SniperTowerScene!);
+				NotifyHudSelectionChange("sniper_tower");
 				break;
 			case "Rapid":
 				CurrentBuildingScene = RapidTowerScene;
 				UpdateSelectedBuildingDisplay("Rapid");
 				_buildingBuilder.StartBuildMode(RapidTowerScene!);
+				NotifyHudSelectionChange("rapid_tower");
 				break;
 			case "Heavy":
 				CurrentBuildingScene = HeavyTowerScene;
 				UpdateSelectedBuildingDisplay("Heavy");
 				_buildingBuilder.StartBuildMode(HeavyTowerScene!);
+				NotifyHudSelectionChange("heavy_tower");
 				break;
 		}
 	}
@@ -183,6 +277,7 @@ public partial class Player : CharacterBody2D
 		UpdateSelectedBuildingDisplay("None");
 		HideBuildingStats();
 		_buildingBuilder.CancelBuildMode();
+		NotifyHudSelectionChange(null);
 		GD.Print("🚫 Cleared building selection");
 	}
 	
@@ -194,6 +289,7 @@ public partial class Player : CharacterBody2D
 		
 		CurrentBuildingScene = null!;
 		HideBuildingStats();
+		NotifyHudSelectionChange(null);
 		
 		GD.Print($"🔧 CancelBuildMode finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")}");
 	}
@@ -204,6 +300,8 @@ public partial class Player : CharacterBody2D
 		
 		CurrentBuildingScene = null!;
 		HideBuildingStats();
+		// Note: Don't call NotifyHudSelectionChange here as this is called by PlayerBuildingBuilder
+		// and would create circular calls when the main selection methods already handle HUD notification
 		
 		GD.Print($"🧹 ClearPlayerSelectionState finished. CurrentBuildingScene after: {(CurrentBuildingScene == null ? "null" : "NOT NULL - ERROR!")}");
 	}

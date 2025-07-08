@@ -27,6 +27,8 @@ using Game.Domain.Shared.Services;
 using Game.Application.Game.Services;
 using Game.Infrastructure.Game;
 using Game.Domain.Common.Services;
+using Game.Application.UI.Services;
+using Game.Infrastructure.UI.Services;
 
 namespace Game.Di;
 
@@ -102,6 +104,10 @@ public static class DiConfiguration
             var logger = new ConsoleLogger("⚡ [TIMEMANAGER]");
             return new Game.Infrastructure.Game.GodotTimeManager(logger);
         });
+        
+        // Register TowerSelectionHudConfigService
+        diContainer.RegisterFactory<ITowerSelectionHudConfigService>(() => 
+            new TowerSelectionHudConfigService());
     }
 
     public static void RegisterSingletonsFromGodot(DiContainer diContainer)
