@@ -1,4 +1,4 @@
-# Tower Selection, Upgrade & Sell System Plan
+# Building Selection, Upgrade & Sell System Plan
 
 ## Execution Instructions
 
@@ -14,29 +14,29 @@
 
 ## 🎯 **Objective**
 
-Implement a comprehensive tower selection, upgrade, and selling system that allows players to interact with placed towers through left-click selection, showing a modal HUD with tower information, upgrade options, and sell functionality.
+Implement a comprehensive building selection, upgrade, and selling system that allows players to interact with placed buildings through left-click selection, showing a modal HUD with building information, upgrade options, and sell functionality.
 
 ---
 
-## 📋 **Phase 1: Tower Selection & Input System** 🎯
+## 📋 **Phase 1: Building Selection & Input System** 🎯
 
-### **[ ] 1.1 Implement Tower Click Detection**
+### **[ ] 1.1 Implement Building Click Detection**
 - [ ] **File**: `src/Presentation/Buildings/Building.cs` - Add input handling
 - [ ] **Action**: Add `_on_input_event` method to handle mouse clicks
 - [ ] **Features**:
-  - [ ] Detect left mouse button clicks on tower collision area
+  - [ ] Detect left mouse button clicks on building collision area
   - [ ] Ignore clicks when player has active building to place
   - [ ] Add selection state tracking (`IsSelected` property)
-  - [ ] Emit selection signal to TowerSelectionManager
+  - [ ] Emit selection signal to BuildingSelectionManager
 
-### **[ ] 1.2 Create Tower Selection Manager**
-- [ ] **New File**: `src/Presentation/UI/TowerSelectionManager.cs`
-- [ ] **Purpose**: Central manager for tower selection state
+### **[ ] 1.2 Create Building Selection Manager**
+- [ ] **New File**: `src/Presentation/UI/BuildingSelectionManager.cs`
+- [ ] **Purpose**: Central manager for building selection state
 - [ ] **Features**:
   - [ ] Singleton pattern for global access
-  - [ ] Track currently selected tower
-  - [ ] Handle tower selection/deselection logic
-  - [ ] Coordinate with TowerUpgradeHud display
+  - [ ] Track currently selected building
+  - [ ] Handle building selection/deselection logic
+  - [ ] Coordinate with BuildingUpgradeHud display
   - [ ] Handle "click outside" detection for closing HUD
 
 ### **[ ] 1.3 Add Visual Selection Feedback**
@@ -44,24 +44,24 @@ Implement a comprehensive tower selection, upgrade, and selling system that allo
 - [ ] **Action**: Add visual selection indicators
 - [ ] **Features**:
   - [ ] Add 2px solid black border when selected
-  - [ ] Show range circle when tower is selected
-  - [ ] Highlight tower with subtle color change
+  - [ ] Show range circle when building is selected
+  - [ ] Highlight building with subtle color change
   - [ ] Ensure selection visuals are clear and professional
 
 ### **[ ] 1.4 Integration with Build Mode**
 - [ ] **File**: `src/Presentation/Player/PlayerBuildingBuilder.cs` - Check integration
-- [ ] **Action**: Ensure tower selection doesn't interfere with building placement
+- [ ] **Action**: Ensure building selection doesn't interfere with building placement
 - [ ] **Features**:
-  - [ ] Disable tower selection when player has active building to place
-  - [ ] Clear tower selection when entering build mode
-  - [ ] Prevent tower selection during build preview mode
+  - [ ] Disable building selection when player has active building to place
+  - [ ] Clear building selection when entering build mode
+  - [ ] Prevent building selection during build preview mode
 
 ---
 
-## 📋 **Phase 2: Tower Upgrade HUD Implementation** 🖥️
+## 📋 **Phase 2: Building Upgrade HUD Implementation** 🖥️
 
-### **[ ] 2.1 Create Tower Upgrade HUD Scene**
-- [ ] **New File**: `scenes/UI/TowerUpgradeHud.tscn`
+### **[ ] 2.1 Create Building Upgrade HUD Scene**
+- [ ] **New File**: `scenes/UI/BuildingUpgradeHud.tscn`
 - [ ] **Structure**: Large horizontal rectangle centered on screen
 - [ ] **Components**:
   - [ ] Main Panel (horizontal rectangle, center-anchored)

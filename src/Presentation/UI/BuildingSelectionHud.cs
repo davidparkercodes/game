@@ -6,87 +6,90 @@ using System.Collections.Generic;
 using System.Linq;
 using Game.Presentation.Player;
 using Game.Presentation.UI;
+using Game.Application.UI.Services;
+using Game.Infrastructure.Audio.Services;
+using Game.Domain.Audio.Enums;
 
 namespace Game.Presentation.UI;
 
-public partial class TowerSelectionHud : Control
+public partial class BuildingSelectionHud : Control
 {
     [Export] public HBoxContainer? HBoxContainer;
-    private TowerSelectionHudConfigService _configService = null!;
-    private Dictionary<string, Button> _towerButtons = new();
-    private string? _selectedTowerKey = null;
-    private const string LOG_PREFIX = "🏗️ [TOWER_HUD]";
+    private BuildingSelectionHudConfigService _configService = null!;
+    private Dictionary<string, Button> _buildingButtons = new();
+    private string? _selectedBuildingKey = null;
+    private const string LOG_PREFIX = "🏗️ [BUILDING_HUD]";
 
     public override void _Ready()
     {
-        GD.Print($"{LOG_PREFIX} Initializing TowerSelectionHud...");
+        GD.Print($"{LOG_PREFIX} Initializing BuildingSelectionHud...");
         
-        _configService = new TowerSelectionHudConfigService();
+        _configService = new BuildingSelectionHudConfigService();
         HBoxContainer ??= GetNode<HBoxContainer>("HBoxContainer");
 
-        InitializeTowerIcons();
-        GD.Print($"{LOG_PREFIX} TowerSelectionHud initialized successfully");
+        InitializeBuildingIcons();
+        GD.Print($"{LOG_PREFIX} BuildingSelectionHud initialized successfully");
     }
 
-    private void InitializeTowerIcons()
+    private void InitializeBuildingIcons()
     {
         var config = _configService.GetConfiguration();
         var layout = config.Layout;
         var styling = config.Styling;
         
-        // Sort towers by display order
-        var sortedTowers = config.Towers
+        // Sort buildings by display order
+        var sortedBuildings = config.Buildings
             .OrderBy(kvp => kvp.Value.DisplayOrder)
             .ToList();
         
-        foreach (var (towerKey, towerConfig) in sortedTowers)
+        foreach (var (buildingKey, buildingConfig) in sortedBuildings)
         {
-            var button = CreateTowerButton(towerKey, towerConfig, layout, styling);
+            var button = CreateBuildingButton(buildingKey, buildingConfig, layout, styling);
             HBoxContainer?.AddChild(button);
-            _towerButtons[towerKey] = button;
+            _buildingButtons[buildingKey] = button;
             
-            GD.Print($"{LOG_PREFIX} Created button for {towerKey} (order: {towerConfig.DisplayOrder}, hotkey: {towerConfig.Hotkey})");
+            GD.Print($"{LOG_PREFIX} Created button for {buildingKey} (order: {buildingConfig.DisplayOrder}, hotkey: {buildingConfig.Hotkey})");
         }
     }
     
-    private Button CreateTowerButton(string towerKey, TowerDisplayConfig towerConfig, HudLayout layout, HudStyling styling)
+    private Button CreateBuildingButton(string buildingKey, BuildingDisplayConfig buildingConfig, HudLayout layout, HudStyling styling)
     {
         var button = new Button
         {
             CustomMinimumSize = new Vector2(layout.SquareSize, layout.SquareSize),
-            TooltipText = $"{CapitalizeTowerName(towerKey)} (Press {towerConfig.Hotkey})",
+            TooltipText = $"{CapitalizeBuildingName(buildingKey)} (Press {buildingConfig.Hotkey})",
             ExpandIcon = true
         };
         
         // Load icon based on whether region is specified
-        if (!string.IsNullOrEmpty(towerConfig.IconRegion))
+        if (!string.IsNullOrEmpty(buildingConfig.IconRegion))
         {
-            button.Icon = CreateTowerIconFromRegion(towerConfig.IconPath, towerConfig.IconRegion);
+            button.Icon = CreateBuildingIconFromRegion(buildingConfig.IconPath, buildingConfig.IconRegion);
         }
         else
         {
-            button.Icon = LoadTowerIcon(towerConfig.IconPath);
+            button.Icon = LoadBuildingIcon(buildingConfig.IconPath);
         }
         
         // Apply styling from config
         SetButtonStyling(button, styling, false);
         
         // Add hotkey number label overlay
-        AddHotkeyLabel(button, towerConfig.Hotkey, styling);
+        AddHotkeyLabel(button, buildingConfig.Hotkey, styling);
         
         // Connect button press event
-        button.Pressed += () => OnTowerButtonPressed(towerKey);
+        button.Pressed += () => OnBuildingButtonPressed(buildingKey);
         
-        // Connect hover events for visual feedback and tower info display
+        // Connect hover events for visual feedback and building info display
         button.MouseEntered += () => 
         {
-            OnTowerButtonHover(towerKey, true);
-            ShowTowerInfo(towerKey);
+            OnBuildingButtonHover(buildingKey, true);
+            ShowBuildingInfo(buildingKey);
         };
         button.MouseExited += () => 
         {
-            OnTowerButtonHover(towerKey, false);
-            HideTowerInfo();
+            OnBuildingButtonHover(buildingKey, false);
+            HideBuildingInfo();
         };
         
         return button;
@@ -122,7 +125,7 @@ public partial class TowerSelectionHud : Control
         button.AddChild(label);
     }
     
-    private Texture2D? LoadTowerIcon(string iconPath)
+    private Texture2D? LoadBuildingIcon(string iconPath)
     {
         var validatedPath = _configService.GetValidatedIconPath(iconPath);
         try
@@ -141,12 +144,12 @@ public partial class TowerSelectionHud : Control
         }
     }
     
-    private AtlasTexture? CreateTowerIconFromRegion(string iconPath, string iconRegion)
+    private AtlasTexture? CreateBuildingIconFromRegion(string iconPath, string iconRegion)
     {
         if (string.IsNullOrEmpty(iconRegion))
         {
             // Fallback to full texture if no region specified
-            var fullTexture = LoadTowerIcon(iconPath);
+            var fullTexture = LoadBuildingIcon(iconPath);
             if (fullTexture == null) return null;
             
             var atlasTexture = new AtlasTexture();
@@ -233,49 +236,52 @@ public partial class TowerSelectionHud : Control
         button.AddThemeStyleboxOverride("focus", styleBox);
     }
     
-    private string CapitalizeTowerName(string towerKey)
+    private string CapitalizeBuildingName(string buildingKey)
     {
-        return towerKey.Replace("_", " ")
+        return buildingKey.Replace("_", " ")
             .Split(' ')
             .Select(word => char.ToUpper(word[0]) + word.Substring(1).ToLower())
             .Aggregate((a, b) => a + " " + b);
     }
     
-    private void OnTowerButtonPressed(string towerKey)
+    private void OnBuildingButtonPressed(string buildingKey)
     {
-        GD.Print($"{LOG_PREFIX} Tower button {towerKey} pressed");
+        GD.Print($"{LOG_PREFIX} Building button {buildingKey} pressed");
         
-        // Toggle selection if same tower is clicked
-        if (_selectedTowerKey == towerKey)
+        // Toggle selection if same building is clicked
+        if (_selectedBuildingKey == buildingKey)
         {
+            PlayDeselectionSound();
             ClearSelection();
             var player = GetTree().GetFirstNodeInGroup("player") as Game.Presentation.Player.Player;
             player?.ClearBuildingSelection();
         }
         else
         {
-            SetSelectedTower(towerKey);
+            PlaySelectionSound();
+            SetSelectedBuilding(buildingKey);
             var player = GetTree().GetFirstNodeInGroup("player") as Game.Presentation.Player.Player;
-            var displayName = GetDisplayNameFromTowerKey(towerKey);
+            var displayName = GetDisplayNameFromBuildingKey(buildingKey);
             player?.SelectBuilding(displayName);
         }
     }
     
-    private string GetDisplayNameFromTowerKey(string towerKey)
+    private string GetDisplayNameFromBuildingKey(string buildingKey)
     {
-        return towerKey switch
+        // Use config-driven approach - get display name from configuration
+        var config = _configService.GetConfiguration();
+        if (config.Buildings.TryGetValue(buildingKey, out var buildingConfig))
         {
-            "basic_tower" => "Basic",
-            "sniper_tower" => "Sniper",
-            "rapid_tower" => "Rapid",
-            "heavy_tower" => "Heavy",
-            _ => CapitalizeTowerName(towerKey)
-        };
+            // Could add display_name field to config, for now capitalize the key
+            return CapitalizeBuildingName(buildingKey);
+        }
+        
+        return CapitalizeBuildingName(buildingKey);
     }
     
-    private void OnTowerButtonHover(string towerKey, bool isHovering)
+    private void OnBuildingButtonHover(string buildingKey, bool isHovering)
     {
-        if (!_towerButtons.TryGetValue(towerKey, out var button) || towerKey == _selectedTowerKey)
+        if (!_buildingButtons.TryGetValue(buildingKey, out var button) || buildingKey == _selectedBuildingKey)
             return;
             
         var config = _configService.GetConfiguration();
@@ -313,58 +319,58 @@ public partial class TowerSelectionHud : Control
         button.AddThemeStyleboxOverride("hover", styleBox);
     }
     
-    public void SetSelectedTower(string? towerKey)
+    public void SetSelectedBuilding(string? buildingKey)
     {
         // Clear previous selection
-        if (_selectedTowerKey != null && _towerButtons.TryGetValue(_selectedTowerKey, out var oldButton))
+        if (_selectedBuildingKey != null && _buildingButtons.TryGetValue(_selectedBuildingKey, out var oldButton))
         {
             var config = _configService.GetConfiguration();
             SetButtonStyling(oldButton, config.Styling, false);
         }
         
-        _selectedTowerKey = towerKey;
+        _selectedBuildingKey = buildingKey;
         
         // Apply selection styling to new button
-        if (towerKey != null && _towerButtons.TryGetValue(towerKey, out var newButton))
+        if (buildingKey != null && _buildingButtons.TryGetValue(buildingKey, out var newButton))
         {
             var config = _configService.GetConfiguration();
             SetButtonStyling(newButton, config.Styling, true);
-            GD.Print($"{LOG_PREFIX} Selected tower: {towerKey}");
+            GD.Print($"{LOG_PREFIX} Selected building: {buildingKey}");
         }
     }
     
     public void ClearSelection()
     {
-        SetSelectedTower(null);
-        GD.Print($"{LOG_PREFIX} Cleared tower selection");
+        SetSelectedBuilding(null);
+        GD.Print($"{LOG_PREFIX} Cleared building selection");
     }
     
-    private void ShowTowerInfo(string towerKey)
+    private void ShowBuildingInfo(string buildingKey)
     {
         try
         {
-            var displayName = GetDisplayNameFromTowerKey(towerKey);
-            var towerStats = GetTowerStats(displayName);
+            var displayName = GetDisplayNameFromBuildingKey(buildingKey);
+            var buildingStats = GetBuildingStats(buildingKey);
             
-            if (towerStats != null && HudManager.Instance != null && HudManager.Instance.IsInitialized())
+            if (buildingStats != null && HudManager.Instance != null && HudManager.Instance.IsInitialized())
             {
                 HudManager.Instance.ShowTowerStats(
                     $"{displayName} Tower",
-                    towerStats.Value.Cost,
-                    towerStats.Value.Damage,
-                    towerStats.Value.Range,
-                    towerStats.Value.AttackSpeed
+                    buildingStats.Value.Cost,
+                    buildingStats.Value.Damage,
+                    buildingStats.Value.Range,
+                    buildingStats.Value.AttackSpeed
                 );
-                GD.Print($"{LOG_PREFIX} Showing stats for {displayName} tower");
+                GD.Print($"{LOG_PREFIX} Showing stats for {displayName} building");
             }
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"{LOG_PREFIX} Error showing tower info: {ex.Message}");
+            GD.PrintErr($"{LOG_PREFIX} Error showing building info: {ex.Message}");
         }
     }
     
-    private void HideTowerInfo()
+    private void HideBuildingInfo()
     {
         try
         {
@@ -375,30 +381,18 @@ public partial class TowerSelectionHud : Control
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"{LOG_PREFIX} Error hiding tower info: {ex.Message}");
+            GD.PrintErr($"{LOG_PREFIX} Error hiding building info: {ex.Message}");
         }
     }
     
-    private (int Cost, int Damage, float Range, float AttackSpeed)? GetTowerStats(string displayName)
+    private (int Cost, int Damage, float Range, float AttackSpeed)? GetBuildingStats(string buildingKey)
     {
         try
         {
-            // Map display names to config keys using domain entity ConfigKey constants
-            string? configKey = displayName.ToLower() switch
-            {
-                "basic" => Game.Domain.Buildings.Entities.BasicTower.ConfigKey,
-                "sniper" => Game.Domain.Buildings.Entities.SniperTower.ConfigKey,
-                "rapid" => Game.Domain.Buildings.Entities.RapidTower.ConfigKey,
-                "heavy" => Game.Domain.Buildings.Entities.HeavyTower.ConfigKey,
-                _ => null
-            };
-            
-            if (configKey == null) return null;
-            
-            // Get stats from the configuration service
+            // Use the buildingKey directly - it should match the config key in building stats
             if (StatsManagerService.Instance != null)
             {
-                var configStats = StatsManagerService.Instance.GetBuildingStats(configKey);
+                var configStats = StatsManagerService.Instance.GetBuildingStats(buildingKey);
                 return (configStats.cost, configStats.damage, configStats.range, configStats.attack_speed);
             }
             
@@ -406,12 +400,46 @@ public partial class TowerSelectionHud : Control
         }
         catch (System.Exception ex)
         {
-            GD.PrintErr($"{LOG_PREFIX} Error getting tower stats for {displayName}: {ex.Message}");
+            GD.PrintErr($"{LOG_PREFIX} Error getting building stats for {buildingKey}: {ex.Message}");
             return null;
         }
     }
     
     // Hotkey input is handled by Player class and communicated via NotifyHudSelectionChange
     // This prevents double processing of the same input events
+    
+    private void PlaySelectionSound()
+    {
+        try
+        {
+            var config = _configService.GetConfiguration();
+            if (config.Audio.Enabled && SoundManagerService.Instance != null)
+            {
+                SoundManagerService.Instance.PlaySound("tower_select", SoundCategory.UI);
+                GD.Print($"{LOG_PREFIX} Played selection sound");
+            }
+        }
+        catch (System.Exception ex)
+        {
+            GD.PrintErr($"{LOG_PREFIX} Error playing selection sound: {ex.Message}");
+        }
+    }
+    
+    private void PlayDeselectionSound()
+    {
+        try
+        {
+            var config = _configService.GetConfiguration();
+            if (config.Audio.Enabled && SoundManagerService.Instance != null)
+            {
+                SoundManagerService.Instance.PlaySound("tower_deselect", SoundCategory.UI);
+                GD.Print($"{LOG_PREFIX} Played deselection sound");
+            }
+        }
+        catch (System.Exception ex)
+        {
+            GD.PrintErr($"{LOG_PREFIX} Error playing deselection sound: {ex.Message}");
+        }
+    }
 }
 

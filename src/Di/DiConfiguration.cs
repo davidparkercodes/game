@@ -105,9 +105,9 @@ public static class DiConfiguration
             return new Game.Infrastructure.Game.GodotTimeManager(logger);
         });
         
-        // Register TowerSelectionHudConfigService
-        diContainer.RegisterFactory<ITowerSelectionHudConfigService>(() => 
-            new TowerSelectionHudConfigService());
+        // Register BuildingSelectionHudConfigService
+        diContainer.RegisterFactory<IBuildingSelectionHudConfigService>(() => 
+            new BuildingSelectionHudConfigService());
     }
 
     public static void RegisterSingletonsFromGodot(DiContainer diContainer)

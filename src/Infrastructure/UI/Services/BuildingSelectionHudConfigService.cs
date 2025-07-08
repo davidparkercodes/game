@@ -6,15 +6,15 @@ using Godot;
 
 namespace Game.Infrastructure.UI.Services;
 
-public class TowerSelectionHudConfigService : ITowerSelectionHudConfigService
+public class BuildingSelectionHudConfigService : IBuildingSelectionHudConfigService
 {
-    private const string CONFIG_PATH = "res://data/huds/tower_selection_hud.json";
+    private const string CONFIG_PATH = "res://data/huds/building_selection_hud.json";
     private const string DEFAULT_ICON_PATH = "res://assets/sprites/ui/default_tower_icon.png";
     
-    private TowerSelectionHudConfig? _cachedConfig;
+    private BuildingSelectionHudConfig? _cachedConfig;
     private bool _configLoaded = false;
 
-    public TowerSelectionHudConfig GetConfiguration()
+    public BuildingSelectionHudConfig GetConfiguration()
     {
         if (!_configLoaded)
         {
@@ -30,8 +30,8 @@ public class TowerSelectionHudConfigService : ITowerSelectionHudConfigService
         {
             var config = GetConfiguration();
             return config.Layout.SquareSize > 0 && 
-                   config.Layout.MaxTowers > 0 && 
-                   config.Towers.Count > 0;
+                   config.Layout.MaxBuildings > 0 && 
+                   config.Buildings.Count > 0;
         }
         catch
         {
@@ -51,7 +51,7 @@ public class TowerSelectionHudConfigService : ITowerSelectionHudConfigService
             return iconPath;
         }
         
-        GD.PrintErr($"⚠️ TowerSelectionHudConfigService: Icon not found at {iconPath}, using default");
+        GD.PrintErr($"⚠️ BuildingSelectionHudConfigService: Icon not found at {iconPath}, using default");
         return DEFAULT_ICON_PATH;
     }
 
@@ -89,19 +89,19 @@ public class TowerSelectionHudConfigService : ITowerSelectionHudConfigService
                         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
                     };
                     
-                    _cachedConfig = JsonSerializer.Deserialize<TowerSelectionHudConfig>(jsonContent, options);
-                    GD.Print($"✅ TowerSelectionHudConfigService: Configuration loaded from {CONFIG_PATH}");
+                    _cachedConfig = JsonSerializer.Deserialize<BuildingSelectionHudConfig>(jsonContent, options);
+                    GD.Print($"✅ BuildingSelectionHudConfigService: Configuration loaded from {CONFIG_PATH}");
                 }
             }
             else
             {
-                GD.PrintErr($"⚠️ TowerSelectionHudConfigService: Config file not found at {CONFIG_PATH}, using defaults");
+                GD.PrintErr($"⚠️ BuildingSelectionHudConfigService: Config file not found at {CONFIG_PATH}, using defaults");
                 _cachedConfig = CreateDefaultConfiguration();
             }
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"❌ TowerSelectionHudConfigService: Error loading config: {ex.Message}");
+            GD.PrintErr($"❌ BuildingSelectionHudConfigService: Error loading config: {ex.Message}");
             _cachedConfig = CreateDefaultConfiguration();
         }
         finally
@@ -110,13 +110,13 @@ public class TowerSelectionHudConfigService : ITowerSelectionHudConfigService
         }
     }
 
-    private TowerSelectionHudConfig CreateDefaultConfiguration()
+    private BuildingSelectionHudConfig CreateDefaultConfiguration()
     {
-        return new TowerSelectionHudConfig
+        return new BuildingSelectionHudConfig
         {
             Layout = new HudLayout
             {
-                MaxTowers = 4,
+                MaxBuildings = 4,
                 SquareSize = 48,
                 SpacingBetweenSquares = 8,
                 BottomMargin = 20,

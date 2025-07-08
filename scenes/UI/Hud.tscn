@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://src/Presentation/UI/Hud.cs" id="1_wfueu"]
-[ext_resource type="Script" path="res://src/Presentation/UI/TowerSelectionHud.cs" id="1_tower_hud"]
+[ext_resource type="Script" path="res://src/Presentation/UI/BuildingSelectionHud.cs" id="1_building_hud"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wfueu"]
 bg_color = Color(0, 0, 0, 0.45098)
@@ -97,7 +97,7 @@ theme_override_colors/font_color = Color(0.8, 0.4, 1, 1)
 theme_override_font_sizes/font_size = 16
 text = "Attack Speed: 30"
 
-[node name="TowerSelectionHud" type="Control" parent="."]
+[node name="BuildingSelectionHud" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
@@ -110,9 +110,9 @@ offset_right = 120.0
 offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 0
-script = ExtResource("1_tower_hud")
+script = ExtResource("1_building_hud")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TowerSelectionHud"]
+[node name="HBoxContainer" type="HBoxContainer" parent="BuildingSelectionHud"]
 layout_mode = 1
 anchors_preset = 15
 anchor_left = 0.0

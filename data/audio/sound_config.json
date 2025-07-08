@@ -86,7 +86,20 @@
         "description": "Heavy tower construction sound"
       }
     },
-    "ui": {},
+    "ui": {
+      "tower_select": {
+        "file": "res://assets/audio/towers/tower_select.mp3",
+        "category": "UI",
+        "volume": -3.0,
+        "description": "Tower selection sound"
+      },
+      "tower_deselect": {
+        "file": "res://assets/audio/towers/tower_deselect.mp3",
+        "category": "UI",
+        "volume": -3.0,
+        "description": "Tower deselection sound"
+      }
+    },
     "enemies": {},
     "music": {
       "boss_battle": {
