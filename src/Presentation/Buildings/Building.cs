@@ -71,7 +71,6 @@ public partial class Building : StaticBody2D
 		InitializeStats();
 		CreateRangeVisual();
 		CreateInputArea();
-		CreateUpgradeVisuals();
 		CreateAnimations();
 		ConnectSignals();
 		SetupInputHandling();
@@ -785,31 +784,7 @@ public partial class Building : StaticBody2D
 	}
 	
 	// ===== UPGRADE LEVEL VISUALS =====
-	
-	private void CreateUpgradeVisuals()
-	{
-		if (IsPreview) return; // Don't create upgrade visuals for preview buildings
-		
-		// Create upgrade level label (shows "Lv.2" style)
-		_upgradeLevelLabel = new Label();
-		_upgradeLevelLabel.Text = "";
-		_upgradeLevelLabel.Position = new Vector2(-15, -25); // Top-left of building
-		_upgradeLevelLabel.AddThemeColorOverride("font_color", Colors.Yellow);
-		_upgradeLevelLabel.AddThemeFontSizeOverride("font_size", 10);
-		_upgradeLevelLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
-		_upgradeLevelLabel.AddThemeConstantOverride("shadow_offset_x", 1);
-		_upgradeLevelLabel.AddThemeConstantOverride("shadow_offset_y", 1);
-		_upgradeLevelLabel.Visible = false;
-		AddChild(_upgradeLevelLabel);
-		
-		// Create star container for upgrade level indicators
-		_upgradeStars = new Control();
-		_upgradeStars.Position = new Vector2(-10, -35); // Top-right of building
-		_upgradeStars.Visible = false;
-		AddChild(_upgradeStars);
-		
-		GD.Print($"{LogPrefix} {Name} upgrade visuals created");
-	}
+	// Visual upgrade indicators removed - only color tinting is used
 	
 	private void CreateAnimations()
 	{
@@ -849,46 +824,20 @@ public partial class Building : StaticBody2D
 	
 	public void UpdateUpgradeVisuals()
 	{
-		if (IsPreview || _upgradeLevelLabel == null || _upgradeStars == null) return;
+		if (IsPreview) return;
 		
 		if (UpgradeLevel > 0)
 		{
-			// Show upgrade level label
-			_upgradeLevelLabel.Text = $"Lv.{UpgradeLevel + 1}"; // Level 1 = UpgradeLevel 0
-			_upgradeLevelLabel.Visible = true;
-			
-			// Clear existing stars
-			foreach (Node child in _upgradeStars.GetChildren())
-			{
-				child.QueueFree();
-			}
-			
-			// Create star indicators
-			for (int i = 0; i < UpgradeLevel; i++)
-			{
-				var star = new Label();
-				star.Text = "⭐";
-				star.Position = new Vector2(i * 8, 0);
-				star.AddThemeFontSizeOverride("font_size", 8);
-				_upgradeStars.AddChild(star);
-			}
-			
-			_upgradeStars.Visible = true;
-			
 			// Apply upgrade color tint
 			ApplyUpgradeColorTint();
 		}
 		else
 		{
-			// Hide upgrade visuals for level 0
-			_upgradeLevelLabel.Visible = false;
-			_upgradeStars.Visible = false;
-			
 			// Remove upgrade color tint
 			Modulate = _originalModulate;
 		}
 		
-		GD.Print($"{LogPrefix} {Name} upgrade visuals updated for level {UpgradeLevel}");
+		GD.Print($"{LogPrefix} {Name} upgrade visuals updated for level {UpgradeLevel} (color tint only)");
 	}
 	
 	private void ApplyUpgradeColorTint()
