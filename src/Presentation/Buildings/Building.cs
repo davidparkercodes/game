@@ -178,6 +178,25 @@ public partial class Building : StaticBody2D
 		AddChild(_rangeCircle);
 	}
 	
+	public void UpdateRangeVisual()
+	{
+		if (_rangeCircle == null) return;
+		
+		// Clear existing points
+		_rangeCircle.ClearPoints();
+		
+		// Recreate circle with current Range
+		const int segments = 64;
+		for (int i = 0; i <= segments; i++)
+		{
+			float angle = i * 2.0f * Mathf.Pi / segments;
+			Vector2 point = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * Range;
+			_rangeCircle.AddPoint(point);
+		}
+		
+		GD.Print($"{LogPrefix} {Name} range visual updated to radius {Range}");
+	}
+	
 	private void CreateInputArea()
 	{
 		if (IsPreview) return; // Don't create input area for preview buildings

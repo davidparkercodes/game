@@ -6,6 +6,7 @@ using Game.Domain.Enemies.ValueObjects;
 using Game.Domain.Buildings.ValueObjects;
 using Game.Application.Enemies.Configuration;
 using Game.Application.Buildings.Configuration;
+using Game.Infrastructure.Economy.Services;
 using Godot;
 
 namespace Game.Infrastructure.Stats.Services;
@@ -209,8 +210,8 @@ public class StatsManagerService
             return (0, 0, 0);
         }
         
-        // Calculate upgrade multiplier for the next level
-        float upgradeMultiplier = GetUpgradeMultiplier(towerType);
+        // Calculate upgrade multiplier for the next level using economy config
+        float upgradeMultiplier = GameEconomyConfigService.Instance.GetUpgradeDamageMultiplier();
         float totalMultiplier = 1.0f + (upgradeMultiplier - 1.0f) * (currentLevel + 1);
         
         return (
@@ -229,31 +230,29 @@ public class StatsManagerService
         }
         
         // Calculate upgrade cost based on base upgrade cost and current level
-        // Each level increases cost by 50% (configurable)
+        // Use economy config for upgrade cost multiplier
         int baseCost = stats.upgrade_cost;
-        float multiplier = 1.0f + (currentLevel * 0.5f);
+        float upgradeMultiplier = GameEconomyConfigService.Instance.GetUpgradeCostMultiplier();
+        float multiplier = 1.0f + (currentLevel * (upgradeMultiplier - 1.0f));
         
         return (int)(baseCost * multiplier);
     }
     
     public float GetUpgradeMultiplier(string towerType)
     {
-        // TODO: Load from configuration when upgrade_multiplier is added to BuildingStatsData
-        // For now, use default multiplier of 1.5 (50% improvement)
-        return 1.5f;
+        // Use economy config service for upgrade multiplier
+        return GameEconomyConfigService.Instance.GetUpgradeDamageMultiplier();
     }
     
     public float GetSellPercentage(string towerType)
     {
-        // TODO: Load from configuration when sell_percentage is added to BuildingStatsData
-        // For now, use default sell percentage of 75%
-        return 0.75f;
+        // Use economy config service for sell percentage
+        return GameEconomyConfigService.Instance.GetSellPercentage();
     }
     
     public int GetMaxUpgradeLevel(string towerType)
     {
-        // TODO: Load from configuration when max_upgrade_level is added to BuildingStatsData
-        // For now, use default max level of 3
-        return 3;
+        // Use economy config service for max upgrade level
+        return GameEconomyConfigService.Instance.GetMaxUpgradeLevels();
     }
 }

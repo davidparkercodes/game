@@ -2,6 +2,7 @@ using Game.Domain.Buildings.Services;
 using Game.Presentation.Buildings;
 using Game.Infrastructure.Stats.Services;
 using Game.Infrastructure.Game.Services;
+using Game.Infrastructure.Economy.Services;
 using Game.Presentation.UI;
 using Godot;
 
@@ -10,7 +11,6 @@ namespace Game.Application.Buildings.Services;
 public class TowerSellService : ITowerSellService
 {
     private const string LogPrefix = "💰 [TOWER-SELL]";
-    private const float DefaultSellPercentage = 0.75f;
     
     public int GetSellValue(Building building)
     {
@@ -71,9 +71,8 @@ public class TowerSellService : ITowerSellService
     
     public float GetSellPercentage(string buildingType)
     {
-        // TODO: Load from configuration per building type
-        // For now, use default sell percentage
-        return DefaultSellPercentage;
+        // Use economy config service for sell percentage
+        return GameEconomyConfigService.Instance.GetSellPercentage();
     }
     
     public int CalculateTotalInvestment(Building building)
@@ -126,9 +125,10 @@ public class TowerSellService : ITowerSellService
             var baseStats = StatsManagerService.Instance.GetBuildingStats(buildingType);
             
             // Calculate upgrade cost based on base upgrade cost and level
-            // Each level increases cost by 50% (same as TowerUpgradeService)
+            // Use economy config for upgrade cost multiplier
             int baseCost = baseStats.upgrade_cost;
-            float multiplier = 1.0f + (level * 0.5f);
+            float upgradeMultiplier = GameEconomyConfigService.Instance.GetUpgradeCostMultiplier();
+            float multiplier = 1.0f + (level * (upgradeMultiplier - 1.0f));
             
             return (int)(baseCost * multiplier);
         }

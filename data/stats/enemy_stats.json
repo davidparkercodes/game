@@ -20,7 +20,7 @@
       "max_health": 200,
       "speed": 30.0,
       "damage": 15,
-      "reward_gold": 12,
+      "reward_gold": 8,
       "reward_xp": 20,
       "description": "Heavy armored enemy with high health"
     },
@@ -28,15 +28,15 @@
       "max_health": 150,
       "speed": 75.0,
       "damage": 20,
-      "reward_gold": 15,
+      "reward_gold": 9,
       "reward_xp": 25,
       "description": "Elite enemy with balanced stats"
     },
     "boss_enemy": {
-      "max_health": 5000,
+      "max_health": 2000,
       "speed": 45.0,
       "damage": 30,
-      "reward_gold": 50,
+      "reward_gold": 20,
       "reward_xp": 100,
       "description": "Massive boss enemy with high health and devastating damage"
     }

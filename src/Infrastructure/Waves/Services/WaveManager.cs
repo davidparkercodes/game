@@ -52,6 +52,10 @@ public class WaveManager
             // Set the total rounds in RoundService from the wave configuration
             RoundService.Instance?.SetTotalRounds(totalWaves);
             GD.Print($"🌊 WaveManager: Set RoundService.TotalRounds to {totalWaves}");
+            
+            // Initialize the game with starting values
+            GameService.Instance?.StartGame();
+            GD.Print($"🎮 WaveManager: Started game with initial values");
         }
     }
 

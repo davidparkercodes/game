@@ -1,6 +1,7 @@
 using Godot;
 using Game.Application.Game.Services;
 using Game.Infrastructure.Game;
+using System.Collections.Generic;
 
 namespace Game.Presentation.UI;
 
@@ -12,9 +13,18 @@ public partial class SpeedControl : CanvasLayer
 
     private ITimeManager? _timeManager;
     private const string LogPrefix = "⚡ [SPEED-CONTROL]";
+    private const string ConfigFilePath = "res://data/ui/speed_control_config.json";
     
     public override void _Ready()
     {
+        // Check configuration first to determine if we should show speed controls
+        if (!ShouldShowSpeedControls())
+        {
+            GD.Print($"{LogPrefix} Speed controls disabled via configuration");
+            Visible = false;
+            return;
+        }
+        
         // Defer initialization to ensure all child nodes are ready
         CallDeferred(nameof(DeferredInitialize));
     }
@@ -171,6 +181,50 @@ public partial class SpeedControl : CanvasLayer
         if (_timeManager != null)
         {
             _timeManager.SpeedChanged -= OnSpeedChanged;
+        }
+    }
+    
+    private bool ShouldShowSpeedControls()
+    {
+        try
+        {
+            var configFile = FileAccess.Open(ConfigFilePath, FileAccess.ModeFlags.Read);
+            if (configFile == null)
+            {
+                GD.PrintErr($"{LogPrefix} Could not open config file: {ConfigFilePath}");
+                return true; // Default to showing controls if config file is missing
+            }
+            
+            var jsonContent = configFile.GetAsText();
+            configFile.Close();
+            
+            var json = new Json();
+            var parseResult = json.Parse(jsonContent);
+            
+            if (parseResult != Error.Ok)
+            {
+                GD.PrintErr($"{LogPrefix} Error parsing config JSON: {parseResult}");
+                return true; // Default to showing controls if JSON is malformed
+            }
+            
+            var jsonData = json.Data.AsGodotDictionary();
+            
+            if (jsonData.ContainsKey("showSpeedControls"))
+            {
+                var showControls = jsonData["showSpeedControls"].AsBool();
+                GD.Print($"{LogPrefix} Configuration loaded: showSpeedControls = {showControls}");
+                return showControls;
+            }
+            else
+            {
+                GD.PrintErr($"{LogPrefix} Config file missing 'showSpeedControls' key");
+                return true; // Default to showing controls if key is missing
+            }
+        }
+        catch (System.Exception ex)
+        {
+            GD.PrintErr($"{LogPrefix} Exception reading config file: {ex.Message}");
+            return true; // Default to showing controls on any error
         }
     }
 }

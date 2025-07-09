@@ -149,8 +149,11 @@ public class TowerUpgradeService : ITowerUpgradeService
         // Update building's visual appearance for upgrades
         UpdateBuildingVisuals(building);
         
-        // Reinitialize stats to update internal components
-        building.InitializeStats();
+		// Reinitialize stats to update internal components
+		building.InitializeStats();
+		
+		// Update range visual circle to reflect new range
+		building.UpdateRangeVisual();
     }
     
     private void UpdateBuildingVisuals(Building building)

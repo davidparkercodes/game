@@ -1,6 +1,7 @@
 using Godot;
 using Game.Presentation.UI;
 using Game.Infrastructure.Waves.Services;
+using Game.Infrastructure.Economy.Services;
 
 namespace Game.Infrastructure.Game.Services;
 
@@ -8,22 +9,38 @@ public class GameService
 {
     public static GameService Instance { get; private set; } = null!;
 
-    public int Money { get; private set; } = 500;
-    public int Lives { get; private set; } = 20;
-    public int Score { get; private set; } = 0;
+    public int Money { get; private set; }
+    public int Lives { get; private set; }
+    public int Score { get; private set; }
     public bool IsGameActive { get; private set; } = false;
 
     static GameService()
     {
         Instance = new GameService();
+        // Initialize economy config service first
+        GameEconomyConfigService.Instance.Initialize();
+        GD.Print($"💰 GameService: Economy config initialized. Starting money: {GameEconomyConfigService.Instance.GetStartingMoney()}");
     }
 
     public void StartGame()
     {
         IsGameActive = true;
-        Money = 500;
-        Lives = 20;
-        Score = 0;
+        
+        // Ensure economy config is initialized
+        if (GameEconomyConfigService.Instance == null)
+        {
+            GD.PrintErr("💰 GameService: Economy config service not initialized!");
+            Money = 500; // Fallback
+            Lives = 20;  // Fallback
+            Score = 0;   // Fallback
+        }
+        else
+        {
+            Money = GameEconomyConfigService.Instance.GetStartingMoney();
+            Lives = GameEconomyConfigService.Instance.GetStartingLives();
+            Score = GameEconomyConfigService.Instance.GetStartingScore();
+            GD.Print($"💰 GameService: Starting game with Money: {Money}, Lives: {Lives}, Score: {Score}");
+        }
         
         // Initialize wave system
         WaveManager.Instance?.Reset();
@@ -107,7 +124,7 @@ public class GameService
     public void OnEnemyKilled(int reward)
     {
         AddMoney(reward);
-        Score += reward * 10;
+        Score += reward * GameEconomyConfigService.Instance.GetKillScoreMultiplier();
         
         GD.Print($"💰 GameService: Enemy killed! Reward: {reward}, New score: {Score}");
         
@@ -118,9 +135,21 @@ public class GameService
 
     public void Reset()
     {
-        Money = 500;
-        Lives = 20;
-        Score = 0;
+        // Ensure economy config is initialized
+        if (GameEconomyConfigService.Instance == null)
+        {
+            GD.PrintErr("💰 GameService: Economy config service not initialized during reset!");
+            Money = 500; // Fallback
+            Lives = 20;  // Fallback
+            Score = 0;   // Fallback
+        }
+        else
+        {
+            Money = GameEconomyConfigService.Instance.GetStartingMoney();
+            Lives = GameEconomyConfigService.Instance.GetStartingLives();
+            Score = GameEconomyConfigService.Instance.GetStartingScore();
+            GD.Print($"💰 GameService: Reset game with Money: {Money}, Lives: {Lives}, Score: {Score}");
+        }
         IsGameActive = false;
         
         // Reset wave manager
