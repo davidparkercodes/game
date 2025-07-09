@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://src/Presentation/UI/Hud.cs" id="1_wfueu"]
 [ext_resource type="Script" path="res://src/Presentation/UI/BuildingSelectionHud.cs" id="1_building_hud"]
+[ext_resource type="PackedScene" uid="uid://buildingupgradehud" path="res://scenes/UI/BuildingUpgradeHud.tscn" id="2_upgrade_hud"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wfueu"]
 bg_color = Color(0, 0, 0, 0.45098)
@@ -10,8 +11,8 @@ bg_color = Color(0, 0, 0, 0.45098)
 script = ExtResource("1_wfueu")
 
 [node name="SidebarPanel" type="Panel" parent="."]
-offset_right = 200.0
-offset_bottom = 300.0
+offset_right = 120.0
+offset_bottom = 180.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_wfueu")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SidebarPanel"]
@@ -19,15 +20,15 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
 
 [node name="MoneyLabel" type="Label" parent="SidebarPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.831373, 0, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 14
 
 [node name="WaveLabel" type="Label" parent="SidebarPanel/VBoxContainer"]
 layout_mode = 2
@@ -38,14 +39,14 @@ layout_mode = 2
 [node name="SelectedTowerLabel" type="Label" parent="SidebarPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.6, 1, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 
 [node name="SkipButton" type="Button" parent="SidebarPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 0, 1)
 theme_override_colors/font_color_hover = Color(1, 1, 1, 1)
 theme_override_colors/font_color_pressed = Color(0.8, 0.8, 0, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 12
 text = "⏭️ Start Wave"
 visible = true
 
@@ -53,48 +54,48 @@ visible = true
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -210.0
+offset_left = -130.0
 offset_top = 10.0
 offset_right = -10.0
-offset_bottom = 160.0
+offset_bottom = 100.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_wfueu")
 visible = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TowerStatsPanel"]
 layout_mode = 1
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 190.0
-offset_bottom = 140.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 114.0
+offset_bottom = 84.0
 
 [node name="TowerNameLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.8, 0, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 12
 text = "Basic Tower"
 
 [node name="CostLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.8, 0, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 10
 text = "Cost: $10"
 
 [node name="DamageLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 10
 text = "Damage: 50"
 
 [node name="RangeLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 10
 text = "Range: 75"
 
 [node name="FireRateLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.4, 1, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 10
 text = "Attack Speed: 30"
 
 [node name="BuildingSelectionHud" type="Control" parent="."]
@@ -104,10 +105,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -120.0
-offset_top = -70.0
-offset_right = 120.0
-offset_bottom = -10.0
+offset_left = -70.0
+offset_top = -40.0
+offset_right = 70.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("1_building_hud")
@@ -119,8 +120,10 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
 alignment = 1
+
+[node name="BuildingUpgradeHud" parent="." instance=ExtResource("2_upgrade_hud")]

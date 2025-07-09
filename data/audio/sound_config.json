@@ -98,6 +98,36 @@
         "category": "UI",
         "volume": -3.0,
         "description": "Tower deselection sound"
+      },
+      "tower_upgrade": {
+        "file": "res://assets/audio/towers/tower_upgrade.mp3",
+        "category": "SFX",
+        "volume": -2.0,
+        "description": "Tower upgrade sound effect"
+      },
+      "tower_sell": {
+        "file": "res://assets/audio/towers/tower_sell.mp3",
+        "category": "SFX",
+        "volume": -2.0,
+        "description": "Tower sell sound effect"
+      },
+      "ui_modal_open": {
+        "file": "res://assets/audio/ui/modal_open.mp3",
+        "category": "UI",
+        "volume": -4.0,
+        "description": "UI modal open sound"
+      },
+      "ui_modal_close": {
+        "file": "res://assets/audio/ui/modal_close.mp3",
+        "category": "UI",
+        "volume": -4.0,
+        "description": "UI modal close sound"
+      },
+      "ui_button_click": {
+        "file": "res://assets/audio/ui/button_click.mp3",
+        "category": "UI",
+        "volume": -4.0,
+        "description": "UI button click sound"
       }
     },
     "enemies": {},

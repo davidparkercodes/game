@@ -149,4 +149,82 @@ public class BuildingRegistry : IBuildingRegistry
             GD.Print($"{LogPrefix} Remaining building: {building.Name} at {building.GlobalPosition}");
         }
     }
+    
+    public void RemoveBuildingForSale(Building building)
+    {
+        if (building == null)
+        {
+            GD.PrintErr($"{LogPrefix} Cannot remove null building for sale");
+            return;
+        }
+        
+        if (_registeredBuildings.Remove(building))
+        {
+            GD.Print($"{LogPrefix} Removed building {building.Name} from registry for sale (Total: {_registeredBuildings.Count})");
+            
+            // Queue the building for deletion
+            if (Godot.GodotObject.IsInstanceValid(building))
+            {
+                building.QueueFree();
+            }
+        }
+        else
+        {
+            GD.PrintErr($"{LogPrefix} Building {building.Name} was not registered for sale removal");
+        }
+    }
+    
+    public void UpdateBuildingUpgradeLevel(Building building, int newLevel)
+    {
+        if (building == null)
+        {
+            GD.PrintErr($"{LogPrefix} Cannot update upgrade level for null building");
+            return;
+        }
+        
+        if (!_registeredBuildings.Contains(building))
+        {
+            GD.PrintErr($"{LogPrefix} Building {building.Name} not found in registry for upgrade level update");
+            return;
+        }
+        
+        // Update the building's upgrade level
+        building.UpgradeLevel = newLevel;
+        
+        GD.Print($"{LogPrefix} Updated {building.Name} upgrade level to {newLevel}");
+    }
+    
+    public IEnumerable<Building> GetBuildingsByType(string buildingType)
+    {
+        CleanupInvalidBuildings();
+        return _registeredBuildings.Where(b => GetBuildingConfigKey(b) == buildingType);
+    }
+    
+    private string GetBuildingConfigKey(Building building)
+    {
+        // Extract building type from class name and convert to config key
+        string className = building.GetType().Name;
+        
+        // Convert from PascalCase to snake_case
+        return className.ToLower() switch
+        {
+            "basictower" => "basic_tower",
+            "snipertower" => "sniper_tower",
+            "rapidtower" => "rapid_tower",
+            "heavytower" => "heavy_tower",
+            _ => "basic_tower" // fallback
+        };
+    }
+    
+    public int GetTotalBuildingCount()
+    {
+        CleanupInvalidBuildings();
+        return _registeredBuildings.Count;
+    }
+    
+    public int GetUpgradedBuildingCount()
+    {
+        CleanupInvalidBuildings();
+        return _registeredBuildings.Count(b => b.UpgradeLevel > 0);
+    }
 }

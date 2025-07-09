@@ -4,6 +4,8 @@ using Game.Presentation.Enemies;
 using Game.Presentation.Projectiles;
 using Game.Infrastructure.Audio.Services;
 using Game.Infrastructure.Stats.Services;
+using Game.Presentation.UI;
+using Game.Domain.Buildings.ValueObjects;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,10 +27,31 @@ public partial class Building : StaticBody2D
 	protected bool _showingRange = false;
 	private Line2D _rangeCircle = null!;
 	
+	// Input detection for tower selection
+	private Area2D _inputArea = null!;
+	private CollisionShape2D _inputCollision = null!;
+	
 	protected List<Enemy> _enemiesInRange = new List<Enemy>();
 	protected Enemy? _currentTarget = null;
 	private const string LogPrefix = "🏢 [TOWER]";
 	private bool _isActive = true;
+	
+	// Building selection system
+	public bool IsSelected { get; private set; } = false;
+	private Line2D? _selectionBorder = null;
+	private Color _originalModulate = Colors.White;
+	
+	// Upgrade level visual indicators (removed level labels and stars)
+	// Only color tinting is used for upgrade feedback
+	
+	// Animation components
+	private Tween? _selectionTween = null;
+	private Tween? _rangeTween = null;
+	
+	// Building upgrade tracking
+	public int UpgradeLevel { get; set; } = 0;
+	public int TotalInvestment { get; set; } = 0;
+	public BuildingStats BaseStats { get; private set; }
 	
 	// Shooting system properties
 	protected string _shootSoundKey = $"{Domain.Entities.BuildingConfigKeys.BasicTower}_shoot";
@@ -47,7 +70,11 @@ public partial class Building : StaticBody2D
 		
 		InitializeStats();
 		CreateRangeVisual();
+		CreateInputArea();
+		CreateUpgradeVisuals();
+		CreateAnimations();
 		ConnectSignals();
+		SetupInputHandling();
 		
 		// Register this building with the registry for collision detection (but not for preview buildings)
 		if (!IsPreview)
@@ -73,6 +100,14 @@ public partial class Building : StaticBody2D
 		else
 		{
 			GD.PrintErr($"{LogPrefix} {Name} failed to connect range area signals - _rangeArea is null");
+		}
+		
+		// Connect input event for building selection to the smaller input area
+		if (_inputArea != null && !IsPreview)
+		{
+			_inputArea.Connect("input_event", new Callable(this, nameof(OnAreaInputEvent)));
+			_inputArea.InputPickable = true;
+			GD.Print($"{LogPrefix} {Name} input event connected to input area");
 		}
 		
 		if (_fireTimer != null)
@@ -142,6 +177,29 @@ public partial class Building : StaticBody2D
 		}
 		
 		AddChild(_rangeCircle);
+	}
+	
+	private void CreateInputArea()
+	{
+		if (IsPreview) return; // Don't create input area for preview buildings
+		
+		// Create a small Area2D for input detection (only around the tower sprite)
+		_inputArea = new Area2D();
+		_inputArea.Name = "InputArea";
+		
+		// Create collision shape for input detection - smaller than the tower's collision radius
+		_inputCollision = new CollisionShape2D();
+		var inputShape = new CircleShape2D();
+		inputShape.Radius = CollisionRadius; // Use the building's collision radius (typically 12px)
+		_inputCollision.Shape = inputShape;
+		
+		// Add collision shape to input area
+		_inputArea.AddChild(_inputCollision);
+		
+		// Add input area to the building
+		AddChild(_inputArea);
+		
+		GD.Print($"{LogPrefix} {Name} input area created with radius {inputShape.Radius}");
 	}
 	
 	private void OnEnemyEnteredRange(Area2D area)
@@ -383,6 +441,24 @@ public partial class Building : StaticBody2D
 			AttackSpeed = stats.attack_speed;
 			CollisionRadius = stats.collision_radius;
 			
+			// Store base stats for upgrade calculations
+			BaseStats = new BuildingStats(
+				cost: stats.cost,
+				damage: stats.damage,
+				range: stats.range,
+				attackSpeed: stats.attack_speed,
+				bulletSpeed: stats.bullet_speed,
+				shootSound: $"{towerType}_shoot",
+				impactSound: $"{towerType.Replace("_tower", "_bullet")}_impact",
+				description: stats.description
+			);
+			
+			// Initialize total investment with base cost
+			if (TotalInvestment == 0)
+			{
+				TotalInvestment = Cost;
+			}
+			
 			// Set sound keys based on tower type
 			SetSoundKeysForTowerType(towerType);
 			
@@ -544,7 +620,292 @@ public partial class Building : StaticBody2D
 		if (!IsPreview)
 		{
 			BuildingRegistry.Instance.UnregisterBuilding(this);
+			// Notify BuildingSelectionManager about building destruction
+			BuildingSelectionManager.Instance.OnBuildingDestroyed(this);
 		}
 		base._ExitTree();
+	}
+	
+	// ===== BUILDING SELECTION SYSTEM =====
+	
+	private void SetupInputHandling()
+	{
+		// Enable input handling for building selection
+		if (!IsPreview)
+		{
+			InputPickable = true;
+		}
+	}
+	
+	public override void _Input(InputEvent @event)
+	{
+		if (IsPreview) return;
+		
+		if (@event is InputEventMouseButton mouseButton && mouseButton.Pressed)
+		{
+			if (mouseButton.ButtonIndex == MouseButton.Left)
+			{
+				// Check if player is not in build mode
+				var player = GetTree().GetFirstNodeInGroup("player") as Player.Player;
+				if (player != null && player._buildingBuilder.IsInBuildMode)
+				{
+					return; // Don't allow selection during build mode
+				}
+				
+				// Check if the click is within the building's collision area
+				if (IsPointInCollisionArea(mouseButton.GlobalPosition))
+				{
+					GD.Print($"{LogPrefix} {Name} click is within collision area - handling selection");
+					HandleBuildingSelection();
+					GetViewport().SetInputAsHandled();
+				}
+				// If click is outside collision area, don't handle it - let it propagate
+			}
+		}
+	}
+	
+	private bool IsPointInCollisionArea(Vector2 globalPoint)
+	{
+		// Check if the point is within the building's collision radius
+		var distance = GlobalPosition.DistanceTo(globalPoint);
+		return distance <= CollisionRadius;
+	}
+	
+	private void OnAreaInputEvent(Viewport viewport, InputEvent @event, int shapeIdx)
+	{
+		if (@event is InputEventMouseButton mouseButton && mouseButton.Pressed)
+		{
+			if (mouseButton.ButtonIndex == MouseButton.Left)
+			{
+				GD.Print($"{LogPrefix} {Name} area received left click at {mouseButton.GlobalPosition}");
+				
+				// Check if player is not in build mode
+				var player = GetTree().GetFirstNodeInGroup("player") as Player.Player;
+				if (player != null && player._buildingBuilder.IsInBuildMode)
+				{
+					GD.Print($"{LogPrefix} {Name} ignoring click - player is in build mode");
+					return;
+				}
+				
+				HandleBuildingSelection();
+				GetViewport().SetInputAsHandled();
+			}
+		}
+	}
+	
+	private void HandleBuildingSelection()
+	{
+		GD.Print($"{LogPrefix} Building {Name} clicked at {GlobalPosition}");
+		
+		// Use BuildingSelectionManager to handle the selection
+		BuildingSelectionManager.Instance.SelectBuilding(this);
+	}
+	
+	public void SetSelected(bool selected)
+	{
+		if (IsSelected == selected) return;
+		
+		IsSelected = selected;
+		
+		if (selected)
+		{
+			// Show selection visual feedback
+			ShowSelectionVisuals();
+			GD.Print($"{LogPrefix} Building {Name} selected");
+		}
+		else
+		{
+			// Hide selection visual feedback
+			HideSelectionVisuals();
+			GD.Print($"{LogPrefix} Building {Name} deselected");
+		}
+	}
+	
+	public void ToggleSelection()
+	{
+		SetSelected(!IsSelected);
+	}
+	
+	private void ShowSelectionVisuals()
+	{
+		// Create selection border if it doesn't exist
+		if (_selectionBorder == null)
+		{
+			CreateSelectionBorder();
+		}
+		
+		// Animate selection border appearance
+		if (_selectionBorder != null && _selectionTween != null)
+		{
+			_selectionBorder.Visible = true;
+			_selectionBorder.DefaultColor = new Color(Colors.Black.R, Colors.Black.G, Colors.Black.B, 0.0f);
+			
+			_selectionTween.Kill();
+			_selectionTween = CreateTween();
+			_selectionTween.TweenProperty(_selectionBorder, "default_color", Colors.Black, 0.2f);
+			_selectionTween.Parallel().TweenProperty(this, "modulate", new Color(1.1f, 1.1f, 1.1f, 1.0f), 0.2f);
+		}
+		
+		// Show range circle with animation
+		ShowRangeAnimated();
+	}
+	
+	private void HideSelectionVisuals()
+	{
+		// Animate selection border disappearance
+		if (_selectionBorder != null && _selectionTween != null)
+		{
+			_selectionTween.Kill();
+			_selectionTween = CreateTween();
+			_selectionTween.TweenProperty(_selectionBorder, "default_color", new Color(Colors.Black.R, Colors.Black.G, Colors.Black.B, 0.0f), 0.15f);
+			_selectionTween.TweenCallback(Callable.From(() => _selectionBorder.Visible = false));
+			_selectionTween.Parallel().TweenProperty(this, "modulate", _originalModulate, 0.15f);
+		}
+		
+		// Hide range circle with animation
+		HideRangeAnimated();
+	}
+	
+	private void CreateSelectionBorder()
+	{
+		_selectionBorder = new Line2D();
+		_selectionBorder.Width = 2.0f;
+		_selectionBorder.DefaultColor = Colors.Black;
+		_selectionBorder.Visible = false;
+		
+		// Create a square border around the building
+		float borderSize = CollisionRadius + 5.0f;
+		_selectionBorder.AddPoint(new Vector2(-borderSize, -borderSize));
+		_selectionBorder.AddPoint(new Vector2(borderSize, -borderSize));
+		_selectionBorder.AddPoint(new Vector2(borderSize, borderSize));
+		_selectionBorder.AddPoint(new Vector2(-borderSize, borderSize));
+		_selectionBorder.AddPoint(new Vector2(-borderSize, -borderSize)); // Close the square
+		
+		AddChild(_selectionBorder);
+	}
+	
+	// ===== UPGRADE LEVEL VISUALS =====
+	
+	private void CreateUpgradeVisuals()
+	{
+		if (IsPreview) return; // Don't create upgrade visuals for preview buildings
+		
+		// Create upgrade level label (shows "Lv.2" style)
+		_upgradeLevelLabel = new Label();
+		_upgradeLevelLabel.Text = "";
+		_upgradeLevelLabel.Position = new Vector2(-15, -25); // Top-left of building
+		_upgradeLevelLabel.AddThemeColorOverride("font_color", Colors.Yellow);
+		_upgradeLevelLabel.AddThemeFontSizeOverride("font_size", 10);
+		_upgradeLevelLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
+		_upgradeLevelLabel.AddThemeConstantOverride("shadow_offset_x", 1);
+		_upgradeLevelLabel.AddThemeConstantOverride("shadow_offset_y", 1);
+		_upgradeLevelLabel.Visible = false;
+		AddChild(_upgradeLevelLabel);
+		
+		// Create star container for upgrade level indicators
+		_upgradeStars = new Control();
+		_upgradeStars.Position = new Vector2(-10, -35); // Top-right of building
+		_upgradeStars.Visible = false;
+		AddChild(_upgradeStars);
+		
+		GD.Print($"{LogPrefix} {Name} upgrade visuals created");
+	}
+	
+	private void CreateAnimations()
+	{
+		if (IsPreview) return; // Don't create animations for preview buildings
+		
+		// Create tweens for smooth animations
+		_selectionTween = CreateTween();
+		_rangeTween = CreateTween();
+		
+		GD.Print($"{LogPrefix} {Name} animations created");
+	}
+	
+	private void ShowRangeAnimated()
+	{
+		if (_rangeCircle != null && _rangeTween != null)
+		{
+			_rangeCircle.Visible = true;
+			_rangeCircle.DefaultColor = new Color(0.2f, 0.8f, 0.2f, 0.0f);
+			
+			_rangeTween.Kill();
+			_rangeTween = CreateTween();
+			_rangeTween.TweenProperty(_rangeCircle, "default_color", new Color(0.2f, 0.8f, 0.2f, 0.6f), 0.3f);
+			_showingRange = true;
+		}
+	}
+	
+	private void HideRangeAnimated()
+	{
+		if (_rangeCircle != null && _rangeTween != null)
+		{
+			_rangeTween.Kill();
+			_rangeTween = CreateTween();
+			_rangeTween.TweenProperty(_rangeCircle, "default_color", new Color(0.2f, 0.8f, 0.2f, 0.0f), 0.2f);
+			_rangeTween.TweenCallback(Callable.From(() => { _rangeCircle.Visible = false; _showingRange = false; }));
+		}
+	}
+	
+	public void UpdateUpgradeVisuals()
+	{
+		if (IsPreview || _upgradeLevelLabel == null || _upgradeStars == null) return;
+		
+		if (UpgradeLevel > 0)
+		{
+			// Show upgrade level label
+			_upgradeLevelLabel.Text = $"Lv.{UpgradeLevel + 1}"; // Level 1 = UpgradeLevel 0
+			_upgradeLevelLabel.Visible = true;
+			
+			// Clear existing stars
+			foreach (Node child in _upgradeStars.GetChildren())
+			{
+				child.QueueFree();
+			}
+			
+			// Create star indicators
+			for (int i = 0; i < UpgradeLevel; i++)
+			{
+				var star = new Label();
+				star.Text = "⭐";
+				star.Position = new Vector2(i * 8, 0);
+				star.AddThemeFontSizeOverride("font_size", 8);
+				_upgradeStars.AddChild(star);
+			}
+			
+			_upgradeStars.Visible = true;
+			
+			// Apply upgrade color tint
+			ApplyUpgradeColorTint();
+		}
+		else
+		{
+			// Hide upgrade visuals for level 0
+			_upgradeLevelLabel.Visible = false;
+			_upgradeStars.Visible = false;
+			
+			// Remove upgrade color tint
+			Modulate = _originalModulate;
+		}
+		
+		GD.Print($"{LogPrefix} {Name} upgrade visuals updated for level {UpgradeLevel}");
+	}
+	
+	private void ApplyUpgradeColorTint()
+	{
+		// Apply subtle color tint based on upgrade level
+		Color upgradeTint = UpgradeLevel switch
+		{
+			1 => new Color(1.1f, 1.0f, 1.0f, 1.0f), // Slightly more red
+			2 => new Color(1.0f, 1.1f, 1.0f, 1.0f), // Slightly more green
+			3 => new Color(1.0f, 1.0f, 1.1f, 1.0f), // Slightly more blue
+			_ => new Color(1.2f, 1.2f, 1.0f, 1.0f)  // Golden tint for higher levels
+		};
+		
+		// Only apply if not selected (selection has its own modulation)
+		if (!IsSelected)
+		{
+			Modulate = upgradeTint;
+		}
 	}
 }

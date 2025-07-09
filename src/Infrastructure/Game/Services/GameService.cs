@@ -59,6 +59,34 @@ public class GameService
         UpdateHudMoney();
         GD.Print($"Added {amount} money. Total: {Money}");
     }
+    
+    public bool CanAffordUpgrade(int cost)
+    {
+        return Money >= cost;
+    }
+    
+    public bool SpendMoneyOnUpgrade(int cost, string towerName)
+    {
+        if (Money >= cost)
+        {
+            Money -= cost;
+            UpdateHudMoney();
+            GD.Print($"💰 [UPGRADE] Spent ${cost} to upgrade {towerName}. Remaining: ${Money}");
+            return true;
+        }
+        else
+        {
+            GD.Print($"💰 [UPGRADE] Cannot afford upgrade for {towerName}. Need ${cost}, have ${Money}");
+            return false;
+        }
+    }
+    
+    public void ReceiveMoneyFromSale(int amount, string towerName)
+    {
+        Money += amount;
+        UpdateHudMoney();
+        GD.Print($"💰 [SELL] Received ${amount} from selling {towerName}. Total: ${Money}");
+    }
 
     public void OnEnemyReachedEnd()
     {

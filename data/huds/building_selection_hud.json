@@ -1,10 +1,10 @@
 {
   "layout": {
     "max_buildings": 9,
-    "square_size": 48,
-    "spacing_between_squares": 8,
-    "bottom_margin": 20,
-    "border_width": 2
+    "square_size": 24,
+    "spacing_between_squares": 4,
+    "bottom_margin": 10,
+    "border_width": 1
   },
   "styling": {
     "default_border_color": "#444444",
@@ -12,7 +12,7 @@
     "hover_border_color": "#FFFF00",
     "background_color": "#000000AA",
     "number_text_color": "#FFFFFF",
-    "number_font_size": 14
+    "number_font_size": 10
   },
   "audio": {
     "select_sound_path": "res://assets/audio/towers/tower_select.mp3",

@@ -219,6 +219,12 @@ public partial class Main : Node
 		// DEBUG: Wave jump shortcuts
 		HandleDebugInput(@event);
 	}
+	
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		// Handle click outside to deselect buildings - only if not handled by buildings
+		HandleClickOutsideBuildings(@event);
+	}
 
 	private void UpdateInventoryDisplay()
 	{
@@ -324,6 +330,22 @@ public partial class Main : Node
 		AnnounceDebugShortcuts();
 	}
 
+	// Handle keyboard shortcuts (both debug and game features)
+	private void HandleClickOutsideBuildings(InputEvent @event)
+	{
+		// Handle mouse clicks to deselect buildings when clicking outside
+		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
+		{
+			// Get mouse position in global coordinates
+			Vector2 globalMousePos = GetViewport().GetMousePosition();
+			GD.Print($"🎯 [MAIN] Handling unhandled click at {globalMousePos}");
+			
+			// Always handle click outside - the BuildingSelectionManager will decide what to do
+			GD.Print("🎯 [MAIN] Calling HandleClickOutside");
+			BuildingSelectionManager.Instance.HandleClickOutside(globalMousePos);
+		}
+	}
+	
 	// Handle keyboard shortcuts (both debug and game features)
 	private void HandleDebugInput(InputEvent @event)
 	{

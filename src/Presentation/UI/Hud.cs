@@ -50,6 +50,9 @@ public partial class Hud : CanvasLayer
 		RangeLabel ??= GetNodeOrNull<Label>("TowerStatsPanel/VBoxContainer/RangeLabel");
 		FireRateLabel ??= GetNodeOrNull<Label>("TowerStatsPanel/VBoxContainer/FireRateLabel");
 		
+		// Initialize BuildingUpgradeHud connection
+		InitializeBuildingUpgradeHud();
+		
 		LogNodeStatus();
 	}
 
@@ -84,7 +87,7 @@ public partial class Hud : CanvasLayer
 
 	private void SetDefaultLabels()
 	{
-		if (MoneyLabel != null) MoneyLabel.Text = "Money: $0";
+		if (MoneyLabel != null) MoneyLabel.Text = "⚡$0";
 		if (LivesLabel != null) LivesLabel.Text = "Lives: 0";
 		if (WaveLabel != null) WaveLabel.Text = "Wave: 0/?";
 	}
@@ -128,7 +131,7 @@ public partial class Hud : CanvasLayer
 	public void UpdateMoney(int amount)
 	{
 		if (!ValidateComponent(MoneyLabel, "MoneyLabel")) return;
-		MoneyLabel!.Text = $"Money: ${amount}";
+		MoneyLabel!.Text = $"⚡${amount}";
 	}
 
 	public void UpdateLives(int lives)
@@ -238,5 +241,26 @@ public partial class Hud : CanvasLayer
 	{
 		GD.Print($"{LogPrefix} Skip button pressed - starting next wave");
 		WaveManager.Instance?.StartNextWave();
+	}
+	
+	private void InitializeBuildingUpgradeHud()
+	{
+		try
+		{
+			var buildingUpgradeHud = GetNodeOrNull<BuildingUpgradeHud>("BuildingUpgradeHud");
+			if (buildingUpgradeHud != null)
+			{
+				BuildingSelectionManager.Instance.InitializeBuildingUpgradeHud(buildingUpgradeHud);
+				GD.Print($"{LogPrefix} BuildingUpgradeHud connected to BuildingSelectionManager");
+			}
+			else
+			{
+				GD.PrintErr($"{LogPrefix} BuildingUpgradeHud not found in scene");
+			}
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"{LogPrefix} Error initializing BuildingUpgradeHud: {ex.Message}");
+		}
 	}
 }

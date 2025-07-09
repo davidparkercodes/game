@@ -1,0 +1,184 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://src/Presentation/UI/BuildingUpgradeHud.cs" id="1_upgrade_hud"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(1, 0.4, 0.8, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2"]
+bg_color = Color(0.196, 0.157, 0.243, 1)
+
+[node name="BuildingUpgradeHud" type="Control"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 280.0
+visible = false
+script = ExtResource("1_upgrade_hud")
+
+[node name="MainPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+
+[node name="TowerNameLabel" type="Label" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "Tower Name"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="CurrentStatsTitle" type="Label" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Stats"
+horizontal_alignment = 1
+
+[node name="CurrentStatsContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="CostContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/CurrentStatsContainer"]
+layout_mode = 2
+
+[node name="CostLabel" type="Label" parent="MainPanel/VBoxContainer/CurrentStatsContainer/CostContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(90, 0)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "Cost:"
+horizontal_alignment = 0
+
+[node name="CostValue" type="RichTextLabel" parent="MainPanel/VBoxContainer/CurrentStatsContainer/CostContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+bbcode_enabled = true
+text = "[color=teal]⚡50[/color] [color=white]+[/color] [color=#ff66cc]⚡25[/color]"
+fit_content = true
+auto_scroll_to_bottom_on_update = false
+
+[node name="DamageContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/CurrentStatsContainer"]
+layout_mode = 2
+
+[node name="DamageLabel" type="Label" parent="MainPanel/VBoxContainer/CurrentStatsContainer/DamageContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(90, 0)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "Damage:"
+horizontal_alignment = 0
+
+[node name="DamageValue" type="RichTextLabel" parent="MainPanel/VBoxContainer/CurrentStatsContainer/DamageContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+bbcode_enabled = true
+text = "[color=teal]25[/color] [color=white]→[/color] [color=#ff66cc]38[/color]"
+fit_content = true
+auto_scroll_to_bottom_on_update = false
+
+[node name="RangeContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/CurrentStatsContainer"]
+layout_mode = 2
+
+[node name="RangeLabel" type="Label" parent="MainPanel/VBoxContainer/CurrentStatsContainer/RangeContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(90, 0)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "Range:"
+horizontal_alignment = 0
+
+[node name="RangeValue" type="RichTextLabel" parent="MainPanel/VBoxContainer/CurrentStatsContainer/RangeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+bbcode_enabled = true
+text = "[color=teal]100[/color] [color=white]→[/color] [color=#ff66cc]150[/color]"
+fit_content = true
+auto_scroll_to_bottom_on_update = false
+
+[node name="AttackSpeedContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/CurrentStatsContainer"]
+layout_mode = 2
+
+[node name="AttackSpeedLabel" type="Label" parent="MainPanel/VBoxContainer/CurrentStatsContainer/AttackSpeedContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+custom_minimum_size = Vector2(90, 0)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "Attack Speed:"
+horizontal_alignment = 0
+
+[node name="AttackSpeedValue" type="RichTextLabel" parent="MainPanel/VBoxContainer/CurrentStatsContainer/AttackSpeedContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+bbcode_enabled = true
+text = "[color=teal]30[/color] [color=white]→[/color] [color=#ff66cc]45[/color]"
+fit_content = true
+auto_scroll_to_bottom_on_update = false
+
+[node name="UpgradeButton" type="Button" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color_hover = Color(1, 1, 1, 1)
+theme_override_colors/font_color_pressed = Color(0.8, 0.8, 0.8, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+theme_override_styles/hover = SubResource("StyleBoxFlat_1")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_1")
+theme_override_font_sizes/font_size = 14
+mouse_default_cursor_shape = 2
+text = "Upgrade (⚡25)"
+
+[node name="HSeparator3" type="HSeparator" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="SellButton" type="Button" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color_hover = Color(1, 1, 1, 1)
+theme_override_colors/font_color_pressed = Color(0.8, 0.8, 0.8, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_2")
+theme_override_styles/hover = SubResource("StyleBoxFlat_2")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_2")
+theme_override_font_sizes/font_size = 14
+mouse_default_cursor_shape = 2
+text = "Sell Tower (⚡38)"
+
+[node name="CloseButton" type="Button" parent="MainPanel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -30.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = 30.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color_hover = Color(1, 0.4, 0.4, 1)
+theme_override_colors/font_color_pressed = Color(0.8, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 16
+mouse_default_cursor_shape = 2
+text = "✕"

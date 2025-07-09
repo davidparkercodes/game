@@ -4,6 +4,7 @@ using Game.Presentation.Systems;
 using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Audio.Services;
 using Game.Domain.Audio.Enums;
+using Game.Presentation.UI;
 using PresentationValidator = Game.Presentation.Systems.BuildingZoneValidator;
 
 namespace Game.Presentation.Player;
@@ -57,6 +58,9 @@ public class PlayerBuildingBuilder
 			GD.Print($"🔄 Switched to {buildingScene.ResourcePath.GetFile().GetBaseName()} building");
 			return;
 		}
+		
+		// Clear any existing building selection when entering build mode
+		BuildingSelectionManager.Instance.ClearSelection();
 		
 		_isInBuildMode = true;
 		

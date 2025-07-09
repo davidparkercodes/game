@@ -83,7 +83,7 @@ public class BuildingRegistryTests
         BuildingRegistry.ResetInstance();
         var registry = BuildingRegistry.Instance;
         
-        var action = () => registry.RegisterBuilding(null);
+        var action = () => registry.RegisterBuilding(null!);
         
         action.Should().NotThrow();
     }
@@ -94,7 +94,7 @@ public class BuildingRegistryTests
         BuildingRegistry.ResetInstance();
         var registry = BuildingRegistry.Instance;
         
-        var action = () => registry.UnregisterBuilding(null);
+        var action = () => registry.UnregisterBuilding(null!);
         
         action.Should().NotThrow();
     }

@@ -16,10 +16,10 @@ anchor_left = 1.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 0.0
-offset_left = -200.0
-offset_top = 320.0
+offset_left = -100.0
+offset_top = 190.0
 offset_right = -10.0
-offset_bottom = 520.0
+offset_bottom = 270.0
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_speed")
 
@@ -28,47 +28,47 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 20.0
-offset_right = -10.0
-offset_bottom = -20.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
 theme_override_constants/separation = 5
 
 [node name="SpeedLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 0, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 10
 text = "Speed Control"
 horizontal_alignment = 1
 
 [node name="Speed1xButton" type="Button" parent="Panel/VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(50, 25)
+custom_minimum_size = Vector2(30, 16)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color_hover = Color(1, 1, 0, 1)
 theme_override_colors/font_color_pressed = Color(0, 1, 0, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
 text = "1x"
 toggle_mode = true
 button_pressed = true
 
 [node name="Speed2xButton" type="Button" parent="Panel/VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(50, 25)
+custom_minimum_size = Vector2(30, 16)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color_hover = Color(1, 1, 0, 1)
 theme_override_colors/font_color_pressed = Color(0, 1, 0, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
 text = "2x"
 toggle_mode = true
 
 [node name="Speed4xButton" type="Button" parent="Panel/VBoxContainer"]
 layout_mode = 2
-custom_minimum_size = Vector2(50, 25)
+custom_minimum_size = Vector2(30, 16)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color_hover = Color(1, 1, 0, 1)
 theme_override_colors/font_color_pressed = Color(0, 1, 0, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
 text = "4x"
 toggle_mode = true
 

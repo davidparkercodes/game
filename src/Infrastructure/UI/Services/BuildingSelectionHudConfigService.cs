@@ -31,7 +31,38 @@ public class BuildingSelectionHudConfigService : IBuildingSelectionHudConfigServ
             var config = GetConfiguration();
             return config.Layout.SquareSize > 0 && 
                    config.Layout.MaxBuildings > 0 && 
-                   config.Buildings.Count > 0;
+                   config.Buildings.Count > 0 &&
+                   IsAudioConfigurationValid(config.Audio);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private bool IsAudioConfigurationValid(HudAudio audio)
+    {
+        if (audio == null) return false;
+        
+        // If audio is disabled, we don't need to validate paths
+        if (!audio.Enabled) return true;
+        
+        // If enabled, validate that audio files exist
+        return DoesAudioFileExist(audio.SelectSoundPath) &&
+               DoesAudioFileExist(audio.DeselectSoundPath);
+    }
+
+    private bool DoesAudioFileExist(string audioPath)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(audioPath)) return false;
+            
+            if (IsInGodotRuntime())
+            {
+                return Godot.FileAccess.FileExists(audioPath);
+            }
+            return false;
         }
         catch
         {
@@ -117,10 +148,10 @@ public class BuildingSelectionHudConfigService : IBuildingSelectionHudConfigServ
             Layout = new HudLayout
             {
                 MaxBuildings = 4,
-                SquareSize = 48,
-                SpacingBetweenSquares = 8,
-                BottomMargin = 20,
-                BorderWidth = 2
+                SquareSize = 24,
+                SpacingBetweenSquares = 4,
+                BottomMargin = 10,
+                BorderWidth = 1
             },
             Styling = new HudStyling
             {
@@ -129,7 +160,13 @@ public class BuildingSelectionHudConfigService : IBuildingSelectionHudConfigServ
                 HoverBorderColor = "#FFFF00",
                 BackgroundColor = "#000000AA",
                 NumberTextColor = "#FFFFFF",
-                NumberFontSize = 14
+                NumberFontSize = 10
+            },
+            Audio = new HudAudio
+            {
+                SelectSoundPath = "res://assets/audio/towers/tower_select.mp3",
+                DeselectSoundPath = "res://assets/audio/towers/tower_deselect.mp3",
+                Enabled = true
             }
         };
     }

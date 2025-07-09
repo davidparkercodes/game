@@ -200,4 +200,60 @@ public class StatsManagerService
         LoadEnemyStats();
         LoadBuildingStats();
     }
+    
+    public (int damage, float range, float attackSpeed) GetUpgradeStats(string towerType, int currentLevel)
+    {
+        if (!_buildingStats.TryGetValue(towerType, out var stats))
+        {
+            GD.PrintErr($"⚠️ StatsManagerService: Tower type '{towerType}' not found for upgrade stats");
+            return (0, 0, 0);
+        }
+        
+        // Calculate upgrade multiplier for the next level
+        float upgradeMultiplier = GetUpgradeMultiplier(towerType);
+        float totalMultiplier = 1.0f + (upgradeMultiplier - 1.0f) * (currentLevel + 1);
+        
+        return (
+            damage: (int)(stats.damage * totalMultiplier),
+            range: stats.range * totalMultiplier,
+            attackSpeed: stats.attack_speed * totalMultiplier
+        );
+    }
+    
+    public int GetUpgradeCost(string towerType, int currentLevel)
+    {
+        if (!_buildingStats.TryGetValue(towerType, out var stats))
+        {
+            GD.PrintErr($"⚠️ StatsManagerService: Tower type '{towerType}' not found for upgrade cost");
+            return 0;
+        }
+        
+        // Calculate upgrade cost based on base upgrade cost and current level
+        // Each level increases cost by 50% (configurable)
+        int baseCost = stats.upgrade_cost;
+        float multiplier = 1.0f + (currentLevel * 0.5f);
+        
+        return (int)(baseCost * multiplier);
+    }
+    
+    public float GetUpgradeMultiplier(string towerType)
+    {
+        // TODO: Load from configuration when upgrade_multiplier is added to BuildingStatsData
+        // For now, use default multiplier of 1.5 (50% improvement)
+        return 1.5f;
+    }
+    
+    public float GetSellPercentage(string towerType)
+    {
+        // TODO: Load from configuration when sell_percentage is added to BuildingStatsData
+        // For now, use default sell percentage of 75%
+        return 0.75f;
+    }
+    
+    public int GetMaxUpgradeLevel(string towerType)
+    {
+        // TODO: Load from configuration when max_upgrade_level is added to BuildingStatsData
+        // For now, use default max level of 3
+        return 3;
+    }
 }
