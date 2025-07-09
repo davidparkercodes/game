@@ -3,6 +3,8 @@ using Game.Presentation.Buildings;
 using Game.Infrastructure.Stats.Services;
 using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Economy.Services;
+using Game.Infrastructure.Audio.Services;
+using Game.Domain.Audio.Enums;
 using Game.Presentation.UI;
 using Godot;
 
@@ -49,6 +51,9 @@ public class TowerSellService : ITowerSellService
             
             // Add money to player
             GameService.Instance?.ReceiveMoneyFromSale(sellValue, buildingName);
+            
+            // Play sell sound
+            PlaySellSound();
             
             // Remove building from BuildingRegistry
             BuildingRegistry.Instance.UnregisterBuilding(building);
@@ -136,6 +141,19 @@ public class TowerSellService : ITowerSellService
         {
             GD.PrintErr($"{LogPrefix} Error calculating upgrade cost for level {level}: {ex.Message}");
             return 0;
+        }
+    }
+    
+    private void PlaySellSound()
+    {
+        if (SoundManagerService.Instance != null)
+        {
+            SoundManagerService.Instance.PlaySound("sell_building", SoundCategory.SFX);
+            GD.Print($"{LogPrefix} Played sell sound effect");
+        }
+        else
+        {
+            GD.PrintErr($"{LogPrefix} SoundManagerService not available for sell sound");
         }
     }
     

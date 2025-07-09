@@ -134,3 +134,4 @@ The audio system uses a JSON configuration file (`data/audio/sound_config.json`)
 | `basic_bullet_impact` | `projectiles/basic_bullet_impact.mp3` | Basic bullet hitting enemies |
 | `sniper_bullet_impact` | `projectiles/sniper_bullet_impact.mp3` | Sniper bullet hitting enemies |
 | `round_start` | `game/round_start.mp3` | When defend phase begins |
+| `error` | `game/error.mp3` | Error sound when user cannot afford to upgrade building or place a building in a spot |

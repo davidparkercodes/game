@@ -15,7 +15,7 @@ EnemyType = "boss_enemy"
 modulate = Color(0.8, 0.2, 0.2, 1)
 texture = ExtResource("2_gonmn")
 region_enabled = true
-region_rect = Rect2(0, 16, 16, 16)
+region_rect = Rect2(48, 0, 16, 16)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false

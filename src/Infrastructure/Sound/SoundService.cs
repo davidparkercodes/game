@@ -51,10 +51,12 @@ public class SoundService : ISoundService
 
     public void PlaySound(string soundKey, SoundCategory category = SoundCategory.SFX, float volumeDb = 0.0f)
     {
+        GD.Print($"🔊 PlaySound called: {soundKey}, category: {category}, volumeDb: {volumeDb}");
         
         if (!_sounds.ContainsKey(soundKey))
         {
             GD.PrintErr($"❌ Sound not found: {soundKey}");
+            GD.PrintErr($"Available sounds: {string.Join(", ", _sounds.Keys)}");
             return;
         }
         

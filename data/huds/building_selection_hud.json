@@ -12,7 +12,7 @@
     "hover_border_color": "#FFFF00",
     "background_color": "#000000AA",
     "number_text_color": "#FFFFFF",
-    "number_font_size": 10
+    "number_font_size": 6
   },
   "audio": {
     "select_sound_path": "res://assets/audio/towers/tower_select.mp3",

@@ -36,6 +36,9 @@ public partial class Enemy : Area2D
 		
 		ApplyVisualScale();
 		
+		// Update sprite region based on enemy type
+		UpdateSpriteRegion();
+		
 		// Initialize health bar if it exists
 		InitializeHealthBar();
 		
@@ -126,6 +129,7 @@ public partial class Enemy : Area2D
 	{
 		EnemyType = enemyType;
 		LoadStatsFromConfig();
+		UpdateSpriteRegion();
 	}
 	
 	public EnemyStatsData GetStats()
@@ -207,7 +211,47 @@ public partial class Enemy : Area2D
 		}
 		else
 		{
-			GD.PrintErr("⚠️ SoundManagerService not available to stop boss music");
+		GD.Print($"⚠️ StatsManagerService not available to stop boss music");
 		}
+	}
+	
+	private void UpdateSpriteRegion()
+	{
+		var sprite = GetNodeOrNull<Sprite2D>("Sprite2D");
+		if (sprite == null)
+		{
+			GD.PrintErr($"⚠️ Sprite2D not found for enemy {Name}");
+			return;
+		}
+		
+		// Set sprite region based on enemy type
+		// Sprite sheet: 64x128 with 16x16 tiles
+		Rect2 region = EnemyType switch
+		{
+			Domain.Entities.EnemyConfigKeys.BasicEnemy => new Rect2(32, 0, 16, 16),    // (2,0)
+			Domain.Entities.EnemyConfigKeys.TankEnemy => new Rect2(32, 16, 16, 16),    // (2,1)
+			Domain.Entities.EnemyConfigKeys.FastEnemy => new Rect2(32, 32, 16, 16),    // (2,2)
+			Domain.Entities.EnemyConfigKeys.EliteEnemy => new Rect2(32, 48, 16, 16),   // (2,3)
+			Domain.Entities.EnemyConfigKeys.BossEnemy => new Rect2(48, 0, 16, 16),     // (3,0)
+			_ => new Rect2(32, 0, 16, 16) // Default to basic enemy
+		};
+		
+		sprite.RegionEnabled = true;
+		sprite.RegionRect = region;
+		
+		// Apply color modulation based on enemy type
+		Color enemyColor = EnemyType switch
+		{
+			Domain.Entities.EnemyConfigKeys.BasicEnemy => new Color(1.0f, 1.0f, 1.0f, 1.0f),     // White (original)
+			Domain.Entities.EnemyConfigKeys.TankEnemy => new Color(0.4f, 0.4f, 0.4f, 1.0f),      // Dark gray (armored)
+			Domain.Entities.EnemyConfigKeys.FastEnemy => new Color(0.2f, 1.0f, 0.2f, 1.0f),      // Bright green (fast)
+			Domain.Entities.EnemyConfigKeys.EliteEnemy => new Color(1.0f, 0.8f, 0.2f, 1.0f),     // Gold (elite)
+			Domain.Entities.EnemyConfigKeys.BossEnemy => new Color(0.8f, 0.2f, 0.2f, 1.0f),      // Red (boss)
+			_ => new Color(1.0f, 1.0f, 1.0f, 1.0f) // Default to white
+		};
+		
+		sprite.Modulate = enemyColor;
+		
+		GD.Print($"🎨 Updated sprite region for {EnemyType} to {region} with color {enemyColor}");
 	}
 }

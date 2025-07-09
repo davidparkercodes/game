@@ -11,6 +11,8 @@ using Game.Application.Game.Services;
 using Game.Infrastructure.Map.Services;
 using Game.Infrastructure.Map.Extensions;
 using Game.Presentation.Buildings;
+using Game.Domain.Audio.Enums;
+using Game.Domain.Audio.Services;
 using static Game.Di.DiConfiguration;
 
 namespace Game.Presentation.Core;
@@ -44,9 +46,12 @@ public partial class Main : Node
 		_diContainer = new DiContainer();
 		RegisterServices(_diContainer);
 		
+		// Register Godot singletons (including SoundManagerService)
+		RegisterSingletonsFromGodot(_diContainer);
+		
 		_mediator = _diContainer.Resolve<IMediator>();
 		
-		GD.Print("🔧 DI Container initialized with mediator");
+		GD.Print("🔧 DI Container initialized with mediator and singletons");
 
 		// Perform startup validation
 		PerformStartupValidation();
@@ -326,6 +331,9 @@ public partial class Main : Node
 		WaveManager.Instance?.Reset(); // This will set up the initial wave button state
 		GD.Print("🌊 Wave Manager initialized");
 		
+		// Start game background music
+		StartGameMusic();
+		
 		// Announce debug shortcuts
 		AnnounceDebugShortcuts();
 	}
@@ -404,6 +412,34 @@ public partial class Main : Node
 		GD.Print("⏭️ Shift+6: Jump to next wave");
 		GD.Print("⚡ Shift+7: Complete current wave instantly");
 		GD.Print("🎮 ====================================");
+	}
+
+	private void StartGameMusic()
+	{
+		try
+		{
+			GD.Print("🎵 Starting game music...");
+			
+			// Get sound service from DI container
+			var soundService = _diContainer.Resolve<ISoundService>();
+			if (soundService != null)
+			{
+				GD.Print($"🎵 Sound service found: {soundService.GetType().Name}");
+				
+				// Start playing background music
+				soundService.PlaySound("game_music", SoundCategory.Music);
+				GD.Print("🎵 Background music playback requested");
+			}
+			else
+			{
+				GD.PrintErr("❌ SoundService not found in DI container");
+			}
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"❌ Failed to start game music: {ex.Message}");
+			GD.PrintErr($"Stack trace: {ex.StackTrace}");
+		}
 	}
 
 	public DiContainer GetDiContainer() => _diContainer;

@@ -18,6 +18,7 @@ public class SoundServiceAdapter : ISoundService
 
     public void PlaySound(string soundKey, SoundCategory category = SoundCategory.SFX, float volumeDb = 0.0f)
     {
+        GD.Print($"🔊 SoundServiceAdapter.PlaySound called: {soundKey}, category: {category}");
         _soundManagerService.PlaySound(soundKey, category, volumeDb);
     }
 

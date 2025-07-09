@@ -3,6 +3,7 @@ using Game.Domain.Enemies.Services;
 using Game.Infrastructure.Game.Services;
 using Game.Infrastructure.Rounds.Services;
 using Game.Infrastructure.Audio.Services;
+using Game.Domain.Audio.Enums;
 using Game.Presentation.UI;
 using Game.Presentation.Enemies;
 
@@ -417,8 +418,17 @@ public class WaveManager
         GD.Print("🏆 VICTORY! All enemies defeated!");
         GD.Print("🎉 The kingdom is safe! Well done, commander!");
         
-        // Could add victory sound/music here if we had one
-        // For now, just log the celebration
+        // Play victory music
+        if (SoundManagerService.Instance != null)
+        {
+            SoundManagerService.Instance.PlaySound("victory_music", SoundCategory.Music);
+            GD.Print("🎵 Playing victory music!");
+        }
+        else
+        {
+            GD.PrintErr("⚠️ SoundManagerService not available for victory music");
+        }
+        
         GD.Print("🎆 Victory celebration complete!");
     }
     

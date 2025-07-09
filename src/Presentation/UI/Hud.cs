@@ -11,13 +11,13 @@ public partial class Hud : CanvasLayer
 	[Export] public Label? LivesLabel;
 	[Export] public Label? WaveLabel;
 	[Export] public Button? SkipButton;
-	
+
 	[Export] public Panel? TowerStatsPanel;
 	[Export] public Label? TowerNameLabel;
-	[Export] public Label? CostLabel;
-	[Export] public Label? DamageLabel;
-	[Export] public Label? RangeLabel;
-	[Export] public Label? FireRateLabel;
+	[Export] public RichTextLabel? CostLabel;
+	[Export] public RichTextLabel? DamageLabel;
+	[Export] public RichTextLabel? RangeLabel;
+	[Export] public RichTextLabel? FireRateLabel;
 
 	private bool _isInitialized = false;
 	private const string LogPrefix = "🎨 [HUD]";
@@ -25,14 +25,14 @@ public partial class Hud : CanvasLayer
 	public override void _Ready()
 	{
 		GD.Print($"{LogPrefix} Initializing HUD components...");
-		
+
 		InitializeNodeReferences();
 		InitializeEventConnections();
 		SetupInitialState();
-		
+
 		_isInitialized = true;
 		GD.Print($"{LogPrefix} HUD initialization complete!");
-		
+
 		CallDeferred(nameof(PerformStartupValidation));
 	}
 
@@ -40,19 +40,19 @@ public partial class Hud : CanvasLayer
 	{
 		MoneyLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/MoneyLabel");
 		LivesLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/LivesLabel");
-		WaveLabel  ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/WaveLabel");
+		WaveLabel ??= GetNodeOrNull<Label>("SidebarPanel/VBoxContainer/WaveLabel");
 		SkipButton ??= GetNodeOrNull<Button>("SidebarPanel/VBoxContainer/SkipButton");
-		
+
 		TowerStatsPanel ??= GetNodeOrNull<Panel>("TowerStatsPanel");
 		TowerNameLabel ??= GetNodeOrNull<Label>("TowerStatsPanel/VBoxContainer/TowerNameLabel");
-		CostLabel ??= GetNodeOrNull<Label>("TowerStatsPanel/VBoxContainer/CostLabel");
-		DamageLabel ??= GetNodeOrNull<Label>("TowerStatsPanel/VBoxContainer/DamageLabel");
-		RangeLabel ??= GetNodeOrNull<Label>("TowerStatsPanel/VBoxContainer/RangeLabel");
-		FireRateLabel ??= GetNodeOrNull<Label>("TowerStatsPanel/VBoxContainer/FireRateLabel");
-		
+		CostLabel ??= GetNodeOrNull<RichTextLabel>("TowerStatsPanel/VBoxContainer/CostLabel");
+		DamageLabel ??= GetNodeOrNull<RichTextLabel>("TowerStatsPanel/VBoxContainer/DamageLabel");
+		RangeLabel ??= GetNodeOrNull<RichTextLabel>("TowerStatsPanel/VBoxContainer/RangeLabel");
+		FireRateLabel ??= GetNodeOrNull<RichTextLabel>("TowerStatsPanel/VBoxContainer/FireRateLabel");
+
 		// Initialize BuildingUpgradeHud connection
 		InitializeBuildingUpgradeHud();
-		
+
 		LogNodeStatus();
 	}
 
@@ -75,13 +75,13 @@ public partial class Hud : CanvasLayer
 		{
 			TowerStatsPanel.Visible = false;
 		}
-		
+
 		if (SkipButton != null)
 		{
 			SkipButton.Visible = true;
 			SkipButton.Text = "⏭️ Start Wave";
 		}
-		
+
 		SetDefaultLabels();
 	}
 
@@ -101,17 +101,17 @@ public partial class Hud : CanvasLayer
 		GD.Print($"  ⏭️ SkipButton: {(SkipButton != null ? "✅" : "❌")}");
 		GD.Print($"  🏗️ TowerStatsPanel: {(TowerStatsPanel != null ? "✅" : "❌")}");
 	}
-	
+
 	private void PerformStartupValidation()
 	{
 		var missingComponents = new List<string>();
-		
+
 		if (MoneyLabel == null) missingComponents.Add("MoneyLabel");
 		if (LivesLabel == null) missingComponents.Add("LivesLabel");
 		if (WaveLabel == null) missingComponents.Add("WaveLabel");
 		if (SkipButton == null) missingComponents.Add("SkipButton");
 		if (TowerStatsPanel == null) missingComponents.Add("TowerStatsPanel");
-		
+
 		if (missingComponents.Count > 0)
 		{
 			GD.PrintErr($"{LogPrefix} Missing components: {string.Join(", ", missingComponents)}");
@@ -121,7 +121,7 @@ public partial class Hud : CanvasLayer
 		{
 			GD.Print($"{LogPrefix} All components found and validated successfully!");
 		}
-		
+
 		if (SkipButton != null)
 		{
 			GD.Print($"{LogPrefix} Button validation - Visible: {SkipButton.Visible}, Text: '{SkipButton.Text}'");
@@ -157,19 +157,19 @@ public partial class Hud : CanvasLayer
 		}
 		return true;
 	}
-	
+
 	public void ShowTowerStats(string towerName, int cost, int damage, float range, float attackSpeed)
 	{
 		if (!ValidateComponent(TowerStatsPanel, "TowerStatsPanel")) return;
-		
+
 		TowerStatsPanel!.Visible = true;
-		
+
 		if (TowerNameLabel != null) TowerNameLabel.Text = towerName;
-		if (CostLabel != null) CostLabel.Text = $"Cost: ${cost}";
-		if (DamageLabel != null) DamageLabel.Text = $"Damage: {damage}";
-		if (RangeLabel != null) RangeLabel.Text = $"Range: {range:F0}";
-		if (FireRateLabel != null) FireRateLabel.Text = $"Attack Speed: {attackSpeed:F0}";
-		
+		if (CostLabel != null) CostLabel.Text = $"[font_size=10][color=white]Cost:[/color] [color=#4eadc7]${cost}[/color][/font_size]";
+		if (DamageLabel != null) DamageLabel.Text = $"[font_size=10][color=white]Damage:[/color] [color=#4eadc7]{damage}[/color][/font_size]";
+		if (RangeLabel != null) RangeLabel.Text = $"[font_size=10][color=white]Range:[/color] [color=#4eadc7]{range:F0}[/color][/font_size]";
+		if (FireRateLabel != null) FireRateLabel.Text = $"[font_size=10][color=white]Attack Speed:[/color] [color=#4eadc7]{attackSpeed:F0}[/color][/font_size]";
+
 		GD.Print($"{LogPrefix} Showing tower stats for: {towerName}");
 	}
 
@@ -181,19 +181,19 @@ public partial class Hud : CanvasLayer
 			GD.Print($"{LogPrefix} Tower stats panel hidden");
 		}
 	}
-	
+
 	public void ShowBuildingStats(string buildingName, int cost, int damage, float range, float attackSpeed)
 	{
 		if (!ValidateComponent(TowerStatsPanel, "TowerStatsPanel")) return;
-		
+
 		TowerStatsPanel!.Visible = true;
-		
+
 		if (TowerNameLabel != null) TowerNameLabel.Text = buildingName;
-		if (CostLabel != null) CostLabel.Text = $"Cost: ${cost}";
-		if (DamageLabel != null) DamageLabel.Text = $"Damage: {damage}";
-		if (RangeLabel != null) RangeLabel.Text = $"Range: {range:F0}";
-		if (FireRateLabel != null) FireRateLabel.Text = $"Attack Speed: {attackSpeed:F0}";
-		
+		if (CostLabel != null) CostLabel.Text = $"[font_size=10][color=white]Cost:[/color] [color=#4eadc7]${cost}[/color][/font_size]";
+		if (DamageLabel != null) DamageLabel.Text = $"[font_size=10][color=white]Damage:[/color] [color=#4eadc7]{damage}[/color][/font_size]";
+		if (RangeLabel != null) RangeLabel.Text = $"[font_size=10][color=white]Range:[/color] [color=#4eadc7]{range:F0}[/color][/font_size]";
+		if (FireRateLabel != null) FireRateLabel.Text = $"[font_size=10][color=white]Attack Speed:[/color] [color=#4eadc7]{attackSpeed:F0}[/color][/font_size]";
+
 		GD.Print($"{LogPrefix} Showing building stats for: {buildingName}");
 	}
 
@@ -205,7 +205,7 @@ public partial class Hud : CanvasLayer
 			GD.Print($"{LogPrefix} Building stats panel hidden");
 		}
 	}
-	
+
 	public void ShowSkipButton()
 	{
 		if (ValidateComponent(SkipButton, "SkipButton"))
@@ -214,7 +214,7 @@ public partial class Hud : CanvasLayer
 			GD.Print($"{LogPrefix} Skip button shown");
 		}
 	}
-	
+
 	public void HideSkipButton()
 	{
 		if (SkipButton != null)
@@ -223,7 +223,7 @@ public partial class Hud : CanvasLayer
 			GD.Print($"{LogPrefix} Skip button hidden");
 		}
 	}
-	
+
 	public void UpdateSkipButtonText(string newText)
 	{
 		if (ValidateComponent(SkipButton, "SkipButton"))
@@ -232,17 +232,17 @@ public partial class Hud : CanvasLayer
 			GD.Print($"{LogPrefix} Skip button text updated to: {newText}");
 		}
 	}
-	
+
 	public bool IsSkipButtonVisible => SkipButton?.Visible ?? false;
-	
+
 	public bool IsInitialized => _isInitialized;
-	
+
 	private void OnSkipButtonPressed()
 	{
 		GD.Print($"{LogPrefix} Skip button pressed - starting next wave");
 		WaveManager.Instance?.StartNextWave();
 	}
-	
+
 	private void InitializeBuildingUpgradeHud()
 	{
 		try

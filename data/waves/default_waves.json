@@ -92,7 +92,7 @@
       "description": "Elite forces spearhead a coordinated assault",
       "preWaveDelay": 2.0,
       "postWaveDelay": 4.0,
-      "bonusMoney": 75,
+      "bonusMoney": 40,
       "enemyGroups": [
         {
           "enemyType": "elite_enemy",
@@ -101,7 +101,7 @@
           "startDelay": 0.0,
           "healthMultiplier": 1.2,
           "speedMultiplier": 1.0,
-          "moneyReward": 9
+          "moneyReward": 5
         },
         {
           "enemyType": "tank_enemy",
@@ -110,7 +110,7 @@
           "startDelay": 4.0,
           "healthMultiplier": 1.3,
           "speedMultiplier": 1.1,
-          "moneyReward": 8
+          "moneyReward": 4
         },
         {
           "enemyType": "fast_enemy",
@@ -119,7 +119,7 @@
           "startDelay": 10.0,
           "healthMultiplier": 1.2,
           "speedMultiplier": 1.3,
-          "moneyReward": 7
+          "moneyReward": 3
         }
       ]
     },

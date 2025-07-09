@@ -2,6 +2,8 @@ using Game.Domain.Buildings.Services;
 using Game.Presentation.Buildings;
 using Game.Infrastructure.Stats.Services;
 using Game.Infrastructure.Game.Services;
+using Game.Infrastructure.Audio.Services;
+using Game.Domain.Audio.Enums;
 using Godot;
 
 namespace Game.Application.Buildings.Services;
@@ -98,6 +100,8 @@ public class TowerUpgradeService : ITowerUpgradeService
         if (!CanUpgrade(building))
         {
             GD.Print($"{LogPrefix} Cannot upgrade building {building.Name} - requirements not met");
+            // Play error sound when cannot upgrade building
+            PlayErrorSound();
             return false;
         }
         
@@ -107,6 +111,8 @@ public class TowerUpgradeService : ITowerUpgradeService
         if (GameService.Instance?.SpendMoneyOnUpgrade(upgradeCost, buildingName) != true)
         {
             GD.PrintErr($"{LogPrefix} Failed to spend money for upgrade");
+            // Play error sound when cannot afford upgrade
+            PlayErrorSound();
             return false;
         }
         
@@ -117,6 +123,9 @@ public class TowerUpgradeService : ITowerUpgradeService
             
             // Update building's total investment
             building.TotalInvestment += upgradeCost;
+            
+            // Play upgrade sound
+            PlayUpgradeSound();
             
             GD.Print($"{LogPrefix} Successfully upgraded {building.Name} to level {building.UpgradeLevel}");
             return true;
@@ -196,6 +205,32 @@ public class TowerUpgradeService : ITowerUpgradeService
     private bool IsAtMaxLevel(string buildingType, int currentLevel)
     {
         return currentLevel >= GetMaxUpgradeLevel(buildingType);
+    }
+    
+    private void PlayUpgradeSound()
+    {
+        if (SoundManagerService.Instance != null)
+        {
+            SoundManagerService.Instance.PlaySound("upgrade_building", SoundCategory.SFX);
+            GD.Print($"{LogPrefix} Played upgrade sound effect");
+        }
+        else
+        {
+            GD.PrintErr($"{LogPrefix} SoundManagerService not available for upgrade sound");
+        }
+    }
+    
+    private void PlayErrorSound()
+    {
+        if (SoundManagerService.Instance != null)
+        {
+            SoundManagerService.Instance.PlaySound("error", SoundCategory.SFX);
+            GD.Print($"{LogPrefix} Played error sound - cannot upgrade building");
+        }
+        else
+        {
+            GD.PrintErr($"{LogPrefix} SoundManagerService not available for error sound");
+        }
     }
     
     private string GetBuildingConfigKey(Building building)

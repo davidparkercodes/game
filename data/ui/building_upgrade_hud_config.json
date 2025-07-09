@@ -33,8 +33,8 @@
       "tower_name": 20,
       "description": 12,
       "section_title": 16,
-      "stat_label": 14,
-      "button_text": 16
+      "stat_label": 12,
+      "button_text": 14
     },
     "buttons": {
       "upgrade_button": {
@@ -119,8 +119,8 @@
   "audio": {
     "modal_open_sound": "ui_modal_open",
     "modal_close_sound": "ui_modal_close",
-    "upgrade_sound": "tower_upgrade",
-    "sell_sound": "tower_sell",
+    "upgrade_sound": "upgrade_building",
+    "sell_sound": "sell_building",
     "button_click_sound": "ui_button_click",
     "enabled": true
   },

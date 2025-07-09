@@ -25,6 +25,7 @@ public static class SoundLoader
         {
             try
             {
+                GD.Print($"🔊 Attempting to load sound: {soundData.Key} from {soundData.Value.FilePath}");
                 var audioStream = GD.Load<AudioStream>(soundData.Value.FilePath);
                 if (audioStream != null)
                 {

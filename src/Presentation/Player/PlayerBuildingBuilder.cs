@@ -96,6 +96,8 @@ public class PlayerBuildingBuilder
 	Vector2 buildPosition = _currentPreview.GetPlacementPosition();
 	if (!PresentationValidator.CanBuildAtWithLogging(buildPosition))
 	{
+		// Play error sound when cannot place building
+		PlayErrorSound();
 		return;
 	}
 		
@@ -105,12 +107,16 @@ public class PlayerBuildingBuilder
 		{
 			var existingBuilding = BuildingRegistry.Instance.GetBuildingAt(buildPosition, collisionRadius);
 			GD.Print($"🏭 Cannot place building - overlapping with existing {existingBuilding?.Name ?? "building"} at {buildPosition}");
+			// Play error sound when cannot place building due to collision
+			PlayErrorSound();
 			return;
 		}
 		
 		if (!_currentPreview.CanPlaceBuilding())
 		{
 			GD.Print("⚠️ Cannot place building at this location!");
+			// Play error sound when cannot place building
+			PlayErrorSound();
 			return;
 		}
 
@@ -125,6 +131,8 @@ public class PlayerBuildingBuilder
 		{
 			GD.Print($"💰 Not enough money! Need ${cost}, but have ${GameService.Instance.Money}");
 			_currentPreview.FlashRed();
+			// Play error sound when cannot afford building
+			PlayErrorSound();
 			return;
 		}
 
@@ -161,5 +169,17 @@ public class PlayerBuildingBuilder
 		
 		GD.Print($"🔨 Playing construction sound: {soundKey} for building {building.GetType().Name}");
 		SoundManagerService.Instance.PlaySound(soundKey, SoundCategory.SFX);
+	}
+	
+	private void PlayErrorSound()
+	{
+		if (SoundManagerService.Instance == null)
+		{
+			GD.PrintErr("⚠️ SoundManagerService not available for error sound");
+			return;
+		}
+		
+		GD.Print("❌ Playing error sound - cannot place building");
+		SoundManagerService.Instance.PlaySound("error", SoundCategory.SFX);
 	}
 }

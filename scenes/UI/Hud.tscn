@@ -74,29 +74,33 @@ theme_override_colors/font_color = Color(1, 0.8, 0, 1)
 theme_override_font_sizes/font_size = 12
 text = "Basic Tower"
 
-[node name="CostLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
+[node name="CostLabel" type="RichTextLabel" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.8, 0, 1)
-theme_override_font_sizes/font_size = 10
-text = "Cost: $10"
+theme_override_font_sizes/font_size = 6
+bbcode_enabled = true
+text = "[color=white]Cost:[/color] [color=#4eadc7]$10[/color]"
+fit_content = true
 
-[node name="DamageLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
+[node name="DamageLabel" type="RichTextLabel" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
-theme_override_font_sizes/font_size = 10
-text = "Damage: 50"
+theme_override_font_sizes/font_size = 6
+bbcode_enabled = true
+text = "[color=white]Damage:[/color] [color=#4eadc7]50[/color]"
+fit_content = true
 
-[node name="RangeLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
+[node name="RangeLabel" type="RichTextLabel" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-theme_override_font_sizes/font_size = 10
-text = "Range: 75"
+theme_override_font_sizes/font_size = 6
+bbcode_enabled = true
+text = "[color=white]Range:[/color] [color=#4eadc7]75[/color]"
+fit_content = true
 
-[node name="FireRateLabel" type="Label" parent="TowerStatsPanel/VBoxContainer"]
+[node name="FireRateLabel" type="RichTextLabel" parent="TowerStatsPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.4, 1, 1)
-theme_override_font_sizes/font_size = 10
-text = "Attack Speed: 30"
+theme_override_font_sizes/font_size = 6
+bbcode_enabled = true
+text = "[color=white]Attack Speed:[/color] [color=#4eadc7]30[/color]"
+fit_content = true
 
 [node name="BuildingSelectionHud" type="Control" parent="."]
 layout_mode = 3

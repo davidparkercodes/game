@@ -4,25 +4,25 @@
       "basic_tower_shoot": {
         "file": "res://assets/audio/towers/basic_tower_shoot.mp3",
         "category": "SFX",
-        "volume": -2.0,
+        "volume": 1.0,
         "description": "Basic tower firing sound"
       },
       "sniper_tower_shoot": {
         "file": "res://assets/audio/towers/sniper_tower_shoot.mp3",
         "category": "SFX",
-        "volume": -2.0,
+        "volume": 1.0,
         "description": "Sniper tower firing sound"
       },
       "rapid_tower_shoot": {
         "file": "res://assets/audio/towers/rapid_tower_shoot.mp3",
         "category": "SFX",
-        "volume": -1.5,
+        "volume": 1.0,
         "description": "Rapid tower firing sound"
       },
       "heavy_tower_shoot": {
         "file": "res://assets/audio/towers/heavy_tower_shoot.mp3",
         "category": "SFX",
-        "volume": -1.0,
+        "volume": 1.0,
         "description": "Heavy tower firing sound"
       }
     },
@@ -30,25 +30,25 @@
       "basic_bullet_impact": {
         "file": "res://assets/audio/projectiles/basic_bullet_impact.mp3",
         "category": "SFX",
-        "volume": -2.0,
+        "volume": 1.0,
         "description": "Basic bullet impact sound"
       },
       "sniper_bullet_impact": {
         "file": "res://assets/audio/projectiles/sniper_bullet_impact.mp3",
         "category": "SFX",
-        "volume": -2.0,
+        "volume": 1.0,
         "description": "Sniper bullet impact sound"
       },
       "rapid_bullet_impact": {
         "file": "res://assets/audio/projectiles/rapid_bullet_impact.mp3",
         "category": "SFX",
-        "volume": -1.5,
+        "volume": 1.0,
         "description": "Rapid bullet impact sound"
       },
       "heavy_bullet_impact": {
         "file": "res://assets/audio/projectiles/heavy_bullet_impact.mp3",
         "category": "SFX",
-        "volume": -0.5,
+        "volume": 1.0,
         "description": "Heavy bullet impact sound"
       }
     },
@@ -56,77 +56,83 @@
       "round_start": {
         "file": "res://assets/audio/game/round_start.mp3",
         "category": "SFX",
-        "volume": -2.0,
+        "volume": 1.0,
         "description": "Round start sound"
+      },
+      "error": {
+        "file": "res://assets/audio/game/error.mp3",
+        "category": "SFX",
+        "volume": 1.0,
+        "description": "Error sound when user cannot afford to upgrade building or place a building in a spot"
       }
     },
     "building": {
       "basic_tower_build": {
         "file": "res://assets/audio/towers/basic_tower_build.mp3",
         "category": "SFX",
-        "volume": -2.0,
+        "volume": 1.0,
         "description": "Basic tower construction sound"
       },
       "sniper_tower_build": {
         "file": "res://assets/audio/towers/sniper_tower_build.mp3",
         "category": "SFX",
-        "volume": -2.0,
+        "volume": 1.0,
         "description": "Sniper tower construction sound"
       },
       "rapid_tower_build": {
         "file": "res://assets/audio/towers/rapid_tower_build.mp3",
         "category": "SFX",
-        "volume": -1.5,
+        "volume": 1.0,
         "description": "Rapid tower construction sound"
       },
       "heavy_tower_build": {
         "file": "res://assets/audio/towers/heavy_tower_build.mp3",
         "category": "SFX",
-        "volume": -1.0,
+        "volume": 1.0,
         "description": "Heavy tower construction sound"
+      },
+      "upgrade_building": {
+        "file": "res://assets/audio/buildings/upgrade_building.mp3",
+        "category": "SFX",
+        "volume": 1.0,
+        "description": "Building upgrade sound effect"
+      },
+      "sell_building": {
+        "file": "res://assets/audio/buildings/sell_building.mp3",
+        "category": "SFX",
+        "volume": 1.0,
+        "description": "Building sell sound effect"
       }
     },
     "ui": {
       "tower_select": {
         "file": "res://assets/audio/towers/tower_select.mp3",
         "category": "UI",
-        "volume": -3.0,
+        "volume": 1.0,
         "description": "Tower selection sound"
       },
       "tower_deselect": {
         "file": "res://assets/audio/towers/tower_deselect.mp3",
         "category": "UI",
-        "volume": -3.0,
+        "volume": 1.0,
         "description": "Tower deselection sound"
-      },
-      "tower_upgrade": {
-        "file": "res://assets/audio/towers/tower_upgrade.mp3",
-        "category": "SFX",
-        "volume": -2.0,
-        "description": "Tower upgrade sound effect"
-      },
-      "tower_sell": {
-        "file": "res://assets/audio/towers/tower_sell.mp3",
-        "category": "SFX",
-        "volume": -2.0,
-        "description": "Tower sell sound effect"
       },
       "ui_modal_open": {
         "file": "res://assets/audio/ui/modal_open.mp3",
         "category": "UI",
-        "volume": -4.0,
+        "volume": 1.0,
         "description": "UI modal open sound"
       },
       "ui_modal_close": {
         "file": "res://assets/audio/ui/modal_close.mp3",
         "category": "UI",
-        "volume": -4.0,
+        "volume": 1.0,
         "description": "UI modal close sound"
       },
       "ui_button_click": {
         "file": "res://assets/audio/ui/button_click.mp3",
         "category": "UI",
-        "volume": -4.0,
+        "volume": 1.0,
         "description": "UI button click sound"
       }
     },
@@ -135,8 +141,20 @@
       "boss_battle": {
         "file": "res://assets/audio/music/boss_battle_music_heartbeat_sound.mp3",
         "category": "Music",
-        "volume": 4.0,
+        "volume": 1.0,
         "description": "Intense boss battle music with heartbeat rhythm"
+      },
+      "victory_music": {
+        "file": "res://assets/audio/music/vistory_music.mp3",
+        "category": "Music",
+        "volume": 1.0,
+        "description": "Victory music played when a wave is completed"
+      },
+      "game_music": {
+        "file": "res://assets/audio/music/game_music.mp3",
+        "category": "Music",
+        "volume": 0.8,
+        "description": "Main game background music"
       }
     }
   },
