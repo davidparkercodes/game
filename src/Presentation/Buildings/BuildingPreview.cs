@@ -51,19 +51,12 @@ public partial class BuildingPreview : Node2D
 	
 	private void CheckPlacementValidity()
 	{
-		var viewport = GetViewport();
-		bool withinBounds = true;
-		if (viewport != null)
-		{
-			var screenSize = viewport.GetVisibleRect().Size;
-			withinBounds = _mousePosition.X >= 50 && _mousePosition.X <= screenSize.X - 50 &&
-			               _mousePosition.Y >= 50 && _mousePosition.Y <= screenSize.Y - 50;
-		}
-		
+		// Use world coordinates for validation instead of viewport bounds
+		// The BuildingZoneValidator handles map bounds internally
 		bool validBuildingZone = BuildingZoneValidator.CanBuildAt(_mousePosition);
 		bool noOverlapWithBuildings = !IsOverlappingWithBuildings(_mousePosition);
 		
-		_isValidPlacement = withinBounds && validBuildingZone && noOverlapWithBuildings;
+		_isValidPlacement = validBuildingZone && noOverlapWithBuildings;
 	}
 	
 	private void UpdateVisualFeedback()

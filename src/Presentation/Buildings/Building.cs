@@ -8,6 +8,7 @@ using Game.Presentation.UI;
 using Game.Domain.Buildings.ValueObjects;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Infrastructure.Configuration.Services;
 
 namespace Game.Presentation.Buildings;
 
@@ -845,6 +846,9 @@ public partial class Building : StaticBody2D
 	{
 		if (IsPreview) return;
 		
+		// Apply size scaling based on upgrade level
+		ApplyUpgradeScaling();
+		
 		if (UpgradeLevel > 0)
 		{
 			// Apply upgrade color tint
@@ -856,19 +860,23 @@ public partial class Building : StaticBody2D
 			Modulate = _originalModulate;
 		}
 		
-		GD.Print($"{LogPrefix} {Name} upgrade visuals updated for level {UpgradeLevel} (color tint only)");
+		GD.Print($"{LogPrefix} {Name} upgrade visuals updated for level {UpgradeLevel} (scale and color)");
 	}
 	
+	private void ApplyUpgradeScaling() 
+	{
+		// Retrieve scale factor for current upgrade level
+		float scaleFactor = TowerUpgradeVisualsConfig.Instance.GetScaleForLevel(UpgradeLevel);
+		
+		// Apply scale to the building's visual size
+		Scale = new Vector2(scaleFactor, scaleFactor);
+		GD.Print($"{LogPrefix} {Name} scaled to {scaleFactor}x");
+	}
+
 	private void ApplyUpgradeColorTint()
 	{
 		// Apply subtle color tint based on upgrade level
-		Color upgradeTint = UpgradeLevel switch
-		{
-			1 => new Color(1.1f, 1.0f, 1.0f, 1.0f), // Slightly more red
-			2 => new Color(1.0f, 1.1f, 1.0f, 1.0f), // Slightly more green
-			3 => new Color(1.0f, 1.0f, 1.1f, 1.0f), // Slightly more blue
-			_ => new Color(1.2f, 1.2f, 1.0f, 1.0f)  // Golden tint for higher levels
-		};
+		Color upgradeTint = TowerUpgradeVisualsConfig.Instance.GetColorForLevel(UpgradeLevel);
 		
 		// Only apply if not selected (selection has its own modulation)
 		if (!IsSelected)
