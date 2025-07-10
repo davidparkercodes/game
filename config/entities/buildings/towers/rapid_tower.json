@@ -1,0 +1,37 @@
+{
+  "tower_config": {
+    "name": "Rapid Tower",
+    "type": "rapid_tower",
+    "description": "Fast-firing tower with low damage but high attack speed",
+    "stats": {
+      "cost": 75,
+      "damage": 6,
+      "range": 100.0,
+      "attack_speed": 18.0,
+      "bullet_speed": 800,
+      "collision_radius": 12.0
+    },
+    "upgrade": {
+      "max_level": 3,
+      "upgrade_cost": 75,
+      "cost_multiplier": 1.6,
+      "damage_multiplier": 1.2,
+      "range_multiplier": 1.1,
+      "attack_speed_multiplier": 1.4
+    },
+    "visual": {
+      "sprite_region": "32,64,16,16",
+      "scale_multiplier": 1.0,
+      "color_tint": {
+        "r": 1.0,
+        "g": 0.8,
+        "b": 0.6,
+        "a": 1.0
+      }
+    },
+    "audio": {
+      "shoot_sound": "rapid_tower_shoot",
+      "impact_sound": "rapid_bullet_impact"
+    }
+  }
+}

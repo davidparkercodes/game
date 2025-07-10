@@ -1,0 +1,50 @@
+{
+  "control_settings": {
+    "mouse": {
+      "sensitivity": 1.0,
+      "click_detection_tolerance": 5.0,
+      "double_click_time": 0.5,
+      "drag_threshold": 10.0,
+      "scroll_sensitivity": 1.0,
+      "invert_scroll": false
+    },
+    "keyboard": {
+      "repeat_delay": 0.5,
+      "repeat_rate": 20.0,
+      "key_hold_threshold": 0.3
+    },
+    "touch": {
+      "enabled": false,
+      "touch_sensitivity": 1.0,
+      "pinch_zoom_enabled": true,
+      "swipe_threshold": 50.0,
+      "tap_timeout": 0.3
+    },
+    "gamepad": {
+      "enabled": false,
+      "deadzone": 0.15,
+      "sensitivity": 1.0,
+      "vibration_enabled": true,
+      "auto_detect": true
+    },
+    "accessibility": {
+      "color_blind_mode": "none",
+      "high_contrast": false,
+      "large_ui": false,
+      "screen_reader_support": false,
+      "reduced_motion": false
+    },
+    "input_validation": {
+      "prevent_spam_clicks": true,
+      "spam_click_threshold": 0.1,
+      "validate_input_sequences": true,
+      "block_rapid_fire": false
+    },
+    "performance": {
+      "input_polling_rate": 60,
+      "reduce_input_lag": true,
+      "buffer_inputs": true,
+      "max_input_buffer_size": 10
+    }
+  }
+}

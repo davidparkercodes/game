@@ -1,0 +1,26 @@
+{
+  "debug_settings": {
+    "debug_enabled": true,
+    "debug_keys": {
+      "show_fps": "F1",
+      "toggle_wireframe": "F2",
+      "cycle_debug_overlay": "F3",
+      "enable_collisions": "F4"
+    },
+    "overlays": {
+      "fps_counter": true,
+      "performance_metrics": true,
+      "resource_usage": true
+    },
+    "logging": {
+      "log_level": "debug",
+      "log_to_file": true,
+      "log_directory": "logs/debug"
+    },
+    "developer_tools": {
+      "enable_console": true,
+      "console_key": "F12",
+      "script_reloader_enabled": true
+    }
+  }
+}

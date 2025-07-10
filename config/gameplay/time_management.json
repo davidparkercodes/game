@@ -1,0 +1,48 @@
+{
+  "time_management": {
+    "wave_timing": {
+      "time_between_waves": 15.0,
+      "preparation_time": 5.0,
+      "warning_time": 3.0,
+      "countdown_start": 10.0
+    },
+    "game_speed": {
+      "speed_options": [1.0, 2.0, 4.0],
+      "default_speed_index": 0,
+      "speed_tolerance": 0.01,
+      "normal_speed": 1.0,
+      "fast_forward_speed": 2.0,
+      "slow_motion_speed": 0.5,
+      "pause_speed": 0.0,
+      "max_speed_multiplier": 3.0
+    },
+    "wave_progression": {
+      "base_wave_duration": 30.0,
+      "duration_increase_per_wave": 5.0,
+      "max_wave_duration": 120.0,
+      "enemy_spawn_interval": 1.0,
+      "spawn_interval_decrease_per_wave": 0.05,
+      "min_spawn_interval": 0.2
+    },
+    "timers": {
+      "auto_start_next_wave": false,
+      "auto_start_delay": 3.0,
+      "show_countdown": true,
+      "show_wave_progress": true,
+      "show_next_wave_preview": true
+    },
+    "difficulty_scaling": {
+      "enemy_count_multiplier_per_wave": 1.1,
+      "enemy_health_multiplier_per_wave": 1.05,
+      "enemy_speed_multiplier_per_wave": 1.02,
+      "max_enemies_per_wave": 50
+    },
+    "special_events": {
+      "boss_waves": [5, 10, 15, 20, 25],
+      "bonus_waves": [7, 14, 21],
+      "rush_waves": [3, 8, 13, 18],
+      "preparation_time_bonus_waves": 10.0,
+      "preparation_time_boss_waves": 20.0
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "wave_rules": {
+    "enemy_introduction": {
+      "wave_1": ["basic"],
+      "wave_2": ["basic", "fast"], 
+      "wave_4": ["basic", "fast", "tank"],
+      "wave_6": ["basic", "fast", "tank", "elite"],
+      "wave_8": ["boss"]
+    },
+    "spawn_patterns": {
+      "boss_waves": [8, 16, 24],
+      "elite_frequency": 4,
+      "tank_frequency": 3,
+      "fast_frequency": 2
+    },
+    "category_progression": {
+      "basic": {
+        "min_wave": 1,
+        "max_wave": null,
+        "spawn_probability": 0.6
+      },
+      "fast": {
+        "min_wave": 2,
+        "max_wave": null,
+        "spawn_probability": 0.3
+      },
+      "tank": {
+        "min_wave": 4,
+        "max_wave": null,
+        "spawn_probability": 0.2
+      },
+      "elite": {
+        "min_wave": 6,
+        "max_wave": null,
+        "spawn_probability": 0.1
+      },
+      "boss": {
+        "min_wave": 8,
+        "max_wave": null,
+        "spawn_probability": 0.05
+      }
+    }
+  },
+  "scaling": {
+    "enemy_count_per_wave": {
+      "base": 5,
+      "increment_per_wave": 2
+    },
+    "difficulty_scaling": {
+      "health_multiplier_per_wave": 0.15,
+      "speed_multiplier_per_wave": 0.05,
+      "damage_increment_per_wave": 0.33,
+      "reward_multiplier_per_wave": 0.1
+    }
+  }
+}

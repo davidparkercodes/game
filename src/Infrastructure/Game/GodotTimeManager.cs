@@ -9,10 +9,12 @@ public partial class GodotTimeManager : Node, ITimeManager
     public static GodotTimeManager? Instance { get; private set; }
     
     private readonly ILogger _logger;
+    private readonly ITimeManagementConfigService _timeConfigService;
     
     private float _currentTimeScale = 1.0f;
-    private int _currentSpeedIndex = 0;
-    private readonly float[] _speedOptions = { 1.0f, 2.0f, 4.0f };
+    private int _currentSpeedIndex;
+    private readonly float[] _speedOptions;
+    private readonly float _speedTolerance;
     
     public event SpeedChangedEventHandler? SpeedChanged;
     
@@ -20,9 +22,13 @@ public partial class GodotTimeManager : Node, ITimeManager
     public int CurrentSpeedIndex => _currentSpeedIndex;
     public float[] AvailableSpeeds => _speedOptions;
 
-    public GodotTimeManager(ILogger logger)
+    public GodotTimeManager(ILogger logger, ITimeManagementConfigService timeConfigService)
     {
         _logger = logger;
+        _timeConfigService = timeConfigService;
+        _speedOptions = _timeConfigService.GetSpeedOptions();
+        _currentSpeedIndex = _timeConfigService.GetDefaultSpeedIndex();
+        _speedTolerance = _timeConfigService.GetSpeedTolerance();
         Instance = this;
     }
 
@@ -37,7 +43,7 @@ public partial class GodotTimeManager : Node, ITimeManager
         int speedIndex = 0;
         for (int i = 0; i < _speedOptions.Length; i++)
         {
-            if (Mathf.Abs(_speedOptions[i] - multiplier) < 0.01f)
+            if (Mathf.Abs(_speedOptions[i] - multiplier) < _speedTolerance)
             {
                 speedIndex = i;
                 break;

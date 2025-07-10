@@ -16,7 +16,7 @@ public class MockEnemyStatsProvider : IEnemyStatsProvider
     private readonly EnemyStatsConfig _config;
     private float _healthMultiplier = 1.0f;
     private float _speedMultiplier = 1.0f;
-    private const string DEFAULT_CONFIG_PATH = "data/simulation/enemy-stats.json";
+    private const string DEFAULT_CONFIG_PATH = "config/entities/enemies/enemy-stats.json";
     
     public IEnemyTypeRegistry EnemyTypeRegistry { get; private set; }
 

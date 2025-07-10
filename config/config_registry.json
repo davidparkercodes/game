@@ -1,0 +1,132 @@
+{
+  "registry": {
+    "version": "1.0",
+    "base_path": "res://config",
+    "configurations": {
+      "gameplay.time_management": {
+        "file_path": "res://config/gameplay/time_management.json",
+        "type": "TimeManagementConfig",
+        "description": "Game speed and time control settings",
+        "category": "gameplay",
+        "hot_reload": true,
+        "required": true
+      },
+      "gameplay.game_balance": {
+        "file_path": "res://config/gameplay/game_balance.json",
+        "type": "GameBalanceConfig",
+        "description": "Economy and progression balance settings",
+        "category": "gameplay",
+        "hot_reload": true,
+        "required": true
+      },
+      "gameplay.combat_mechanics": {
+        "file_path": "res://config/gameplay/combat_mechanics.json",
+        "type": "CombatMechanicsConfig",
+        "description": "Combat system and damage calculations",
+        "category": "gameplay",
+        "hot_reload": true,
+        "required": true
+      },
+      "gameplay.movement_config": {
+        "file_path": "res://config/gameplay/movement_config.json",
+        "type": "MovementConfig",
+        "description": "Enemy movement and pathfinding settings",
+        "category": "gameplay",
+        "hot_reload": true,
+        "required": true
+      },
+      "gameplay.wave_mechanics": {
+        "file_path": "res://config/gameplay/wave_mechanics.json",
+        "type": "WaveMechanicsConfig",
+        "description": "Wave spawning and difficulty scaling",
+        "category": "gameplay",
+        "hot_reload": true,
+        "required": true
+      },
+      "entities": {
+        "description": "Game entities configuration",
+        "subcategories": {
+          "buildings": {
+            "description": "Building and tower configurations",
+            "files": [
+              "config/entities/buildings/building_defaults.json"
+            ],
+            "subcategories": {
+              "towers": {
+                "description": "Individual tower configurations",
+                "files": [
+                  "config/entities/buildings/towers/basic_tower.json",
+                  "config/entities/buildings/towers/sniper_tower.json",
+                  "config/entities/buildings/towers/rapid_tower.json",
+                  "config/entities/buildings/towers/heavy_tower.json"
+                ]
+              }
+            }
+          },
+          "enemies": {
+            "description": "Enemy configurations",
+            "files": [
+              "config/entities/enemies/boss_config.json",
+              "config/entities/enemies/enemy_behaviors.json"
+            ]
+          },
+          "projectiles": {
+            "description": "Projectile configurations",
+            "files": [
+              "config/entities/projectiles/projectile_config.json"
+            ]
+          }
+        }
+      },
+      "ui": {
+        "description": "User interface configurations",
+        "files": [
+          "config/ui/hud_layouts.json",
+          "config/ui/visual_themes.json",
+          "config/ui/text_content.json",
+          "config/ui/font_settings.json"
+        ]
+      },
+      "audio": {
+        "description": "Audio and sound configurations",
+        "files": [
+          "config/audio/sound_mappings.json",
+          "config/audio/audio_settings.json"
+        ]
+      },
+      "input": {
+        "description": "Input and control configurations",
+        "files": [
+          "config/input/key_bindings.json",
+          "config/input/control_settings.json"
+        ]
+      },
+      "resources": {
+        "description": "Resource paths and asset configurations",
+        "files": [
+          "config/resources/scene_paths.json",
+          "config/resources/asset_paths.json"
+        ]
+      },
+      "levels": {
+        "description": "Level and wave configurations",
+        "files": [
+          "config/levels/[migrated from data/waves/]"
+        ]
+      },
+      "debug": {
+        "description": "Development and debug configurations",
+        "files": [
+          "config/debug/debug_settings.json",
+          "config/debug/logging_config.json",
+          "config/debug/development_tools.json"
+        ]
+      }
+    },
+    "migration_notes": {
+      "from_data_folder": "Configurations migrated from data/ folder structure",
+      "new_structure": "Reorganized into logical categories with proper nesting",
+      "backwards_compatibility": "Services updated to use new paths"
+    }
+  }
+}

@@ -8,7 +8,10 @@ using Game.Presentation.UI;
 using Game.Domain.Buildings.ValueObjects;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Application.Buildings.Services;
 using Game.Infrastructure.Configuration.Services;
+using Game.Infrastructure.UI.Services;
+using Game.Application.UI.Services;
 
 namespace Game.Presentation.Buildings;
 
@@ -40,7 +43,7 @@ public partial class Building : StaticBody2D
 	// Building selection system
 	public bool IsSelected { get; private set; } = false;
 	private Line2D? _selectionBorder = null;
-	private Color _originalModulate = Colors.White;
+	private Color _originalModulate;
 	
 	// Upgrade level visual indicators (removed level labels and stars)
 	// Only color tinting is used for upgrade feedback
@@ -61,15 +64,20 @@ public partial class Building : StaticBody2D
 	
 	// Performance optimization - bullet pooling
 	private static readonly List<Bullet> _bulletPool = new List<Bullet>();
-	private const int MAX_POOLED_BULLETS = 50;
+	private static int _maxPooledBullets = 50;
 
 	public override void _Ready()
 	{
+		// Initialize original modulate color from configuration
+		var hudConfigService = Di.DiContainer.Instance.Resolve<IHudLayoutConfigService>();
+		var hudConfig = hudConfigService.GetConfiguration();
+		_originalModulate = Color.FromHtml(hudConfig.Colors.TextPrimary);
+
 		_fireTimer = GetNode<Godot.Timer>("Timer");
 		_rangeArea = GetNode<Area2D>("Area2D");
 		_rangeCollision = _rangeArea.GetNode<CollisionShape2D>("CollisionShape2D");
 		
-		InitializeStats();
+		InitializeStatsFromConfig();
 		CreateRangeVisual();
 		CreateInputArea();
 		CreateAnimations();
@@ -122,13 +130,21 @@ public partial class Building : StaticBody2D
 		}
 	}
 
-	public virtual void InitializeStats()
+	public void InitializeStatsFromConfig()
 	{
+		var configService = Di.DiContainer.Instance.Resolve<IBuildingDefaultsConfigService>();
+
+		Cost = configService.GetDefaultCost();
+		Damage = configService.GetDefaultDamage();
+		Range = configService.GetDefaultRange();
+		AttackSpeed = configService.GetDefaultAttackSpeed();
+		_maxPooledBullets = configService.GetMaxPooledBullets();
+
 		if (_rangeCollision?.Shape is CircleShape2D circle)
 		{
 			circle.Radius = Range;
 		}
-		
+
 		if (_fireTimer != null)
 		{
 			_fireTimer.WaitTime = 30.0f / AttackSpeed;
@@ -164,11 +180,14 @@ public partial class Building : StaticBody2D
 	private void CreateRangeVisual()
 	{
 		_rangeCircle = new Line2D();
-		_rangeCircle.Width = 2.0f;
-		_rangeCircle.DefaultColor = new Color(0.2f, 0.8f, 0.2f, 0.6f);
+		var configService = Di.DiContainer.Instance.Resolve<IBuildingDefaultsConfigService>();
+		var rangeColorConfig = configService.GetRangeCircleColor();
+		
+		_rangeCircle.Width = configService.GetRangeCircleWidth();
+		_rangeCircle.DefaultColor = new Color(rangeColorConfig.R, rangeColorConfig.G, rangeColorConfig.B, rangeColorConfig.A);
 		_rangeCircle.Visible = false;
 		
-		const int segments = 64;
+		int segments = configService.GetRangeCircleSegments();
 		for (int i = 0; i <= segments; i++)
 		{
 			float angle = i * 2.0f * Mathf.Pi / segments;
@@ -187,7 +206,8 @@ public partial class Building : StaticBody2D
 		_rangeCircle.ClearPoints();
 		
 		// Recreate circle with current Range
-		const int segments = 64;
+		var configService = Di.DiContainer.Instance.Resolve<IBuildingDefaultsConfigService>();
+		int segments = configService.GetRangeCircleSegments();
 		for (int i = 0; i <= segments; i++)
 		{
 			float angle = i * 2.0f * Mathf.Pi / segments;
@@ -512,12 +532,14 @@ public partial class Building : StaticBody2D
 		float targetAngle = direction.Angle();
 		
 		// Smoothly rotate towards target (optional: can be instant)
-		float rotationSpeed = 5.0f; // Radians per second
+		var configService = Di.DiContainer.Instance.Resolve<IBuildingDefaultsConfigService>();
+		float rotationSpeed = configService.GetRotationSpeed(); // Radians per second
+		float rotationThreshold = configService.GetRotationThreshold();
 		float currentAngle = Rotation;
 		float angleDifference = Mathf.AngleDifference(currentAngle, targetAngle);
 		
 		// Use smooth rotation for more polished look
-		if (Mathf.Abs(angleDifference) > 0.1f)
+		if (Mathf.Abs(angleDifference) > rotationThreshold)
 		{
 			float deltaRotation = Mathf.Sign(angleDifference) * rotationSpeed * (float)GetProcessDeltaTime();
 			if (Mathf.Abs(deltaRotation) > Mathf.Abs(angleDifference))
@@ -757,12 +779,16 @@ public partial class Building : StaticBody2D
 		if (_selectionBorder != null && _selectionTween != null)
 		{
 			_selectionBorder.Visible = true;
-			_selectionBorder.DefaultColor = new Color(Colors.Black.R, Colors.Black.G, Colors.Black.B, 0.0f);
+			var hudConfigService = Di.DiContainer.Instance.Resolve<IHudLayoutConfigService>();
+			var hudConfig = hudConfigService.GetConfiguration();
+			var selectionColor = Color.FromHtml(hudConfig.Colors.SelectionColor);
+			_selectionBorder.DefaultColor = selectionColor;
 			
 			_selectionTween.Kill();
 			_selectionTween = CreateTween();
-			_selectionTween.TweenProperty(_selectionBorder, "default_color", Colors.Black, 0.2f);
-			_selectionTween.Parallel().TweenProperty(this, "modulate", new Color(1.1f, 1.1f, 1.1f, 1.0f), 0.2f);
+			_selectionTween.TweenProperty(_selectionBorder, "default_color", selectionColor, 0.2f);
+			var highlightColor = Color.FromHtml(hudConfig.Colors.AccentColor);
+			_selectionTween.Parallel().TweenProperty(this, "modulate", highlightColor, 0.2f);
 		}
 		
 		// Show range circle with animation
@@ -776,7 +802,11 @@ public partial class Building : StaticBody2D
 		{
 			_selectionTween.Kill();
 			_selectionTween = CreateTween();
-			_selectionTween.TweenProperty(_selectionBorder, "default_color", new Color(Colors.Black.R, Colors.Black.G, Colors.Black.B, 0.0f), 0.15f);
+			var hudConfigService = Di.DiContainer.Instance.Resolve<IHudLayoutConfigService>();
+			var hudConfig = hudConfigService.GetConfiguration();
+			var transparentSelectionColor = Color.FromHtml(hudConfig.Colors.SelectionColor);
+			transparentSelectionColor.A = 0.0f;
+			_selectionTween.TweenProperty(_selectionBorder, "default_color", transparentSelectionColor, 0.15f);
 			_selectionTween.TweenCallback(Callable.From(() => _selectionBorder.Visible = false));
 			_selectionTween.Parallel().TweenProperty(this, "modulate", _originalModulate, 0.15f);
 		}
@@ -789,7 +819,9 @@ public partial class Building : StaticBody2D
 	{
 		_selectionBorder = new Line2D();
 		_selectionBorder.Width = 2.0f;
-		_selectionBorder.DefaultColor = Colors.Black;
+		var hudConfigService = Di.DiContainer.Instance.Resolve<IHudLayoutConfigService>();
+		var hudConfig = hudConfigService.GetConfiguration();
+		_selectionBorder.DefaultColor = Color.FromHtml(hudConfig.Colors.SelectionColor);
 		_selectionBorder.Visible = false;
 		
 		// Create a square border around the building
@@ -822,11 +854,13 @@ public partial class Building : StaticBody2D
 		if (_rangeCircle != null && _rangeTween != null)
 		{
 			_rangeCircle.Visible = true;
-			_rangeCircle.DefaultColor = new Color(0.2f, 0.8f, 0.2f, 0.0f);
+			var hudConfigService = Di.DiContainer.Instance.Resolve<IHudLayoutConfigService>();
+			var hudConfig = hudConfigService.GetConfiguration();
+			_rangeCircle.DefaultColor = Color.FromHtml(hudConfig.Colors.RangeStartColor);
 			
 			_rangeTween.Kill();
 			_rangeTween = CreateTween();
-			_rangeTween.TweenProperty(_rangeCircle, "default_color", new Color(0.2f, 0.8f, 0.2f, 0.6f), 0.3f);
+			_rangeTween.TweenProperty(_rangeCircle, "default_color", Color.FromHtml(hudConfig.Colors.RangeEndColor), 0.3f);
 			_showingRange = true;
 		}
 	}
@@ -835,9 +869,11 @@ public partial class Building : StaticBody2D
 	{
 		if (_rangeCircle != null && _rangeTween != null)
 		{
+			var hudConfigService = Di.DiContainer.Instance.Resolve<IHudLayoutConfigService>();
+			var hudConfig = hudConfigService.GetConfiguration();
 			_rangeTween.Kill();
 			_rangeTween = CreateTween();
-			_rangeTween.TweenProperty(_rangeCircle, "default_color", new Color(0.2f, 0.8f, 0.2f, 0.0f), 0.2f);
+			_rangeTween.TweenProperty(_rangeCircle, "default_color", Color.FromHtml(hudConfig.Colors.RangeStartColor), 0.2f);
 			_rangeTween.TweenCallback(Callable.From(() => { _rangeCircle.Visible = false; _showingRange = false; }));
 		}
 	}

@@ -22,7 +22,7 @@ public class WaveConfigurationService : IWaveConfigurationService
     public string[] GetAvailableWaveSets()
     {
         var waveSets = new List<string>();
-        var waveDirectory = "res://data/waves/";
+        var waveDirectory = "res://config/levels/";
         
         try
         {

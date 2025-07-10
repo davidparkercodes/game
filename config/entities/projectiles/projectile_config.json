@@ -1,0 +1,11 @@
+{
+  "projectile": {
+    "speed": 300,
+    "lifespan": 5.0,
+    "damage": 10,
+    "interact_with": {
+      "enemies": true,
+      "objects": false
+    }
+  }
+}

@@ -15,7 +15,7 @@ public class BuildingTypeRegistry : IBuildingTypeRegistry
     private readonly Dictionary<string, BuildingType> _typesByConfigKey;
     private readonly Dictionary<string, List<BuildingType>> _typesByCategory;
     private readonly IBuildingStatsProvider _buildingStatsProvider;
-    private const string DEFAULT_CONFIG_PATH = "data/simulation/building-stats.json";
+    private const string DEFAULT_CONFIG_PATH = "config/entities/buildings/building-stats.json";
 
     public BuildingTypeRegistry(IBuildingStatsProvider buildingStatsProvider)
     {

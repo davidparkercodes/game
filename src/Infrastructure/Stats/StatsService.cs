@@ -14,8 +14,8 @@ public class StatsService : IBuildingStatsProvider, IEnemyStatsProvider
     private EnemyStatsConfig _enemyStats = null!;
     private BuildingStatsConfig _buildingStats = null!;
     
-    private const string ENEMY_STATS_PATH = "res://data/stats/enemy_stats.json";
-    private const string BUILDING_STATS_PATH = "res://data/stats/building_stats.json";
+    private const string ENEMY_STATS_PATH = "res://config/entities/enemies/enemy_stats.json";
+    private const string BUILDING_STATS_PATH = "res://config/entities/buildings/building_stats.json";
 
     public StatsService()
     {

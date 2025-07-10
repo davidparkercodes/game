@@ -11,7 +11,7 @@ public class TowerUpgradeVisualsConfig
     public static TowerUpgradeVisualsConfig Instance => _instance ??= new TowerUpgradeVisualsConfig();
 
     private TowerUpgradeVisualsData? _config;
-    private const string ConfigPath = "res://data/ui/tower_upgrade_visuals_config.json";
+    private const string ConfigPath = "res://config/ui/tower_upgrade_visuals_config.json";
 
     public TowerUpgradeVisualsData Config => _config ??= LoadConfig();
 

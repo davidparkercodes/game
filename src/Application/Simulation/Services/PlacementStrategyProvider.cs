@@ -13,7 +13,7 @@ public class PlacementStrategyProvider : IPlacementStrategyProvider
 {
     private readonly PlacementStrategyConfig _config;
     private readonly IBuildingTypeRegistry _buildingTypeRegistry;
-    private const string DEFAULT_CONFIG_PATH = "data/simulation/placement_strategies.json";
+    private const string DEFAULT_CONFIG_PATH = "config/gameplay/placement_strategies.json";
 
     public PlacementStrategyProvider(IBuildingTypeRegistry buildingTypeRegistry, string? configPath = null)
     {

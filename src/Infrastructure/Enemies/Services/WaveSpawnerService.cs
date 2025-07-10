@@ -64,7 +64,7 @@ namespace Game.Infrastructure.Enemies.Services;
     {
         try
         {
-            _loadedWaveSet = _waveConfigurationService.LoadWaveSetFromPath("res://data/waves/default_waves.json");
+            _loadedWaveSet = _waveConfigurationService.LoadWaveSetFromPath("res://config/levels/default_waves.json");
             
             if (!string.IsNullOrEmpty(_loadedWaveSet.JsonData))
             {

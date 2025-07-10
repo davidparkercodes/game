@@ -1,0 +1,385 @@
+{
+  "setName": "Default Simulation Waves",
+  "description": "Standard wave configuration for balance testing and simulation",
+  "waves": [
+    {
+      "waveNumber": 1,
+      "waveName": "Scout Patrol",
+      "description": "Basic enemies probing defenses",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 25,
+      "enemyGroups": [
+        {
+          "enemyType": "basic_enemy",
+          "count": 5,
+          "spawnInterval": 1.0,
+          "startDelay": 0.0,
+          "healthMultiplier": 1.0,
+          "speedMultiplier": 1.0,
+          "moneyReward": 10
+        }
+      ]
+    },
+    {
+      "waveNumber": 2,
+      "waveName": "Mixed Forces",
+      "description": "Basic enemies with fast scouts",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 35,
+      "enemyGroups": [
+        {
+          "enemyType": "basic_enemy",
+          "count": 6,
+          "spawnInterval": 1.2,
+          "startDelay": 0.0,
+          "healthMultiplier": 1.1,
+          "speedMultiplier": 1.0,
+          "moneyReward": 12
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 3,
+          "spawnInterval": 0.8,
+          "startDelay": 2.0,
+          "healthMultiplier": 1.0,
+          "speedMultiplier": 1.2,
+          "moneyReward": 15
+        }
+      ]
+    },
+    {
+      "waveNumber": 3,
+      "waveName": "Heavy Reinforcements",
+      "description": "Tank enemies with fast flankers",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 50,
+      "enemyGroups": [
+        {
+          "enemyType": "tank_enemy",
+          "count": 3,
+          "spawnInterval": 2.0,
+          "startDelay": 0.0,
+          "healthMultiplier": 1.0,
+          "speedMultiplier": 0.8,
+          "moneyReward": 25
+        },
+        {
+          "enemyType": "basic_enemy",
+          "count": 8,
+          "spawnInterval": 1.0,
+          "startDelay": 3.0,
+          "healthMultiplier": 1.2,
+          "speedMultiplier": 1.1,
+          "moneyReward": 15
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 4,
+          "spawnInterval": 0.6,
+          "startDelay": 8.0,
+          "healthMultiplier": 1.1,
+          "speedMultiplier": 1.3,
+          "moneyReward": 18
+        }
+      ]
+    },
+    {
+      "waveNumber": 4,
+      "waveName": "Elite Strike Team",
+      "description": "Elite forces coordinated assault",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 75,
+      "enemyGroups": [
+        {
+          "enemyType": "elite_enemy",
+          "count": 2,
+          "spawnInterval": 3.0,
+          "startDelay": 0.0,
+          "healthMultiplier": 1.5,
+          "speedMultiplier": 1.0,
+          "moneyReward": 40
+        },
+        {
+          "enemyType": "tank_enemy",
+          "count": 4,
+          "spawnInterval": 1.5,
+          "startDelay": 2.0,
+          "healthMultiplier": 1.3,
+          "speedMultiplier": 0.9,
+          "moneyReward": 30
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 6,
+          "spawnInterval": 0.5,
+          "startDelay": 6.0,
+          "healthMultiplier": 1.2,
+          "speedMultiplier": 1.4,
+          "moneyReward": 22
+        }
+      ]
+    },
+    {
+      "waveNumber": 5,
+      "waveName": "Total War",
+      "description": "All enemy types overwhelming assault",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 100,
+      "enemyGroups": [
+        {
+          "enemyType": "elite_enemy",
+          "count": 3,
+          "spawnInterval": 2.5,
+          "startDelay": 0.0,
+          "healthMultiplier": 1.8,
+          "speedMultiplier": 1.2,
+          "moneyReward": 50
+        },
+        {
+          "enemyType": "tank_enemy",
+          "count": 5,
+          "spawnInterval": 1.2,
+          "startDelay": 2.0,
+          "healthMultiplier": 1.5,
+          "speedMultiplier": 1.0,
+          "moneyReward": 35
+        },
+        {
+          "enemyType": "basic_enemy",
+          "count": 10,
+          "spawnInterval": 0.8,
+          "startDelay": 5.0,
+          "healthMultiplier": 1.3,
+          "speedMultiplier": 1.2,
+          "moneyReward": 20
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 8,
+          "spawnInterval": 0.4,
+          "startDelay": 10.0,
+          "healthMultiplier": 1.3,
+          "speedMultiplier": 1.5,
+          "moneyReward": 25
+        }
+      ]
+    },
+    {
+      "waveNumber": 6,
+      "waveName": "Endless Swarm",
+      "description": "Extended wave for stress testing",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 125,
+      "enemyGroups": [
+        {
+          "enemyType": "basic_enemy",
+          "count": 15,
+          "spawnInterval": 0.6,
+          "startDelay": 0.0,
+          "healthMultiplier": 1.4,
+          "speedMultiplier": 1.3,
+          "moneyReward": 18
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 12,
+          "spawnInterval": 0.3,
+          "startDelay": 8.0,
+          "healthMultiplier": 1.4,
+          "speedMultiplier": 1.6,
+          "moneyReward": 28
+        },
+        {
+          "enemyType": "tank_enemy",
+          "count": 6,
+          "spawnInterval": 1.0,
+          "startDelay": 15.0,
+          "healthMultiplier": 1.6,
+          "speedMultiplier": 1.1,
+          "moneyReward": 40
+        },
+        {
+          "enemyType": "elite_enemy",
+          "count": 4,
+          "spawnInterval": 2.0,
+          "startDelay": 20.0,
+          "healthMultiplier": 2.0,
+          "speedMultiplier": 1.3,
+          "moneyReward": 60
+        }
+      ]
+    },
+    {
+      "waveNumber": 7,
+      "waveName": "Elite Endgame",
+      "description": "High-tier enemies final test",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 150,
+      "enemyGroups": [
+        {
+          "enemyType": "elite_enemy",
+          "count": 6,
+          "spawnInterval": 1.5,
+          "startDelay": 0.0,
+          "healthMultiplier": 2.2,
+          "speedMultiplier": 1.4,
+          "moneyReward": 75
+        },
+        {
+          "enemyType": "tank_enemy",
+          "count": 8,
+          "spawnInterval": 0.8,
+          "startDelay": 5.0,
+          "healthMultiplier": 1.8,
+          "speedMultiplier": 1.2,
+          "moneyReward": 45
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 10,
+          "spawnInterval": 0.2,
+          "startDelay": 12.0,
+          "healthMultiplier": 1.5,
+          "speedMultiplier": 1.8,
+          "moneyReward": 35
+        }
+      ]
+    },
+    {
+      "waveNumber": 8,
+      "waveName": "Final Stand",
+      "description": "Ultimate challenge wave",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 200,
+      "enemyGroups": [
+        {
+          "enemyType": "elite_enemy",
+          "count": 8,
+          "spawnInterval": 1.0,
+          "startDelay": 0.0,
+          "healthMultiplier": 2.5,
+          "speedMultiplier": 1.5,
+          "moneyReward": 40
+        },
+        {
+          "enemyType": "tank_enemy",
+          "count": 10,
+          "spawnInterval": 0.6,
+          "startDelay": 3.0,
+          "healthMultiplier": 2.0,
+          "speedMultiplier": 1.3,
+          "moneyReward": 25
+        },
+        {
+          "enemyType": "basic_enemy",
+          "count": 20,
+          "spawnInterval": 0.3,
+          "startDelay": 8.0,
+          "healthMultiplier": 1.6,
+          "speedMultiplier": 1.4,
+          "moneyReward": 15
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 15,
+          "spawnInterval": 0.1,
+          "startDelay": 15.0,
+          "healthMultiplier": 1.6,
+          "speedMultiplier": 2.0,
+          "moneyReward": 20
+        }
+      ]
+    },
+    {
+      "waveNumber": 9,
+      "waveName": "Nightmare Mode",
+      "description": "Extreme difficulty test",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 250,
+      "enemyGroups": [
+        {
+          "enemyType": "elite_enemy",
+          "count": 12,
+          "spawnInterval": 0.8,
+          "startDelay": 0.0,
+          "healthMultiplier": 3.0,
+          "speedMultiplier": 1.6,
+          "moneyReward": 50
+        },
+        {
+          "enemyType": "tank_enemy",
+          "count": 15,
+          "spawnInterval": 0.4,
+          "startDelay": 5.0,
+          "healthMultiplier": 2.5,
+          "speedMultiplier": 1.4,
+          "moneyReward": 30
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 25,
+          "spawnInterval": 0.1,
+          "startDelay": 10.0,
+          "healthMultiplier": 1.8,
+          "speedMultiplier": 2.2,
+          "moneyReward": 25
+        }
+      ]
+    },
+    {
+      "waveNumber": 10,
+      "waveName": "Victory or Death",
+      "description": "Final wave maximum challenge",
+      "preWaveDelay": 0.0,
+      "postWaveDelay": 1.0,
+      "bonusMoney": 300,
+      "enemyGroups": [
+        {
+          "enemyType": "elite_enemy",
+          "count": 15,
+          "spawnInterval": 0.5,
+          "startDelay": 0.0,
+          "healthMultiplier": 3.5,
+          "speedMultiplier": 1.8,
+          "moneyReward": 150
+        },
+        {
+          "enemyType": "tank_enemy",
+          "count": 20,
+          "spawnInterval": 0.3,
+          "startDelay": 3.0,
+          "healthMultiplier": 3.0,
+          "speedMultiplier": 1.5,
+          "moneyReward": 75
+        },
+        {
+          "enemyType": "basic_enemy",
+          "count": 30,
+          "spawnInterval": 0.2,
+          "startDelay": 8.0,
+          "healthMultiplier": 2.0,
+          "speedMultiplier": 1.6,
+          "moneyReward": 30
+        },
+        {
+          "enemyType": "fast_enemy",
+          "count": 25,
+          "spawnInterval": 0.05,
+          "startDelay": 15.0,
+          "healthMultiplier": 2.0,
+          "speedMultiplier": 2.5,
+          "moneyReward": 50
+        }
+      ]
+    }
+  ]
+}

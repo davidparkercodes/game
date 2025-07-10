@@ -1,0 +1,50 @@
+{
+  "sound_mappings": {
+    "tower_types": {
+      "basic_tower": {
+        "shoot": "basic_tower_shoot",
+        "build": "basic_tower_build",
+        "impact": "basic_bullet_impact"
+      },
+      "sniper_tower": {
+        "shoot": "sniper_tower_shoot",
+        "build": "sniper_tower_build",
+        "impact": "sniper_bullet_impact"
+      },
+      "rapid_tower": {
+        "shoot": "rapid_tower_shoot",
+        "build": "rapid_tower_build",
+        "impact": "rapid_bullet_impact"
+      },
+      "heavy_tower": {
+        "shoot": "heavy_tower_shoot",
+        "build": "heavy_tower_build",
+        "impact": "heavy_bullet_impact"
+      }
+    },
+    "game_events": {
+      "wave_start": "round_start",
+      "wave_complete": "victory_music",
+      "game_over": "game_music",
+      "boss_spawn": "boss_battle",
+      "error_action": "error"
+    },
+    "ui_interactions": {
+      "tower_selection": "tower_select",
+      "tower_deselection": "tower_deselect",
+      "button_click": "ui_button_click",
+      "modal_open": "ui_modal_open",
+      "modal_close": "ui_modal_close"
+    },
+    "building_actions": {
+      "upgrade": "upgrade_building",
+      "sell": "sell_building",
+      "place": "{tower_type}_build"
+    },
+    "combat_sounds": {
+      "projectile_hit": "{tower_type}_impact",
+      "enemy_death": "enemy_death",
+      "tower_fire": "{tower_type}_shoot"
+    }
+  }
+}

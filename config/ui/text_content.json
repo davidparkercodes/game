@@ -1,0 +1,59 @@
+{
+  "text_content": {
+    "ui_labels": {
+      "money": "Money",
+      "lives": "Lives",
+      "score": "Score",
+      "wave": "Wave",
+      "enemies_remaining": "Enemies Left",
+      "next_wave": "Next Wave",
+      "pause": "Pause",
+      "resume": "Resume",
+      "upgrade": "Upgrade",
+      "sell": "Sell",
+      "build": "Build"
+    },
+    "button_labels": {
+      "start_game": "Start Game",
+      "main_menu": "Main Menu",
+      "options": "Options",
+      "quit": "Quit",
+      "restart": "Restart",
+      "continue": "Continue",
+      "save": "Save",
+      "load": "Load"
+    },
+    "tooltips": {
+      "basic_tower": "Basic Tower - Balanced damage and range",
+      "sniper_tower": "Sniper Tower - Long range, high damage",
+      "rapid_tower": "Rapid Tower - Fast attack speed",
+      "heavy_tower": "Heavy Tower - High damage, slow attack",
+      "upgrade_button": "Upgrade this tower to increase its effectiveness",
+      "sell_button": "Sell this tower to get money back"
+    },
+    "error_messages": {
+      "insufficient_funds": "Not enough money!",
+      "invalid_placement": "Cannot place tower here!",
+      "already_upgraded": "Tower is already at maximum level!",
+      "no_tower_selected": "No tower selected!",
+      "game_over": "Game Over!",
+      "wave_complete": "Wave Complete!"
+    },
+    "notifications": {
+      "enemy_killed": "Enemy destroyed!",
+      "tower_built": "Tower built!",
+      "tower_upgraded": "Tower upgraded!",
+      "tower_sold": "Tower sold!",
+      "wave_started": "Wave started!",
+      "boss_approaching": "Boss enemy approaching!"
+    },
+    "menu_screens": {
+      "main_title": "Tower Defense Game",
+      "pause_title": "Game Paused",
+      "game_over_title": "Game Over",
+      "victory_title": "Victory!",
+      "options_title": "Options",
+      "credits_title": "Credits"
+    }
+  }
+}

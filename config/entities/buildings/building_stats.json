@@ -1,0 +1,54 @@
+{
+  "building_types": {
+    "basic_tower": {
+      "cost": 50,
+      "damage": 10,
+      "range": 120.0,
+      "attack_speed": 36.0,
+      "upgrade_cost": 50,
+      "bullet_speed": 900,
+      "collision_radius": 12.0,
+      "description": "Basic tower with balanced stats"
+    },
+    "sniper_tower": {
+      "cost": 75,
+      "damage": 35,
+      "range": 200.0,
+      "attack_speed": 12.0,
+      "upgrade_cost": 75,
+      "bullet_speed": 1200,
+      "collision_radius": 12.0,
+      "description": "Long range, high damage tower with slow attack speed"
+    },
+    "rapid_tower": {
+      "cost": 75,
+      "damage": 6,
+      "range": 100.0,
+      "attack_speed": 75.0,
+      "upgrade_cost": 75,
+      "bullet_speed": 800,
+      "collision_radius": 12.0,
+      "description": "Fast attack speed tower with lower damage"
+    },
+    "heavy_tower": {
+      "cost": 100,
+      "damage": 50,
+      "range": 150.0,
+      "attack_speed": 18.0,
+      "upgrade_cost": 100,
+      "bullet_speed": 700,
+      "collision_radius": 16.0,
+      "description": "Heavy damage tower with slow attack speed"
+    }
+  },
+  "default_stats": {
+    "cost": 50,
+    "damage": 10,
+    "range": 150.0,
+    "attack_speed": 30.0,
+    "upgrade_cost": 25,
+    "bullet_speed": 900,
+    "collision_radius": 12.0,
+    "description": "Default building stats"
+  }
+}

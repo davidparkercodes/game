@@ -1,0 +1,93 @@
+{
+  "enemy_types_metadata": {
+    "registry": {
+      "BASIC_ENEMY": {
+        "config_key": "basic_enemy",
+        "display_name": "Basic Enemy",
+        "category": "basic",
+        "tier": 1,
+        "is_default": true
+      },
+      "FAST_ENEMY": {
+        "config_key": "fast_enemy",
+        "display_name": "Fast Enemy",
+        "category": "fast",
+        "tier": 1,
+        "is_default": false
+      },
+      "TANK_ENEMY": {
+        "config_key": "tank_enemy",
+        "display_name": "Tank Enemy",
+        "category": "tank",
+        "tier": 2,
+        "is_default": false
+      },
+      "ELITE_ENEMY": {
+        "config_key": "elite_enemy",
+        "display_name": "Elite Enemy",
+        "category": "elite",
+        "tier": 3,
+        "is_default": false
+      },
+      "BOSS_ENEMY": {
+        "config_key": "boss_enemy",
+        "display_name": "Boss Enemy",
+        "category": "boss",
+        "tier": 4,
+        "is_default": false
+      }
+    },
+    "categories": ["basic", "fast", "tank", "elite", "boss"],
+    "default_category": "basic"
+  },
+  "default_stats": {
+    "max_health": 0,
+    "speed": 0.0,
+    "damage": 0,
+    "reward_gold": 0,
+    "reward_xp": 0,
+    "description": ""
+  },
+  "enemy_types": {
+    "basic_enemy": {
+      "max_health": 100,
+      "speed": 50.0,
+      "damage": 1,
+      "reward_gold": 10,
+      "reward_xp": 5,
+      "description": "Basic enemy"
+    },
+    "fast_enemy": {
+      "max_health": 75,
+      "speed": 80.0,
+      "damage": 1,
+      "reward_gold": 15,
+      "reward_xp": 8,
+      "description": "Fast enemy"
+    },
+    "tank_enemy": {
+      "max_health": 200,
+      "speed": 30.0,
+      "damage": 2,
+      "reward_gold": 25,
+      "reward_xp": 15,
+      "description": "Tank enemy"
+    },
+    "elite_enemy": {
+      "max_health": 150,
+      "speed": 60.0,
+      "damage": 2,
+      "reward_gold": 30,
+      "reward_xp": 20,
+      "description": "Elite enemy"
+    },
+    "boss_enemy": {
+      "max_health": 500,
+      "speed": 25.0,
+      "damage": 5,
+      "reward_gold": 100,
+      "reward_xp": 50,
+      "description": "Boss enemy"
+    }
+  }
+}

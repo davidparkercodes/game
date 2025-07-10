@@ -13,7 +13,7 @@ public partial class SpeedControl : CanvasLayer
 
     private ITimeManager? _timeManager;
     private const string LogPrefix = "⚡ [SPEED-CONTROL]";
-    private const string ConfigFilePath = "res://data/ui/speed_control_config.json";
+    private const string ConfigFilePath = "res://config/ui/speed_control_config.json";
     
     public override void _Ready()
     {

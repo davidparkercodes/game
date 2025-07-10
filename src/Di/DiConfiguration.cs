@@ -29,6 +29,7 @@ using Game.Infrastructure.Game;
 using Game.Domain.Common.Services;
 using Game.Application.UI.Services;
 using Game.Infrastructure.UI.Services;
+using Game.Infrastructure.Buildings;
 
 namespace Game.Di;
 
@@ -98,16 +99,29 @@ public static class DiConfiguration
         diContainer.RegisterFactory<IQueryHandler<GetGameStateQuery, GameStateResponse>>(() => 
             new GetGameStateQueryHandler());
         
-        // Register ITimeManager with factory using logger
+        // Register TimeManagementConfigService
+        diContainer.RegisterFactory<ITimeManagementConfigService>(() => 
+            new TimeManagementConfigService());
+        
+        // Register ITimeManager with factory using logger and config service
         diContainer.RegisterFactory<ITimeManager>(() => 
         {
             var logger = new ConsoleLogger("⚡ [TIMEMANAGER]");
-            return new Game.Infrastructure.Game.GodotTimeManager(logger);
+            var timeConfigService = diContainer.Resolve<ITimeManagementConfigService>();
+            return new Game.Infrastructure.Game.GodotTimeManager(logger, timeConfigService);
         });
+        
+        // Register BuildingDefaultsConfigService
+        diContainer.RegisterFactory<IBuildingDefaultsConfigService>(() => 
+            new BuildingDefaultsConfigService());
         
         // Register BuildingSelectionHudConfigService
         diContainer.RegisterFactory<IBuildingSelectionHudConfigService>(() => 
             new BuildingSelectionHudConfigService());
+        
+        // Register HudLayoutConfigService
+        diContainer.RegisterFactory<IHudLayoutConfigService>(() => 
+            new HudLayoutConfigService());
     }
 
     public static void RegisterSingletonsFromGodot(DiContainer diContainer)

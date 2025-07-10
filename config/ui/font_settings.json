@@ -1,0 +1,74 @@
+{
+  "font_settings": {
+    "default_fonts": {
+      "main_font": "res://assets/fonts/main_font.ttf",
+      "ui_font": "res://assets/fonts/ui_font.ttf",
+      "title_font": "res://assets/fonts/title_font.ttf",
+      "monospace_font": "res://assets/fonts/mono_font.ttf"
+    },
+    "font_sizes": {
+      "small": 10,
+      "normal": 12,
+      "medium": 14,
+      "large": 18,
+      "title": 24,
+      "huge": 32
+    },
+    "ui_element_fonts": {
+      "buttons": {
+        "font": "ui_font",
+        "size": "normal"
+      },
+      "labels": {
+        "font": "ui_font",
+        "size": "normal"
+      },
+      "titles": {
+        "font": "title_font",
+        "size": "title"
+      },
+      "tooltips": {
+        "font": "ui_font",
+        "size": "small"
+      },
+      "error_messages": {
+        "font": "ui_font",
+        "size": "medium"
+      },
+      "debug_text": {
+        "font": "monospace_font",
+        "size": "small"
+      },
+      "hud_elements": {
+        "font": "ui_font",
+        "size": "normal"
+      },
+      "menu_items": {
+        "font": "ui_font",
+        "size": "medium"
+      }
+    },
+    "text_styling": {
+      "default_color": "#FFFFFF",
+      "error_color": "#FF4444",
+      "success_color": "#44FF44",
+      "warning_color": "#FFAA44",
+      "disabled_color": "#888888",
+      "highlight_color": "#FFFF44"
+    },
+    "text_effects": {
+      "shadows": {
+        "enabled": true,
+        "offset_x": 1,
+        "offset_y": 1,
+        "color": "#000000",
+        "opacity": 0.5
+      },
+      "outlines": {
+        "enabled": false,
+        "width": 1,
+        "color": "#000000"
+      }
+    }
+  }
+}

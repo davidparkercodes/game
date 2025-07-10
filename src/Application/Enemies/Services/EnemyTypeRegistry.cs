@@ -15,7 +15,7 @@ public class EnemyTypeRegistry : IEnemyTypeRegistry
     private readonly Dictionary<string, EnemyType> _typesByConfigKey;
     private readonly Dictionary<string, List<EnemyType>> _typesByCategory;
     private readonly Dictionary<int, List<EnemyType>> _typesByTier;
-    private const string DEFAULT_CONFIG_PATH = "data/simulation/enemy-stats.json";
+    private const string DEFAULT_CONFIG_PATH = "config/entities/enemies/enemy-stats.json";
 
     public EnemyTypeRegistry()
     {

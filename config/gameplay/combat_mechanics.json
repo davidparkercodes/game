@@ -1,0 +1,63 @@
+{
+  "combat_mechanics": {
+    "damage_calculation": {
+      "base_damage_formula": "weapon_damage * damage_multiplier",
+      "critical_hit_chance": 0.05,
+      "critical_hit_multiplier": 2.0,
+      "armor_penetration_enabled": false,
+      "damage_variance": 0.1
+    },
+    "range_detection": {
+      "range_tolerance": 5.0,
+      "use_squared_distance": true,
+      "range_visualization_enabled": true,
+      "range_check_frequency": 0.1
+    },
+    "targeting": {
+      "default_targeting_strategy": "nearest",
+      "targeting_strategies": {
+        "nearest": {
+          "priority": "distance",
+          "ascending": true
+        },
+        "strongest": {
+          "priority": "health",
+          "ascending": false
+        },
+        "weakest": {
+          "priority": "health",
+          "ascending": true
+        },
+        "fastest": {
+          "priority": "speed",
+          "ascending": false
+        }
+      },
+      "target_switch_delay": 0.2,
+      "prefer_last_target": false
+    },
+    "status_effects": {
+      "poison": {
+        "damage_per_second": 5,
+        "duration": 3.0,
+        "stacking": false
+      },
+      "slow": {
+        "speed_multiplier": 0.5,
+        "duration": 2.0,
+        "stacking": false
+      },
+      "freeze": {
+        "speed_multiplier": 0.0,
+        "duration": 1.0,
+        "stacking": false
+      },
+      "burn": {
+        "damage_per_second": 8,
+        "duration": 4.0,
+        "stacking": true,
+        "max_stacks": 3
+      }
+    }
+  }
+}

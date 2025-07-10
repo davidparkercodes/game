@@ -1,0 +1,51 @@
+{
+  "movement_config": {
+    "path_following": {
+      "path_tolerance": 5.0,
+      "path_prediction_distance": 20.0,
+      "smooth_corners": true,
+      "corner_smoothing_radius": 10.0,
+      "stuck_detection_time": 2.0,
+      "stuck_distance_threshold": 2.0
+    },
+    "enemy_movement": {
+      "base_speed": 50.0,
+      "speed_variance": 0.1,
+      "acceleration": 100.0,
+      "deceleration": 150.0,
+      "max_speed_multiplier": 3.0,
+      "min_speed_multiplier": 0.1
+    },
+    "spawn_mechanics": {
+      "spawn_offset_distance": 50.0,
+      "spawn_randomization_radius": 10.0,
+      "spawn_interval_base": 1.0,
+      "spawn_interval_variance": 0.2,
+      "max_enemies_on_path": 50
+    },
+    "collision_avoidance": {
+      "enabled": false,
+      "avoidance_radius": 15.0,
+      "avoidance_strength": 0.5,
+      "max_avoidance_force": 50.0,
+      "separation_distance": 8.0
+    },
+    "special_behaviors": {
+      "flying_enemies": {
+        "ignore_terrain": true,
+        "altitude": 20.0,
+        "can_cross_water": true
+      },
+      "burrowing_enemies": {
+        "underground_speed_multiplier": 0.7,
+        "surface_time": 2.0,
+        "burrow_time": 1.0
+      },
+      "teleporting_enemies": {
+        "teleport_distance": 100.0,
+        "teleport_cooldown": 5.0,
+        "teleport_chance": 0.1
+      }
+    }
+  }
+}

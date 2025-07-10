@@ -8,7 +8,7 @@ namespace Game.Infrastructure.UI.Services;
 
 public class BuildingSelectionHudConfigService : IBuildingSelectionHudConfigService
 {
-    private const string CONFIG_PATH = "res://data/huds/building_selection_hud.json";
+    private const string CONFIG_PATH = "res://config/ui/building_selection_hud.json";
     private const string DEFAULT_ICON_PATH = "res://assets/sprites/ui/default_tower_icon.png";
     
     private BuildingSelectionHudConfig? _cachedConfig;

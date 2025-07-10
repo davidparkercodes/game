@@ -1,0 +1,60 @@
+{
+  "logging_config": {
+    "global_settings": {
+      "enabled": true,
+      "log_level": "info",
+      "timestamp_format": "yyyy-MM-dd HH:mm:ss",
+      "max_log_file_size": "10MB",
+      "max_log_files": 5
+    },
+    "categories": {
+      "gameplay": {
+        "level": "debug",
+        "log_to_file": true,
+        "file_name": "gameplay.log"
+      },
+      "ai": {
+        "level": "info",
+        "log_to_file": true,
+        "file_name": "ai.log"
+      },
+      "performance": {
+        "level": "warning",
+        "log_to_file": true,
+        "file_name": "performance.log"
+      },
+      "network": {
+        "level": "error",
+        "log_to_file": true,
+        "file_name": "network.log"
+      },
+      "audio": {
+        "level": "info",
+        "log_to_file": false,
+        "console_only": true
+      },
+      "ui": {
+        "level": "debug",
+        "log_to_file": true,
+        "file_name": "ui.log"
+      }
+    },
+    "output_settings": {
+      "console_output": true,
+      "file_output": true,
+      "colored_console": true,
+      "log_directory": "logs/"
+    },
+    "filters": {
+      "exclude_patterns": [
+        ".*verbose.*",
+        ".*spam.*"
+      ],
+      "include_only": [],
+      "rate_limiting": {
+        "enabled": true,
+        "max_messages_per_second": 100
+      }
+    }
+  }
+}

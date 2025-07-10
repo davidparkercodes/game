@@ -1,0 +1,37 @@
+{
+  "tower_config": {
+    "name": "Sniper Tower",
+    "type": "sniper_tower",
+    "description": "Long-range tower with high damage but slow attack speed",
+    "stats": {
+      "cost": 100,
+      "damage": 50,
+      "range": 200.0,
+      "attack_speed": 60.0,
+      "bullet_speed": 1200,
+      "collision_radius": 12.0
+    },
+    "upgrade": {
+      "max_level": 3,
+      "upgrade_cost": 100,
+      "cost_multiplier": 2.0,
+      "damage_multiplier": 1.5,
+      "range_multiplier": 1.2,
+      "attack_speed_multiplier": 1.1
+    },
+    "visual": {
+      "sprite_region": "16,64,16,16",
+      "scale_multiplier": 1.0,
+      "color_tint": {
+        "r": 0.8,
+        "g": 0.9,
+        "b": 1.0,
+        "a": 1.0
+      }
+    },
+    "audio": {
+      "shoot_sound": "sniper_tower_shoot",
+      "impact_sound": "sniper_bullet_impact"
+    }
+  }
+}

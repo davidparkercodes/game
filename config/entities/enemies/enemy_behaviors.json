@@ -1,0 +1,70 @@
+{
+  "enemy_behaviors": {
+    "basic_enemy": {
+      "behavior_type": "path_follower",
+      "aggression_level": "passive",
+      "special_abilities": [],
+      "movement_pattern": "linear",
+      "react_to_damage": false
+    },
+    "fast_enemy": {
+      "behavior_type": "path_follower",
+      "aggression_level": "aggressive",
+      "special_abilities": ["speed_burst"],
+      "movement_pattern": "linear",
+      "react_to_damage": true,
+      "speed_burst": {
+        "trigger_health_percent": 0.5,
+        "speed_multiplier": 1.5,
+        "duration": 3.0
+      }
+    },
+    "heavy_enemy": {
+      "behavior_type": "path_follower",
+      "aggression_level": "defensive",
+      "special_abilities": ["armor_plating"],
+      "movement_pattern": "linear",
+      "react_to_damage": false,
+      "armor_plating": {
+        "damage_reduction": 0.3,
+        "effective_against": ["basic", "rapid"]
+      }
+    },
+    "flying_enemy": {
+      "behavior_type": "flying",
+      "aggression_level": "evasive",
+      "special_abilities": ["terrain_ignore", "evasion"],
+      "movement_pattern": "curved",
+      "react_to_damage": true,
+      "evasion": {
+        "dodge_chance": 0.15,
+        "dodge_distance": 20.0
+      }
+    },
+    "boss_enemy": {
+      "behavior_type": "boss",
+      "aggression_level": "very_aggressive",
+      "special_abilities": ["phase_change", "minion_spawn", "area_attack"],
+      "movement_pattern": "complex",
+      "react_to_damage": true,
+      "phase_change": {
+        "trigger_health_percent": 0.25,
+        "new_abilities": ["rage_mode"],
+        "stat_multipliers": {
+          "speed": 1.2,
+          "damage": 1.5
+        }
+      },
+      "minion_spawn": {
+        "trigger_health_percent": 0.5,
+        "minion_count": 3,
+        "minion_type": "basic_enemy"
+      },
+      "area_attack": {
+        "cooldown": 10.0,
+        "radius": 100.0,
+        "damage_multiplier": 2.0
+      }
+    }
+  }
+}

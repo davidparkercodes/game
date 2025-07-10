@@ -1,0 +1,72 @@
+{
+  "asset_paths": {
+    "sprites": {
+      "base_path": "res://assets/sprites/",
+      "towers": {
+        "basic_tower": "towers/basic_tower.png",
+        "sniper_tower": "towers/sniper_tower.png",
+        "rapid_tower": "towers/rapid_tower.png",
+        "heavy_tower": "towers/heavy_tower.png"
+      },
+      "enemies": {
+        "basic_enemy": "enemies/basic_enemy.png",
+        "fast_enemy": "enemies/fast_enemy.png",
+        "heavy_enemy": "enemies/heavy_enemy.png",
+        "flying_enemy": "enemies/flying_enemy.png",
+        "boss_enemy": "enemies/boss_enemy.png"
+      },
+      "projectiles": {
+        "basic_bullet": "projectiles/basic_bullet.png",
+        "sniper_bullet": "projectiles/sniper_bullet.png",
+        "rapid_bullet": "projectiles/rapid_bullet.png",
+        "heavy_bullet": "projectiles/heavy_bullet.png"
+      },
+      "ui": {
+        "button_normal": "ui/button_normal.png",
+        "button_hover": "ui/button_hover.png",
+        "button_pressed": "ui/button_pressed.png",
+        "panel_background": "ui/panel_background.png",
+        "health_bar": "ui/health_bar.png",
+        "progress_bar": "ui/progress_bar.png"
+      },
+      "tilemap": "shapes_basic_palette_tilemap.png"
+    },
+    "audio": {
+      "base_path": "res://assets/audio/",
+      "music": {
+        "main_theme": "music/main_theme.ogg",
+        "battle_music": "music/battle_music.ogg",
+        "menu_music": "music/menu_music.ogg"
+      },
+      "sound_effects": {
+        "tower_shoot": "sfx/tower_shoot.wav",
+        "tower_impact": "sfx/tower_impact.wav",
+        "enemy_death": "sfx/enemy_death.wav",
+        "building_place": "sfx/building_place.wav",
+        "building_sell": "sfx/building_sell.wav",
+        "building_upgrade": "sfx/building_upgrade.wav",
+        "wave_complete": "sfx/wave_complete.wav",
+        "game_over": "sfx/game_over.wav"
+      }
+    },
+    "fonts": {
+      "base_path": "res://assets/fonts/",
+      "main_font": "main_font.ttf",
+      "ui_font": "ui_font.ttf",
+      "title_font": "title_font.ttf"
+    },
+    "textures": {
+      "base_path": "res://assets/textures/",
+      "backgrounds": {
+        "grass": "backgrounds/grass.png",
+        "dirt": "backgrounds/dirt.png",
+        "stone": "backgrounds/stone.png"
+      },
+      "effects": {
+        "explosion": "effects/explosion.png",
+        "smoke": "effects/smoke.png",
+        "sparks": "effects/sparks.png"
+      }
+    }
+  }
+}

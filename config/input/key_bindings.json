@@ -1,0 +1,48 @@
+{
+  "key_bindings": {
+    "tower_selection": {
+      "basic_tower": "1",
+      "sniper_tower": "2",
+      "rapid_tower": "3",
+      "heavy_tower": "4"
+    },
+    "game_controls": {
+      "pause": "Space",
+      "speed_up": "Equal",
+      "speed_down": "Minus",
+      "normal_speed": "0",
+      "next_wave": "Enter",
+      "cancel_selection": "Escape"
+    },
+    "camera_controls": {
+      "zoom_in": "WheelUp",
+      "zoom_out": "WheelDown",
+      "pan_left": "A",
+      "pan_right": "D",
+      "pan_up": "W",
+      "pan_down": "S",
+      "reset_camera": "R"
+    },
+    "debug_controls": {
+      "toggle_debug": "F1",
+      "spawn_enemy": "F2",
+      "add_money": "F3",
+      "next_wave_debug": "F4",
+      "toggle_fps": "F5"
+    },
+    "ui_controls": {
+      "toggle_menu": "Escape",
+      "confirm": "Enter",
+      "cancel": "Escape",
+      "delete": "Delete",
+      "select_all": "Ctrl+A"
+    },
+    "building_controls": {
+      "upgrade": "U",
+      "sell": "X",
+      "rotate": "Q",
+      "copy": "C",
+      "paste": "V"
+    }
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "hud_layouts": {
+    "main_hud": {
+      "money_display": {
+        "position": {
+          "x": 10,
+          "y": 10
+        },
+        "size": {
+          "width": 150,
+          "height": 30
+        },
+        "anchor": "top_left"
+      },
+      "lives_display": {
+        "position": {
+          "x": 170,
+          "y": 10
+        },
+        "size": {
+          "width": 100,
+          "height": 30
+        },
+        "anchor": "top_left"
+      },
+      "score_display": {
+        "position": {
+          "x": 280,
+          "y": 10
+        },
+        "size": {
+          "width": 150,
+          "height": 30
+        },
+        "anchor": "top_left"
+      },
+      "wave_info": {
+        "position": {
+          "x": -200,
+          "y": 10
+        },
+        "size": {
+          "width": 180,
+          "height": 60
+        },
+        "anchor": "top_right"
+      },
+      "building_selection": {
+        "position": {
+          "x": 0,
+          "y": -60
+        },
+        "size": {
+          "width": 300,
+          "height": 50
+        },
+        "anchor": "bottom_center"
+      },
+      "speed_controls": {
+        "position": {
+          "x": -150,
+          "y": -60
+        },
+        "size": {
+          "width": 120,
+          "height": 50
+        },
+        "anchor": "bottom_right"
+      }
+    },
+    "pause_overlay": {
+      "background": {
+        "color": "#000000",
+        "opacity": 0.7
+      },
+      "menu": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "size": {
+          "width": 300,
+          "height": 400
+        },
+        "anchor": "center"
+      }
+    },
+    "upgrade_panel": {
+      "position": {
+        "x": -300,
+        "y": 100
+      },
+      "size": {
+        "width": 250,
+        "height": 200
+      },
+      "anchor": "top_right",
+      "auto_hide": true
+    }
+  },
+  "font_settings": {
+    "tower_stats": {
+      "info_font_size": 10,
+      "title_font_size": 12,
+      "description_font_size": 8
+    },
+    "main_hud": {
+      "money_font_size": 14,
+      "lives_font_size": 14,
+      "wave_font_size": 14,
+      "button_font_size": 12
+    }
+  },
+  "colors": {
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#CCCCCC",
+    "accent_color": "#4eadc7",
+    "background_color": "#1B1B1B",
+    "border_color": "#555555",
+    "selection_color": "#000000",
+    "range_start_color": "#33CC33",
+    "range_end_color": "#33CC3399"
+  }
+}

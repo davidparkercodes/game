@@ -27,6 +27,24 @@ public class HudStyling
     public string BackgroundColor { get; init; } = "#000000AA";
     public string NumberTextColor { get; init; } = "#FFFFFF";
     public int NumberFontSize { get; init; } = 12;
+    public int ButtonCornerRadius { get; init; } = 2;
+    public float HoverTransparencyMultiplier { get; init; } = 1.2f;
+    public HotkeyPositioning HotkeyPositioning { get; init; } = new();
+    public TextShadow TextShadow { get; init; } = new();
+}
+
+public class HotkeyPositioning
+{
+    public int OffsetLeft { get; init; } = -16;
+    public int OffsetTop { get; init; } = -16;
+    public int OffsetRight { get; init; } = -2;
+    public int OffsetBottom { get; init; } = -2;
+}
+
+public class TextShadow
+{
+    public int OffsetX { get; init; } = 1;
+    public int OffsetY { get; init; } = 1;
 }
 
 public class HudAudio

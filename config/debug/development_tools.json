@@ -1,0 +1,60 @@
+{
+  "development_tools": {
+    "profiler": {
+      "enabled": true,
+      "update_interval": 0.5,
+      "show_frame_time": true,
+      "show_memory_usage": true,
+      "show_draw_calls": true,
+      "track_allocations": true
+    },
+    "validation": {
+      "tolerance": {
+        "position": 0.01,
+        "rotation": 0.01,
+        "scale": 0.001
+      },
+      "strict_mode": false,
+      "validate_on_save": true,
+      "auto_fix_errors": false
+    },
+    "hot_reloading": {
+      "enabled": true,
+      "watch_directories": [
+        "config/",
+        "scripts/",
+        "scenes/"
+      ],
+      "auto_reload_configs": true,
+      "auto_reload_scripts": false,
+      "reload_delay": 0.5
+    },
+    "testing": {
+      "test_mode_enabled": false,
+      "auto_run_tests": false,
+      "test_scenarios": [
+        "quick_balance",
+        "performance_test",
+        "stress_test"
+      ],
+      "mock_data_enabled": true
+    },
+    "performance_monitoring": {
+      "track_fps": true,
+      "track_memory": true,
+      "track_network": false,
+      "alert_thresholds": {
+        "low_fps": 30,
+        "high_memory": "512MB",
+        "frame_spike": 50
+      }
+    },
+    "debugging_aids": {
+      "visual_debugging": true,
+      "collision_shapes_visible": false,
+      "path_visualization": true,
+      "ai_state_display": true,
+      "performance_overlay": false
+    }
+  }
+}

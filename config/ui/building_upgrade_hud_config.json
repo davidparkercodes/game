@@ -1,0 +1,133 @@
+{
+  "hud_config": {
+    "dimensions": {
+      "width": 640,
+      "height": 240,
+      "anchor_position": "center"
+    },
+    "layout": {
+      "main_panel_margin": 10,
+      "section_spacing": 15,
+      "left_section_ratio": 0.25,
+      "center_section_ratio": 0.5,
+      "right_section_ratio": 0.25
+    },
+    "styling": {
+      "background_color": "#2D3748",
+      "border_color": "#4A5568",
+      "border_width": 2,
+      "corner_radius": 8
+    },
+    "colors": {
+      "tower_name_color": "#F7FAFC",
+      "description_color": "#E2E8F0",
+      "section_title_color": "#CBD5E0",
+      "cost_color": "#38B2AC",
+      "damage_color": "#FC8181",
+      "range_color": "#63B3ED",
+      "attack_speed_color": "#B794F6",
+      "upgrade_cost_color": "#F6E05E",
+      "sell_value_color": "#FBB6CE"
+    },
+    "font_sizes": {
+      "tower_name": 20,
+      "description": 12,
+      "section_title": 16,
+      "stat_label": 12,
+      "button_text": 14
+    },
+    "buttons": {
+      "upgrade_button": {
+        "normal_color": "#38A169",
+        "hover_color": "#48BB78",
+        "pressed_color": "#2F855A",
+        "disabled_color": "#718096"
+      },
+      "sell_button": {
+        "normal_color": "#E53E3E",
+        "hover_color": "#F56565",
+        "pressed_color": "#C53030",
+        "disabled_color": "#718096"
+      },
+      "close_button": {
+        "normal_color": "#A0AEC0",
+        "hover_color": "#CBD5E0",
+        "pressed_color": "#718096",
+        "disabled_color": "#4A5568"
+      }
+    },
+    "animations": {
+      "show_duration": 0.3,
+      "hide_duration": 0.2,
+      "fade_in_enabled": true,
+      "scale_animation_enabled": true,
+      "initial_scale": 0.8,
+      "final_scale": 1.0
+    },
+    "modal": {
+      "background_color": "#000000CC",
+      "close_on_outside_click": true,
+      "block_input_behind": true
+    },
+    "tower_icons": {
+      "basic_tower": {
+        "image_path": "res://assets/sprites/towers/basic_tower.png",
+        "image_region": "0,0,32,32",
+        "display_size": 64
+      },
+      "sniper_tower": {
+        "image_path": "res://assets/sprites/towers/sniper_tower.png",
+        "image_region": "0,0,32,32",
+        "display_size": 64
+      },
+      "rapid_tower": {
+        "image_path": "res://assets/sprites/towers/rapid_tower.png",
+        "image_region": "0,0,32,32",
+        "display_size": 64
+      },
+      "heavy_tower": {
+        "image_path": "res://assets/sprites/towers/heavy_tower.png",
+        "image_region": "0,0,32,32",
+        "display_size": 64
+      },
+      "default_tower": {
+        "image_path": "res://assets/sprites/ui/default_tower_icon.png",
+        "image_region": "",
+        "display_size": 64
+      }
+    },
+    "descriptions": {
+      "basic_tower": "A reliable all-around tower with balanced stats for versatile defense",
+      "sniper_tower": "Long-range precision tower with high damage but slower attack speed",
+      "rapid_tower": "Fast-firing tower with lower damage per shot but high rate of fire",
+      "heavy_tower": "Powerful heavy-hitting tower with strong damage and area impact",
+      "default_tower": "A powerful defensive tower for protecting your base"
+    }
+  },
+  "upgrade_config": {
+    "default_upgrade_multiplier": 1.5,
+    "default_upgrade_cost_ratio": 0.5,
+    "default_sell_percentage": 0.75,
+    "max_upgrade_level": 3,
+    "show_upgrade_arrows": true,
+    "upgrade_stat_colors": {
+      "damage": "#FED7D7",
+      "range": "#DBEAFE",
+      "attack_speed": "#E9D8FD"
+    }
+  },
+  "audio": {
+    "modal_open_sound": "ui_modal_open",
+    "modal_close_sound": "ui_modal_close",
+    "upgrade_sound": "upgrade_building",
+    "sell_sound": "sell_building",
+    "button_click_sound": "ui_button_click",
+    "enabled": true
+  },
+  "keyboard_shortcuts": {
+    "close_hud": "Escape",
+    "upgrade_tower": "U",
+    "sell_tower": "S",
+    "enabled": true
+  }
+}

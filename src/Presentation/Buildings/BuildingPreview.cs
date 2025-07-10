@@ -21,7 +21,7 @@ public partial class BuildingPreview : Node2D
 		if (BuildingScene != null)
 		{
 			_previewBuilding = BuildingScene.Instantiate<Building>();
-			_previewBuilding.InitializeStats();
+			_previewBuilding.InitializeStatsFromConfig();
 			_previewBuilding.SetPreviewMode(true); // Properly disable all functionality
 			AddChild(_previewBuilding);
 			
@@ -128,7 +128,7 @@ public partial class BuildingPreview : Node2D
 		if (BuildingScene != null)
 		{
 			_previewBuilding = BuildingScene.Instantiate<Building>();
-			_previewBuilding.InitializeStats();
+			_previewBuilding.InitializeStatsFromConfig();
 			_previewBuilding.SetPreviewMode(true); // Properly disable all functionality
 			AddChild(_previewBuilding);
 			

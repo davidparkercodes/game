@@ -1,6 +1,7 @@
 using Godot;
 using Game.Infrastructure.Rounds.Services;
 using Game.Infrastructure.Waves.Services;
+using Game.Infrastructure.UI.Services;
 using System.Collections.Generic;
 
 namespace Game.Presentation.UI;
@@ -25,6 +26,7 @@ public partial class Hud : CanvasLayer
 
 	private bool _isInitialized = false;
 	private const string LogPrefix = "🎨 [HUD]";
+	private readonly HudLayoutConfigService _hudConfigService = new();
 
 	public override void _Ready()
 	{
@@ -178,12 +180,16 @@ public partial class Hud : CanvasLayer
 		if (!ValidateComponent(TowerStatsPanel, "TowerStatsPanel")) return;
 
 		TowerStatsPanel!.Visible = true;
+		var config = _hudConfigService.GetConfiguration();
+		var fontSize = config.FontSettings.TowerStats.InfoFontSize;
+		var textColor = config.Colors.TextPrimary;
+		var accentColor = config.Colors.AccentColor;
 
 		if (TowerNameLabel != null) TowerNameLabel.Text = towerName;
-		if (CostLabel != null) CostLabel.Text = $"[font_size=10][color=white]Cost:[/color] [color=#4eadc7]${cost}[/color][/font_size]";
-		if (DamageLabel != null) DamageLabel.Text = $"[font_size=10][color=white]Damage:[/color] [color=#4eadc7]{damage}[/color][/font_size]";
-		if (RangeLabel != null) RangeLabel.Text = $"[font_size=10][color=white]Range:[/color] [color=#4eadc7]{range:F0}[/color][/font_size]";
-		if (FireRateLabel != null) FireRateLabel.Text = $"[font_size=10][color=white]Attack Speed:[/color] [color=#4eadc7]{attackSpeed:F0}[/color][/font_size]";
+		if (CostLabel != null) CostLabel.Text = $"[font_size={fontSize}][color={textColor}]Cost:[/color] [color={accentColor}]${cost}[/color][/font_size]";
+		if (DamageLabel != null) DamageLabel.Text = $"[font_size={fontSize}][color={textColor}]Damage:[/color] [color={accentColor}]{damage}[/color][/font_size]";
+		if (RangeLabel != null) RangeLabel.Text = $"[font_size={fontSize}][color={textColor}]Range:[/color] [color={accentColor}]{range:F0}[/color][/font_size]";
+		if (FireRateLabel != null) FireRateLabel.Text = $"[font_size={fontSize}][color={textColor}]Attack Speed:[/color] [color={accentColor}]{attackSpeed:F0}[/color][/font_size]";
 
 		GD.Print($"{LogPrefix} Showing tower stats for: {towerName}");
 	}
@@ -202,12 +208,16 @@ public partial class Hud : CanvasLayer
 		if (!ValidateComponent(TowerStatsPanel, "TowerStatsPanel")) return;
 
 		TowerStatsPanel!.Visible = true;
+		var config = _hudConfigService.GetConfiguration();
+		var fontSize = config.FontSettings.TowerStats.InfoFontSize;
+		var textColor = config.Colors.TextPrimary;
+		var accentColor = config.Colors.AccentColor;
 
 		if (TowerNameLabel != null) TowerNameLabel.Text = buildingName;
-		if (CostLabel != null) CostLabel.Text = $"[font_size=10][color=white]Cost:[/color] [color=#4eadc7]${cost}[/color][/font_size]";
-		if (DamageLabel != null) DamageLabel.Text = $"[font_size=10][color=white]Damage:[/color] [color=#4eadc7]{damage}[/color][/font_size]";
-		if (RangeLabel != null) RangeLabel.Text = $"[font_size=10][color=white]Range:[/color] [color=#4eadc7]{range:F0}[/color][/font_size]";
-		if (FireRateLabel != null) FireRateLabel.Text = $"[font_size=10][color=white]Attack Speed:[/color] [color=#4eadc7]{attackSpeed:F0}[/color][/font_size]";
+		if (CostLabel != null) CostLabel.Text = $"[font_size={fontSize}][color={textColor}]Cost:[/color] [color={accentColor}]${cost}[/color][/font_size]";
+		if (DamageLabel != null) DamageLabel.Text = $"[font_size={fontSize}][color={textColor}]Damage:[/color] [color={accentColor}]{damage}[/color][/font_size]";
+		if (RangeLabel != null) RangeLabel.Text = $"[font_size={fontSize}][color={textColor}]Range:[/color] [color={accentColor}]{range:F0}[/color][/font_size]";
+		if (FireRateLabel != null) FireRateLabel.Text = $"[font_size={fontSize}][color={textColor}]Attack Speed:[/color] [color={accentColor}]{attackSpeed:F0}[/color][/font_size]";
 
 		GD.Print($"{LogPrefix} Showing building stats for: {buildingName}");
 	}

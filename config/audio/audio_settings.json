@@ -1,0 +1,67 @@
+{
+  "audio_settings": {
+    "master_volume": {
+      "enabled": true,
+      "volume": 1.0,
+      "description": "Master volume control for all audio"
+    },
+    "category_volumes": {
+      "music": {
+        "volume": 0.7,
+        "enabled": true,
+        "fade_in_time": 2.0,
+        "fade_out_time": 1.5,
+        "loop_background": true
+      },
+      "sfx": {
+        "volume": 0.8,
+        "enabled": true,
+        "max_concurrent_sounds": 20,
+        "priority_system": true
+      },
+      "ui": {
+        "volume": 0.6,
+        "enabled": true,
+        "max_concurrent_sounds": 5,
+        "priority_system": false
+      },
+      "voice": {
+        "volume": 0.9,
+        "enabled": true,
+        "interrupt_others": true
+      }
+    },
+    "audio_quality": {
+      "sample_rate": 44100,
+      "bit_depth": 16,
+      "compression": "ogg",
+      "streaming_enabled": true,
+      "preload_important": true
+    },
+    "spatial_audio": {
+      "enabled": false,
+      "doppler_effect": false,
+      "distance_attenuation": true,
+      "max_distance": 1000.0,
+      "reference_distance": 100.0
+    },
+    "performance": {
+      "audio_buffer_size": 1024,
+      "max_audio_channels": 32,
+      "cleanup_unused_sounds": true,
+      "sound_pool_size": 50
+    },
+    "accessibility": {
+      "visual_sound_indicators": false,
+      "sound_descriptions": false,
+      "hearing_impaired_mode": false,
+      "subtitle_support": false
+    },
+    "advanced": {
+      "real_time_processing": false,
+      "audio_driver": "auto",
+      "latency_compensation": true,
+      "hardware_acceleration": true
+    }
+  }
+}

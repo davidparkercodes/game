@@ -1,0 +1,75 @@
+{
+  "building_defaults": {
+    "stats": {
+      "default_cost": 10,
+      "default_damage": 10,
+      "default_range": 150.0,
+      "default_attack_speed": 30.0
+    },
+    "visuals": {
+      "range_circle_segments": 64,
+      "range_circle_width": 2.0,
+      "range_circle_color": {
+        "r": 0.2,
+        "g": 0.8,
+        "b": 0.2,
+        "a": 0.6
+      },
+      "rotation_speed": 5.0,
+      "rotation_threshold": 0.1
+    },
+    "performance": {
+      "max_pooled_bullets": 50,
+      "collision_layers": [1, 2]
+    },
+    "placement": {
+      "grid_size": 16,
+      "snap_to_grid": true,
+      "placement_preview_color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.7
+      },
+      "invalid_placement_color": {
+        "r": 1.0,
+        "g": 0.3,
+        "b": 0.3,
+        "a": 0.7
+      }
+    },
+    "visual": {
+      "selection_outline_color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 0.0,
+        "a": 1.0
+      },
+      "selection_outline_width": 2.0,
+      "health_bar_height": 4.0,
+      "health_bar_width": 24.0,
+      "health_bar_offset_y": -20.0
+    },
+    "audio": {
+      "placement_sound": "building_place",
+      "sell_sound": "building_sell",
+      "upgrade_sound": "building_upgrade",
+      "invalid_placement_sound": "invalid_action"
+    },
+    "interaction": {
+      "click_radius": 16.0,
+      "double_click_time": 0.5,
+      "hold_time_for_sell": 1.0
+    },
+    "effects": {
+      "damage_flash_duration": 0.2,
+      "damage_flash_color": {
+        "r": 1.0,
+        "g": 0.3,
+        "b": 0.3,
+        "a": 0.8
+      },
+      "construction_effect_duration": 0.5
+    }
+  }
+}

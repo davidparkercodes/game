@@ -80,9 +80,9 @@ public static class WaveTestingCommands
         
         var configFiles = new[]
         {
-            "data/simulation/wave-configs.json",
-            "data/simulation/wave-configs-balance.json",
-            "data/waves/default_waves.json"
+            "config/levels/wave-configs.json",
+            "config/levels/wave-configs-balance.json",
+            "config/levels/default_waves.json"
         };
         
         foreach (var configFile in configFiles)

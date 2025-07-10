@@ -1,0 +1,42 @@
+{
+  "scene_paths": {
+    "enemies": {
+      "basic_enemy": "res://scenes/Enemies/Enemy.tscn",
+      "fast_enemy": "res://scenes/Enemies/FastEnemy.tscn",
+      "heavy_enemy": "res://scenes/Enemies/HeavyEnemy.tscn",
+      "flying_enemy": "res://scenes/Enemies/FlyingEnemy.tscn",
+      "boss_enemy": "res://scenes/Enemies/BossEnemy.tscn"
+    },
+    "buildings": {
+      "basic_tower": "res://scenes/Buildings/BasicTower.tscn",
+      "sniper_tower": "res://scenes/Buildings/SniperTower.tscn",
+      "rapid_tower": "res://scenes/Buildings/RapidTower.tscn",
+      "heavy_tower": "res://scenes/Buildings/HeavyTower.tscn"
+    },
+    "projectiles": {
+      "basic_bullet": "res://scenes/Projectiles/BasicBullet.tscn",
+      "sniper_bullet": "res://scenes/Projectiles/SniperBullet.tscn",
+      "rapid_bullet": "res://scenes/Projectiles/RapidBullet.tscn",
+      "heavy_bullet": "res://scenes/Projectiles/HeavyBullet.tscn",
+      "missile": "res://scenes/Projectiles/Missile.tscn"
+    },
+    "ui": {
+      "main_menu": "res://scenes/UI/MainMenu.tscn",
+      "game_hud": "res://scenes/UI/GameHUD.tscn",
+      "pause_menu": "res://scenes/UI/PauseMenu.tscn",
+      "game_over_screen": "res://scenes/UI/GameOverScreen.tscn",
+      "victory_screen": "res://scenes/UI/VictoryScreen.tscn"
+    },
+    "levels": {
+      "level_01": "res://scenes/Levels/Level01.tscn",
+      "level_02": "res://scenes/Levels/Level02.tscn",
+      "test_level": "res://scenes/Levels/TestLevel.tscn"
+    },
+    "effects": {
+      "explosion": "res://scenes/Effects/Explosion.tscn",
+      "impact": "res://scenes/Effects/Impact.tscn",
+      "muzzle_flash": "res://scenes/Effects/MuzzleFlash.tscn",
+      "death_effect": "res://scenes/Effects/DeathEffect.tscn"
+    }
+  }
+}

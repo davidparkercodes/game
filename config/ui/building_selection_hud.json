@@ -1,0 +1,60 @@
+{
+  "layout": {
+    "max_buildings": 9,
+    "square_size": 32,
+    "spacing_between_squares": 4,
+    "bottom_margin": 10,
+    "border_width": 1
+  },
+  "styling": {
+    "default_border_color": "#444444",
+    "selected_border_color": "#00FF00",
+    "hover_border_color": "#FFFF00",
+    "background_color": "#000000AA",
+    "number_text_color": "#FFFFFF",
+    "number_font_size": 12,
+    "button_corner_radius": 2,
+    "hover_transparency_multiplier": 1.2,
+    "hotkey_positioning": {
+      "offset_left": -16,
+      "offset_top": -16,
+      "offset_right": -2,
+      "offset_bottom": -2
+    },
+    "text_shadow": {
+      "offset_x": 1,
+      "offset_y": 1
+    }
+  },
+  "audio": {
+    "select_sound_path": "res://assets/audio/towers/tower_select.mp3",
+    "deselect_sound_path": "res://assets/audio/towers/tower_deselect.mp3",
+    "enabled": true
+  },
+  "buildings": {
+    "basic_tower": {
+      "display_order": 1,
+      "icon_path": "res://assets/sprites/shapes_basic_palette_tilemap.png",
+      "icon_region": "0,64,16,16",
+      "hotkey": "1"
+    },
+    "sniper_tower": {
+      "display_order": 2,
+      "icon_path": "res://assets/sprites/shapes_basic_palette_tilemap.png",
+      "icon_region": "32,64,16,16",
+      "hotkey": "2"
+    },
+    "rapid_tower": {
+      "display_order": 3,
+      "icon_path": "res://assets/sprites/shapes_basic_palette_tilemap.png",
+      "icon_region": "16,64,16,16",
+      "hotkey": "3"
+    },
+    "heavy_tower": {
+      "display_order": 4,
+      "icon_path": "res://assets/sprites/shapes_basic_palette_tilemap.png",
+      "icon_region": "48,64,16,16",
+      "hotkey": "4"
+    }
+  }
+}

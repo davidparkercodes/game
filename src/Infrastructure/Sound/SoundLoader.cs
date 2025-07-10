@@ -9,7 +9,7 @@ namespace Game.Infrastructure.Sound;
 
 public static class SoundLoader
 {
-    private const string SOUND_CONFIG_PATH = "res://data/audio/sound_config.json";
+    private const string SOUND_CONFIG_PATH = "res://config/audio/sound_config.json";
     
     public static Dictionary<string, AudioStream> LoadSounds()
     {

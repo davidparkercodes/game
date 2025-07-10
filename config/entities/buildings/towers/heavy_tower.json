@@ -1,0 +1,37 @@
+{
+  "tower_config": {
+    "name": "Heavy Tower",
+    "type": "heavy_tower",
+    "description": "Powerful tower with high damage and medium range",
+    "stats": {
+      "cost": 150,
+      "damage": 30,
+      "range": 140.0,
+      "attack_speed": 48.0,
+      "bullet_speed": 700,
+      "collision_radius": 12.0
+    },
+    "upgrade": {
+      "max_level": 3,
+      "upgrade_cost": 150,
+      "cost_multiplier": 2.2,
+      "damage_multiplier": 1.4,
+      "range_multiplier": 1.15,
+      "attack_speed_multiplier": 1.15
+    },
+    "visual": {
+      "sprite_region": "48,64,16,16",
+      "scale_multiplier": 1.0,
+      "color_tint": {
+        "r": 0.9,
+        "g": 0.7,
+        "b": 0.8,
+        "a": 1.0
+      }
+    },
+    "audio": {
+      "shoot_sound": "heavy_tower_shoot",
+      "impact_sound": "heavy_bullet_impact"
+    }
+  }
+}

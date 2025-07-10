@@ -19,8 +19,8 @@ public class StatsManagerService
     private EnemyStatsData _defaultEnemyStats;
     private Dictionary<string, BuildingStatsData> _buildingStats;
     private BuildingStatsData _defaultBuildingStats;
-    private const string ENEMY_STATS_PATH = "res://data/stats/enemy_stats.json";
-    private const string BUILDING_STATS_PATH = "res://data/stats/building_stats.json";
+    private const string ENEMY_STATS_PATH = "res://config/entities/enemies/enemy_stats.json";
+    private const string BUILDING_STATS_PATH = "res://config/entities/buildings/building_stats.json";
 
     static StatsManagerService()
     {

@@ -7,7 +7,7 @@ public class GameEconomyConfigService
 {
     public static GameEconomyConfigService Instance { get; private set; } = null!;
     
-    private const string ConfigFilePath = "res://data/economy/game_economy_config.json";
+    private const string ConfigFilePath = "res://config/gameplay/game_economy_config.json";
     private const string LogPrefix = "💰 [ECONOMY-CONFIG]";
     
     private GameEconomyData _economyData = null!;

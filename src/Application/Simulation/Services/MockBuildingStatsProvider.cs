@@ -16,7 +16,7 @@ public class MockBuildingStatsProvider : IBuildingStatsProvider
     private readonly BuildingStatsConfig _config;
     private readonly IBuildingTypeRegistry? _buildingTypeRegistry;
     private readonly ILogger _logger;
-    private const string DEFAULT_CONFIG_PATH = "data/simulation/building-stats.json";
+    private const string DEFAULT_CONFIG_PATH = "config/entities/buildings/building-stats.json";
 
     public MockBuildingStatsProvider(IBuildingTypeRegistry? buildingTypeRegistry = null, string? configPath = null, ILogger? logger = null)
     {

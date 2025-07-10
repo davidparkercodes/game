@@ -1,0 +1,56 @@
+{
+  "wave_mechanics": {
+    "wave_progression": {
+      "base_enemy_count": 10,
+      "enemy_count_increase_per_wave": 2,
+      "max_enemies_per_wave": 100,
+      "wave_completion_bonus": 50,
+      "perfect_wave_multiplier": 1.5
+    },
+    "spawn_timing": {
+      "base_spawn_interval": 1.0,
+      "spawn_interval_decrease_per_wave": 0.05,
+      "min_spawn_interval": 0.2,
+      "spawn_burst_size": 1,
+      "spawn_burst_interval": 0.5
+    },
+    "difficulty_scaling": {
+      "health_scaling_per_wave": 1.1,
+      "damage_scaling_per_wave": 1.05,
+      "speed_scaling_per_wave": 1.02,
+      "max_scaling_multiplier": 5.0,
+      "elite_enemy_chance_per_wave": 0.05
+    },
+    "special_waves": {
+      "boss_waves": {
+        "wave_numbers": [5, 10, 15, 20, 25],
+        "boss_health_multiplier": 10.0,
+        "boss_damage_multiplier": 2.0,
+        "boss_speed_multiplier": 0.8,
+        "warning_time": 10.0
+      },
+      "rush_waves": {
+        "wave_numbers": [3, 8, 13, 18],
+        "enemy_count_multiplier": 2.0,
+        "spawn_interval_multiplier": 0.3,
+        "health_multiplier": 0.7
+      },
+      "armored_waves": {
+        "wave_numbers": [7, 14, 21],
+        "armor_multiplier": 2.0,
+        "speed_multiplier": 0.9,
+        "reward_multiplier": 1.5
+      }
+    },
+    "wave_composition": {
+      "enemy_type_distribution": {
+        "basic": 0.6,
+        "fast": 0.2,
+        "heavy": 0.15,
+        "flying": 0.05
+      },
+      "composition_variation_per_wave": 0.1,
+      "force_enemy_type_minimum": true
+    }
+  }
+}

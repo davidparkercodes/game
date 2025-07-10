@@ -106,10 +106,10 @@ public partial class BuildingSelectionHud : Control
             AnchorTop = 1.0f,
             AnchorRight = 1.0f,
             AnchorBottom = 1.0f,
-            OffsetLeft = -16,
-            OffsetTop = -16,
-            OffsetRight = -2,
-            OffsetBottom = -2,
+            OffsetLeft = styling.HotkeyPositioning.OffsetLeft,
+            OffsetTop = styling.HotkeyPositioning.OffsetTop,
+            OffsetRight = styling.HotkeyPositioning.OffsetRight,
+            OffsetBottom = styling.HotkeyPositioning.OffsetBottom,
             MouseFilter = Control.MouseFilterEnum.Ignore // Allow button clicks through
         };
         
@@ -119,8 +119,8 @@ public partial class BuildingSelectionHud : Control
         
         // Add subtle shadow for better readability
         label.AddThemeColorOverride("font_shadow_color", Colors.Black);
-        label.AddThemeConstantOverride("shadow_offset_x", 1);
-        label.AddThemeConstantOverride("shadow_offset_y", 1);
+        label.AddThemeConstantOverride("shadow_offset_x", styling.TextShadow.OffsetX);
+        label.AddThemeConstantOverride("shadow_offset_y", styling.TextShadow.OffsetY);
         
         button.AddChild(label);
     }
@@ -223,11 +223,11 @@ public partial class BuildingSelectionHud : Control
         styleBox.BorderWidthLeft = borderWidth;
         styleBox.BorderWidthRight = borderWidth;
         
-        // Add subtle corner rounding for better appearance
-        styleBox.CornerRadiusTopLeft = 2;
-        styleBox.CornerRadiusTopRight = 2;
-        styleBox.CornerRadiusBottomLeft = 2;
-        styleBox.CornerRadiusBottomRight = 2;
+        // Add corner rounding based on configuration
+        styleBox.CornerRadiusTopLeft = styling.ButtonCornerRadius;
+        styleBox.CornerRadiusTopRight = styling.ButtonCornerRadius;
+        styleBox.CornerRadiusBottomLeft = styling.ButtonCornerRadius;
+        styleBox.CornerRadiusBottomRight = styling.ButtonCornerRadius;
         
         // Apply to all button states for consistency
         button.AddThemeStyleboxOverride("normal", styleBox);
@@ -297,17 +297,17 @@ public partial class BuildingSelectionHud : Control
         styleBox.BorderWidthRight = borderWidth;
         
         // Add corner rounding for consistency
-        styleBox.CornerRadiusTopLeft = 2;
-        styleBox.CornerRadiusTopRight = 2;
-        styleBox.CornerRadiusBottomLeft = 2;
-        styleBox.CornerRadiusBottomRight = 2;
+        styleBox.CornerRadiusTopLeft = styling.ButtonCornerRadius;
+        styleBox.CornerRadiusTopRight = styling.ButtonCornerRadius;
+        styleBox.CornerRadiusBottomLeft = styling.ButtonCornerRadius;
+        styleBox.CornerRadiusBottomRight = styling.ButtonCornerRadius;
         
         if (isHovering)
         {
             styleBox.BorderColor = Color.FromHtml(styling.HoverBorderColor);
             // Subtle background highlight on hover
             var hoverBgColor = Color.FromHtml(styling.BackgroundColor);
-            hoverBgColor.A *= 1.2f; // Slight transparency increase
+            hoverBgColor.A *= styling.HoverTransparencyMultiplier; // Configurable transparency multiplier
             styleBox.BgColor = hoverBgColor;
         }
         else
