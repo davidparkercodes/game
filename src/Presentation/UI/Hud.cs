@@ -19,6 +19,10 @@ public partial class Hud : CanvasLayer
 	[Export] public RichTextLabel? RangeLabel;
 	[Export] public RichTextLabel? FireRateLabel;
 
+	[Export] public Panel? VictoryPanel;
+	[Export] public Label? VictoryLabel;
+	[Export] public Label? VictorySubLabel;
+
 	private bool _isInitialized = false;
 	private const string LogPrefix = "🎨 [HUD]";
 
@@ -50,6 +54,10 @@ public partial class Hud : CanvasLayer
 		RangeLabel ??= GetNodeOrNull<RichTextLabel>("TowerStatsPanel/VBoxContainer/RangeLabel");
 		FireRateLabel ??= GetNodeOrNull<RichTextLabel>("TowerStatsPanel/VBoxContainer/FireRateLabel");
 
+		VictoryPanel ??= GetNodeOrNull<Panel>("VictoryPanel");
+		VictoryLabel ??= GetNodeOrNull<Label>("VictoryPanel/VictoryContainer/VictoryLabel");
+		VictorySubLabel ??= GetNodeOrNull<Label>("VictoryPanel/VictoryContainer/VictorySubLabel");
+
 		// Initialize BuildingUpgradeHud connection
 		InitializeBuildingUpgradeHud();
 
@@ -76,6 +84,11 @@ public partial class Hud : CanvasLayer
 			TowerStatsPanel.Visible = false;
 		}
 
+		if (VictoryPanel != null)
+		{
+			VictoryPanel.Visible = false;
+		}
+
 		if (SkipButton != null)
 		{
 			SkipButton.Visible = true;
@@ -100,6 +113,7 @@ public partial class Hud : CanvasLayer
 		GD.Print($"  🌊 WaveLabel: {(WaveLabel != null ? "✅" : "❌")}");
 		GD.Print($"  ⏭️ SkipButton: {(SkipButton != null ? "✅" : "❌")}");
 		GD.Print($"  🏗️ TowerStatsPanel: {(TowerStatsPanel != null ? "✅" : "❌")}");
+		GD.Print($"  🎉 VictoryPanel: {(VictoryPanel != null ? "✅" : "❌")}");
 	}
 
 	private void PerformStartupValidation()
@@ -111,6 +125,7 @@ public partial class Hud : CanvasLayer
 		if (WaveLabel == null) missingComponents.Add("WaveLabel");
 		if (SkipButton == null) missingComponents.Add("SkipButton");
 		if (TowerStatsPanel == null) missingComponents.Add("TowerStatsPanel");
+		if (VictoryPanel == null) missingComponents.Add("VictoryPanel");
 
 		if (missingComponents.Count > 0)
 		{
@@ -236,6 +251,22 @@ public partial class Hud : CanvasLayer
 	public bool IsSkipButtonVisible => SkipButton?.Visible ?? false;
 
 	public bool IsInitialized => _isInitialized;
+
+	public void ShowVictoryMessage()
+	{
+		if (!ValidateComponent(VictoryPanel, "VictoryPanel")) return;
+		VictoryPanel!.Visible = true;
+		GD.Print($"{LogPrefix} Victory message shown - You Win! :)");
+	}
+
+	public void HideVictoryMessage()
+	{
+		if (VictoryPanel != null)
+		{
+			VictoryPanel.Visible = false;
+			GD.Print($"{LogPrefix} Victory message hidden");
+		}
+	}
 
 	private void OnSkipButtonPressed()
 	{

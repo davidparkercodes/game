@@ -381,7 +381,7 @@ public class WaveManager
         PlayVictoryCelebration();
 
         // Mark game as won in GameService
-        // GameService would need a method for this
+        GameService.Instance?.MarkGameAsWon();
 
         UpdateWaveButtonState();
     }

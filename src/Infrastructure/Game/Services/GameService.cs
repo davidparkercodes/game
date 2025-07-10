@@ -13,6 +13,7 @@ public class GameService
     public int Lives { get; private set; }
     public int Score { get; private set; }
     public bool IsGameActive { get; private set; } = false;
+    public bool IsVictory { get; private set; } = false;
 
     static GameService()
     {
@@ -151,9 +152,16 @@ public class GameService
             GD.Print($"💰 GameService: Reset game with Money: {Money}, Lives: {Lives}, Score: {Score}");
         }
         IsGameActive = false;
+        IsVictory = false;
         
         // Reset wave manager
         WaveManager.Instance?.Reset();
+        
+        // Hide victory message if it's showing
+        if (HudManager.Instance != null && HudManager.Instance.IsInitialized())
+        {
+            HudManager.Instance.HideVictoryMessage();
+        }
         
         // Update HUD with reset values
         UpdateHudMoney();
@@ -167,7 +175,20 @@ public class GameService
 
     public bool IsGameWon()
     {
-        return false;
+        return IsVictory;
+    }
+    
+    public void MarkGameAsWon()
+    {
+        IsVictory = true;
+        IsGameActive = false;
+        GD.Print("🎉 Game marked as won! Victory achieved!");
+        
+        // Show victory message through HUD
+        if (HudManager.Instance != null && HudManager.Instance.IsInitialized())
+        {
+            HudManager.Instance.ShowVictoryMessage();
+        }
     }
     
     // HUD Update Helper Methods

@@ -26,7 +26,7 @@ public class HudStyling
     public string HoverBorderColor { get; init; } = "#FFFF00";
     public string BackgroundColor { get; init; } = "#000000AA";
     public string NumberTextColor { get; init; } = "#FFFFFF";
-    public int NumberFontSize { get; init; } = 14;
+    public int NumberFontSize { get; init; } = 12;
 }
 
 public class HudAudio

@@ -175,16 +175,43 @@ public partial class HudManager : Node
         }
     }
 
-    // Utility Methods
-    public bool IsInitialized()
-    {
-        return _hud != null;
-    }
+	// Victory Message Management
+	public void ShowVictoryMessage()
+	{
+		if (_hud != null)
+		{
+			_hud.ShowVictoryMessage();
+			GD.Print("🎉 Victory message displayed!");
+		}
+		else
+		{
+			GD.PrintErr("❌ Cannot show victory message - HUD is null");
+		}
+	}
 
-    public Hud? GetHud()
-    {
-        return _hud;
-    }
+	public void HideVictoryMessage()
+	{
+		if (_hud != null)
+		{
+			_hud.HideVictoryMessage();
+			GD.Print("🎉 Victory message hidden");
+		}
+		else
+		{
+			GD.PrintErr("❌ Cannot hide victory message - HUD is null");
+		}
+	}
+
+	// Utility Methods
+	public bool IsInitialized()
+	{
+		return _hud != null;
+	}
+
+	public Hud? GetHud()
+	{
+		return _hud;
+	}
 
     public override void _ExitTree()
     {

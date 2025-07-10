@@ -1,7 +1,7 @@
 {
   "layout": {
     "max_buildings": 9,
-    "square_size": 24,
+    "square_size": 32,
     "spacing_between_squares": 4,
     "bottom_margin": 10,
     "border_width": 1
@@ -12,7 +12,7 @@
     "hover_border_color": "#FFFF00",
     "background_color": "#000000AA",
     "number_text_color": "#FFFFFF",
-    "number_font_size": 6
+    "number_font_size": 12
   },
   "audio": {
     "select_sound_path": "res://assets/audio/towers/tower_select.mp3",
